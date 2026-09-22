@@ -17,7 +17,7 @@ const catalogItems = <CatalogItem>[
     description: 'Opciones listas para llevar, sujetas a existencia.',
     icon: Icons.storefront_rounded,
     accent: AppColors.lime,
-    priceLabel: 'Desde $250',
+    priceLabel: 'Desde \$250',
     isReadyStock: true,
   ),
   CatalogItem(

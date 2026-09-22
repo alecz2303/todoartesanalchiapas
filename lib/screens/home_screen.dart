@@ -47,8 +47,7 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 18),
               const Text(
-                'Tu celebración,
-hecha a mano. ✨',
+                'Tu celebración,\nhecha a mano. ✨',
                 style: TextStyle(color: Colors.white, fontSize: 34, fontWeight: FontWeight.w900, height: 1.05),
               ),
               const SizedBox(height: 12),
