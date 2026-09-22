@@ -1,17 +1,6 @@
 name: Bootstrap Flutter Native
 
 on:
-  push:
-    branches:
-      - chore/ta-020-bootstrap-flutter
-    paths:
-      - ".github/workflows/bootstrap-flutter.yml"
-      - "lib/**"
-      - "integration_test/**"
-      - "assets/**"
-      - "pubspec.yaml"
-      - "analysis_options.yaml"
-      - "TODO.md"
   workflow_dispatch:
 
 permissions:
