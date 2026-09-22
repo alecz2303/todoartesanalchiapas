@@ -81,16 +81,16 @@ La experiencia debe conservar la identidad artesanal y chiapaneca de la marca, c
 
 **Objetivo:** convertir la base actual en un proyecto Flutter completo que pueda clonarse, compilarse y probarse de forma reproducible.
 
-- 🟡 **TA-020** Generar estructura nativa Flutter completa (`android/`, `ios/` y archivos generados necesarios).
+- ✅ **TA-020** Generar estructura nativa Flutter completa (`android/`, `ios/` y archivos generados necesarios).
 - ✅ **TA-021** Confirmar identificador de aplicación Android: `com.todoartesanalchiapas.app`.
-- 🟡 **TA-022** Configurar nombre visible: **Todo Artesanal Chiapas**.
-- 🟡 **TA-023** Ejecutar `flutter pub get` y resolver advertencias/dependencias.
-- 🟡 **TA-024** Ejecutar `flutter analyze` sin errores.
-- 🟡 **TA-025** Compilar primera APK de desarrollo.
+- ✅ **TA-022** Configurar nombre visible: **Todo Artesanal Chiapas**.
+- ✅ **TA-023** Ejecutar `flutter pub get` y resolver advertencias/dependencias.
+- ✅ **TA-024** Ejecutar `flutter analyze` sin errores.
+- ✅ **TA-025** Compilar primera APK de desarrollo.
 - ⬜ **TA-026** Probar navegación completa en dispositivo/emulador Android.
 - 🟡 **TA-027** Crear GitHub Actions para análisis y pruebas básicas.
 - ✅ **TA-028** Definir convención de ramas, commits y PR del proyecto.
-- ⬜ **TA-029** Documentar procedimiento reproducible de instalación/desarrollo.
+- ✅ **TA-029** Documentar procedimiento reproducible de instalación/desarrollo en `DEVELOPMENT.md`.
 
 **Criterio para cerrar Fase 0:** cualquier desarrollador puede clonar el repo, instalar dependencias, ejecutar la app y obtener una compilación Android sin modificar código.
 
@@ -387,7 +387,7 @@ Orden recomendado:
 | 2026-09-21 | Los pedidos personalizados requieren inicialmente 20 días de anticipación. |
 | 2026-09-21 | Se solicita inicialmente 50% de anticipo para agendar. |
 | 2026-09-21 | El primer flujo prioriza catálogo, solicitud de pedido y WhatsApp. |
-| 2026-09-21 | Este archivo `TODO.md` se adopta como fuente canónica del plan de trabajo. |\n| 2026-09-21 | Identificador técnico Android/iOS definido: `com.todoartesanalchiapas.app`. |\n| 2026-09-21 | Convención Git definida en `CONTRIBUTING.md`; el trabajo de TA-020 se realiza en `chore/ta-020-bootstrap-flutter`. |
+| 2026-09-21 | Este archivo `TODO.md` se adopta como fuente canónica del plan de trabajo. |\n| 2026-09-21 | Identificador técnico Android/iOS definido: `com.todoartesanalchiapas.app`. |\n| 2026-09-21 | Convención Git definida en `CONTRIBUTING.md`; el trabajo de TA-020 se realiza en `chore/ta-020-bootstrap-flutter`. |\n| 2026-09-21 | Base verificada con Flutter 3.47.5 / Dart 3.13.4: `flutter pub get`, `flutter analyze` y build APK debug exitosos en GitHub Actions. |
 
 ---
 
