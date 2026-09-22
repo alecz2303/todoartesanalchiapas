@@ -2,6 +2,8 @@
 
 Aplicación móvil oficial de **Todo Artesanal Chiapas**, desarrollada en Flutter.
 
+> 📌 **Plan de trabajo oficial:** consultar [TODO.md](TODO.md). Ese archivo es la fuente canónica para el orden, estado y alcance de las tareas del proyecto.
+
 ## Estado actual
 
 Versión inicial `0.1.0+1` enfocada en validar el flujo principal de clientes:
@@ -52,11 +54,7 @@ Antes de ejecutar `flutter create .`, confirma que estás en la raíz clonada de
 
 ## Próximos pasos
 
-- Integrar logo y fotografías reales de Todo Artesanal Chiapas.
-- Crear ficha de detalle de producto.
-- Guardar solicitudes y pedidos en backend.
-- Agregar estados de pedido y seguimiento para clientes.
-- Incorporar panel administrativo, inventario y pagos en etapas posteriores.
+El orden oficial de trabajo se mantiene en **[TODO.md](TODO.md)**. No se deben utilizar listas paralelas que puedan contradecirlo.
 
 ---
 
