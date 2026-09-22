@@ -387,7 +387,10 @@ Orden recomendado:
 | 2026-09-21 | Los pedidos personalizados requieren inicialmente 20 días de anticipación. |
 | 2026-09-21 | Se solicita inicialmente 50% de anticipo para agendar. |
 | 2026-09-21 | El primer flujo prioriza catálogo, solicitud de pedido y WhatsApp. |
-| 2026-09-21 | Este archivo `TODO.md` se adopta como fuente canónica del plan de trabajo. |\n| 2026-09-21 | Identificador técnico Android/iOS definido: `com.todoartesanalchiapas.app`. |\n| 2026-09-21 | Convención Git definida en `CONTRIBUTING.md`; el trabajo de TA-020 se realiza en `chore/ta-020-bootstrap-flutter`. |\n| 2026-09-21 | Base verificada con Flutter 3.47.5 / Dart 3.13.4: `flutter pub get`, `flutter analyze` y build APK debug exitosos en GitHub Actions. |
+| 2026-09-21 | Este archivo `TODO.md` se adopta como fuente canónica del plan de trabajo. |
+| 2026-09-21 | Identificador técnico Android/iOS definido: `com.todoartesanalchiapas.app`. |
+| 2026-09-21 | Convención Git definida en `CONTRIBUTING.md`; el trabajo de TA-020 se realiza en `chore/ta-020-bootstrap-flutter`. |
+| 2026-09-21 | Base verificada con Flutter 3.47.5 / Dart 3.13.4: `flutter pub get`, `flutter analyze` y build APK debug exitosos en GitHub Actions. |
 
 ---
 
