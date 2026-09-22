@@ -87,7 +87,7 @@ La experiencia debe conservar la identidad artesanal y chiapaneca de la marca, c
 - ✅ **TA-023** Ejecutar `flutter pub get` y resolver advertencias/dependencias.
 - ✅ **TA-024** Ejecutar `flutter analyze` sin errores.
 - ✅ **TA-025** Compilar primera APK de desarrollo.
-- ⬜ **TA-026** Probar navegación completa en dispositivo/emulador Android.
+- 🟡 **TA-026** Probar navegación completa en dispositivo/emulador Android.
 - 🟡 **TA-027** Crear GitHub Actions para análisis y pruebas básicas.
 - ✅ **TA-028** Definir convención de ramas, commits y PR del proyecto.
 - ✅ **TA-029** Documentar procedimiento reproducible de instalación/desarrollo en `DEVELOPMENT.md`.
