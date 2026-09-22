@@ -68,6 +68,7 @@ El repositorio contiene:
 
 - `.github/workflows/flutter-ci.yml`: valida PRs y `main` con instalación de dependencias, análisis y build Android.
 - `.github/workflows/bootstrap-flutter.yml`: workflow de bootstrap/manual usado para generar y verificar la estructura nativa inicial.
+- `.github/workflows/android-navigation-test.yml`: prueba manual de regresión que levanta un emulador Android y recorre las cuatro secciones principales.
 
 ## Flujo de trabajo
 
@@ -90,3 +91,16 @@ Entre otros:
 - certificados o llaves privadas
 
 Consulta `.gitignore` antes de agregar archivos sensibles.
+
+
+## Navegación Android verificada
+
+La navegación principal fue validada en un emulador Android mediante GitHub Actions. El flujo recorre:
+
+- Inicio
+- Catálogo
+- Pedido
+- Contacto
+- regreso a Inicio
+
+Por su costo de ejecución, esta prueba de emulador no corre en cada PR; se mantiene como workflow manual de regresión. El CI normal de cada PR continúa ejecutando análisis, tests rápidos y compilación APK debug.

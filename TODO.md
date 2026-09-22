@@ -87,8 +87,8 @@ La experiencia debe conservar la identidad artesanal y chiapaneca de la marca, c
 - ✅ **TA-023** Ejecutar `flutter pub get` y resolver advertencias/dependencias.
 - ✅ **TA-024** Ejecutar `flutter analyze` sin errores.
 - ✅ **TA-025** Compilar primera APK de desarrollo.
-- 🟡 **TA-026** Probar navegación completa en dispositivo/emulador Android.
-- 🟡 **TA-027** Crear GitHub Actions para análisis y pruebas básicas.
+- ✅ **TA-026** Probar navegación completa en dispositivo/emulador Android.
+- ✅ **TA-027** Crear GitHub Actions para análisis y pruebas básicas.
 - ✅ **TA-028** Definir convención de ramas, commits y PR del proyecto.
 - ✅ **TA-029** Documentar procedimiento reproducible de instalación/desarrollo en `DEVELOPMENT.md`.
 
@@ -364,17 +364,19 @@ Estas ideas no se descartan, pero **no deben desplazar el MVP**:
 
 El siguiente bloque oficial es:
 
-### **FASE 0 — Proyecto Flutter ejecutable**
+### **FASE 1 — Identidad visual oficial y catálogo**
 
-Orden recomendado:
+La **FASE 0 quedó completada** con estructura nativa Android/iOS, dependencias reproducibles, análisis en verde, APK debug compilada, prueba de navegación Android, CI y documentación.
 
-1. **TA-020** Generar estructura Flutter nativa.
-2. **TA-021 / TA-022** Confirmar identidad técnica y nombre.
-3. **TA-023 / TA-024** Dependencias y análisis.
-4. **TA-025 / TA-026** APK y prueba real.
-5. **TA-027 / TA-028 / TA-029** CI, flujo Git y documentación.
+Orden recomendado del siguiente bloque:
 
-**No se empezará Fase 1 como bloque principal hasta que Fase 0 tenga una base compilable y verificable.**
+1. **TA-030 / TA-031 / TA-032** Logo, icono y splash oficiales.
+2. **TA-033 / TA-034 / TA-035 / TA-036** Sistema visual y accesibilidad básica.
+3. **TA-040 / TA-041** Categorías y modelo definitivo de producto.
+4. **TA-042 / TA-043 / TA-044** Fotografías, tarjetas y detalle de producto.
+5. **TA-045 / TA-046 / TA-047 / TA-048 / TA-049** Variantes, disponibilidad, precios, cotización, búsqueda y filtros.
+
+**No se iniciará Fase 2 como bloque principal hasta que el catálogo y la identidad oficial de Fase 1 estén consolidados.**
 
 ---
 
@@ -391,6 +393,8 @@ Orden recomendado:
 | 2026-09-21 | Identificador técnico Android/iOS definido: `com.todoartesanalchiapas.app`. |
 | 2026-09-21 | Convención Git definida en `CONTRIBUTING.md`; el trabajo de TA-020 se realiza en `chore/ta-020-bootstrap-flutter`. |
 | 2026-09-21 | Base verificada con Flutter 3.47.5 / Dart 3.13.4: `flutter pub get`, `flutter analyze` y build APK debug exitosos en GitHub Actions. |
+| 2026-09-21 | Navegación principal validada en emulador Android mediante GitHub Actions; el test de emulador queda disponible como workflow manual de regresión. |
+| 2026-09-21 | FASE 0 completada; el siguiente bloque canónico es FASE 1 — identidad visual oficial y catálogo. |
 
 ---
 
