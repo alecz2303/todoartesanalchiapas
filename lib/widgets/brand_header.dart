@@ -24,7 +24,7 @@ class BrandHeader extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(compact ? 12 : 16),
             child: Image.asset(
-              'assets/branding/logo_todo_artesanal_chiapas.jpg',
+              'assets/branding/logo_todo_artesanal_chiapas.png',
               fit: BoxFit.contain,
               filterQuality: FilterQuality.high,
               semanticLabel: 'Logo de Todo Artesanal Chiapas',
