@@ -1,0 +1,115 @@
+name: Bootstrap Flutter Native
+
+on:
+  push:
+    branches:
+      - chore/ta-020-bootstrap-flutter
+    paths:
+      - ".github/workflows/bootstrap-flutter.yml"
+      - "lib/**"
+      - "assets/**"
+      - "pubspec.yaml"
+      - "analysis_options.yaml"
+      - "TODO.md"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter stable
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Show Flutter version
+        run: flutter --version
+
+      - name: Generate native Android and iOS projects
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ ! -d android ] || [ ! -d ios ]; then
+            rm -rf /tmp/todo_artesanal_flutter
+            flutter create \
+              --platforms=android,ios \
+              --org com.todoartesanalchiapas \
+              --project-name app \
+              /tmp/todo_artesanal_flutter
+
+            rm -rf android ios
+            cp -R /tmp/todo_artesanal_flutter/android ./android
+            cp -R /tmp/todo_artesanal_flutter/ios ./ios
+            cp /tmp/todo_artesanal_flutter/.metadata ./.metadata
+          fi
+
+      - name: Apply official app display name
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          import plistlib
+
+          manifest = Path("android/app/src/main/AndroidManifest.xml")
+          text = manifest.read_text(encoding="utf-8")
+          text = re.sub(
+              r'android:label="[^"]*"',
+              'android:label="Todo Artesanal Chiapas"',
+              text,
+              count=1,
+          )
+          manifest.write_text(text, encoding="utf-8")
+
+          plist = Path("ios/Runner/Info.plist")
+          with plist.open("rb") as fh:
+              data = plistlib.load(fh)
+          data["CFBundleDisplayName"] = "Todo Artesanal Chiapas"
+          data["CFBundleName"] = "Todo Artesanal Chiapas"
+          with plist.open("wb") as fh:
+              plistlib.dump(data, fh, sort_keys=False)
+          PY
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Build debug APK
+        run: flutter build apk --debug
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: todo-artesanal-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Commit generated native structure
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add android ios .metadata
+
+          if git diff --cached --quiet; then
+            echo "Native structure already up to date."
+            exit 0
+          fi
+
+          git commit -m "chore: generate Flutter native project [TA-020]"
+          git push
