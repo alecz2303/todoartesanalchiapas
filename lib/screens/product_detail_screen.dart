@@ -20,9 +20,9 @@ class ProductDetailScreen extends StatelessWidget {
           ? 'Quiero solicitar una cotización.'
           : 'Quiero consultar disponibilidad.',
       '',
-      'Producto: ' + item.name,
-      'Categoría: ' + item.categoryLabel,
-      if (item.displayPrice != null) 'Precio mostrado: ' + item.displayPrice!,
+      'Producto: \${item.name}',
+      'Categoría: \${item.categoryLabel}',
+      if (item.displayPrice != null) 'Precio mostrado: \${item.displayPrice!}',
       if (item.supportsReferenceImage)
         'Tengo una imagen de referencia para compartir.',
       '',
