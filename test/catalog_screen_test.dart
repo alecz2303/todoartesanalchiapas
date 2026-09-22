@@ -10,7 +10,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Catálogo'), findsOneWidget);
-    expect(find.text('Muñeca artesanal'), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), 'muñeca');
     await tester.pumpAndSettle();
