@@ -37,15 +37,17 @@ assets/
 
 ## Preparar el proyecto localmente
 
-Esta primera base contiene el código de aplicación y todavía no incluye las carpetas nativas generadas por Flutter (`android/`, `ios/`, etc.). Para completar el proyecto en una computadora con Flutter instalado:
+El repositorio ya contiene la estructura nativa Android/iOS y el lockfile de dependencias.
 
 ```bash
-flutter create .
+git clone https://github.com/alecz2303/todoartesanalchiapas.git
+cd todoartesanalchiapas
 flutter pub get
+flutter analyze
 flutter run
 ```
 
-Antes de ejecutar `flutter create .`, confirma que estás en la raíz clonada de este repositorio.
+Consulta **[DEVELOPMENT.md](DEVELOPMENT.md)** para el procedimiento completo y **[CONTRIBUTING.md](CONTRIBUTING.md)** para el flujo de ramas, commits y PR.
 
 ## Dependencias principales
 
