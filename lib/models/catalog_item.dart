@@ -77,7 +77,7 @@ class CatalogItem {
     }
 
     final amount = '\$${price.toString()} MXN';
-    return pricingType == ProductPricingType.from ? 'Desde \$amount' : amount;
+    return pricingType == ProductPricingType.from ? 'Desde $amount' : amount;
   }
 
   bool get requiresQuote => pricingType == ProductPricingType.quote;
