@@ -102,7 +102,7 @@ La experiencia debe conservar la identidad artesanal y chiapaneca de la marca, c
 
 ## Marca
 
-- ⬜ **TA-030** Integrar logo oficial de Todo Artesanal Chiapas.
+- ✅ **TA-030** Integrar logo oficial de Todo Artesanal Chiapas.
 - ⬜ **TA-031** Crear icono oficial de la app.
 - ⬜ **TA-032** Crear splash screen.
 - ⬜ **TA-033** Definir paleta final y sistema visual.
@@ -394,7 +394,7 @@ Orden recomendado del siguiente bloque:
 | 2026-09-21 | Convención Git definida en `CONTRIBUTING.md`; el trabajo de TA-020 se realiza en `chore/ta-020-bootstrap-flutter`. |
 | 2026-09-21 | Base verificada con Flutter 3.47.5 / Dart 3.13.4: `flutter pub get`, `flutter analyze` y build APK debug exitosos en GitHub Actions. |
 | 2026-09-21 | Navegación principal validada en emulador Android mediante GitHub Actions; el test de emulador queda disponible como workflow manual de regresión. |
-| 2026-09-21 | FASE 0 completada; el siguiente bloque canónico es FASE 1 — identidad visual oficial y catálogo. |
+| 2026-09-21 | FASE 0 completada; el siguiente bloque canónico es FASE 1 — identidad visual oficial y catálogo. |\n| 2026-09-22 | Logo oficial integrado y nombre de marca normalizado como `Todo Artesanal Chiapas` en la interfaz. |
 
 ---
 

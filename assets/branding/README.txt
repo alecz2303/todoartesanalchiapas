@@ -1,6 +1,8 @@
-Coloca aquí los recursos oficiales de Todo Artesanal Chiapas:
-- logo.png
-- icono_app.png
-- fotos o recursos gráficos de marca
+Recursos oficiales de Todo Artesanal Chiapas.
 
-En esta primera versión la app usa un encabezado tipográfico provisional para no depender de archivos externos.
+- logo_todo_artesanal_chiapas.jpg — logo oficial integrado en TA-030.
+- icono_app.png — pendiente de TA-031.
+- recursos adicionales de marca — se agregarán conforme avance Fase 1.
+
+Regla de marca: en textos visibles de la aplicación se debe usar siempre el nombre completo
+"Todo Artesanal Chiapas".

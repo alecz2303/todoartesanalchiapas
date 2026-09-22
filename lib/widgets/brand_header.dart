@@ -9,16 +9,19 @@ class BrandHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final logoSize = compact ? 54.0 : 68.0;
+
     return Row(
       children: [
-        Container(
-          width: compact ? 44 : 54,
-          height: compact ? 44 : 54,
-          decoration: BoxDecoration(
-            color: AppColors.pink,
-            borderRadius: BorderRadius.circular(16),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(compact ? 14 : 18),
+          child: Image.asset(
+            'assets/branding/logo_todo_artesanal_chiapas.jpg',
+            width: logoSize,
+            height: logoSize,
+            fit: BoxFit.cover,
+            semanticLabel: 'Logo de Todo Artesanal Chiapas',
           ),
-          child: const Icon(Icons.auto_awesome, color: Colors.white),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -26,22 +29,26 @@ class BrandHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Todo Artesanal',
+                'Todo Artesanal Chiapas',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: compact ? 19 : 24,
+                  fontSize: compact ? 18 : 23,
                   fontWeight: FontWeight.w900,
                   color: AppColors.ink,
-                  height: 1,
+                  height: 1.05,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 5),
               Text(
-                'CHIAPAS · HECHO A MANO',
+                'PIÑATAS · PAPEL PICADO · Y MÁS',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: compact ? 10 : 11,
+                  fontSize: compact ? 9 : 10.5,
                   fontWeight: FontWeight.w800,
                   color: AppColors.purple,
-                  letterSpacing: 1.3,
+                  letterSpacing: .8,
                 ),
               ),
             ],
