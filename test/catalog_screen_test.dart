@@ -20,7 +20,16 @@ void main() {
     await tester.tap(find.text('Muñeca artesanal'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Solicitar cotización'), findsOneWidget);
+    expect(find.text('Muñeca artesanal'), findsOneWidget);
     expect(find.text('Artesanías'), findsWidgets);
+
+    await tester.scrollUntilVisible(
+      find.text('Solicitar cotización'),
+      300,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Solicitar cotización'), findsOneWidget);
   });
 }
