@@ -102,7 +102,7 @@ La experiencia debe conservar la identidad artesanal y chiapaneca de la marca, c
 
 ## Marca
 
-- ✅ **TA-030** Integrar logo oficial de Todo Artesanal Chiapas.
+- 🟡 **TA-030** Integrar logo oficial de Todo Artesanal Chiapas — corrigiendo asset y renderizado.
 - ⬜ **TA-031** Crear icono oficial de la app.
 - ⬜ **TA-032** Crear splash screen.
 - ⬜ **TA-033** Definir paleta final y sistema visual.

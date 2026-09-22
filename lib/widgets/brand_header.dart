@@ -13,14 +13,22 @@ class BrandHeader extends StatelessWidget {
 
     return Row(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(compact ? 14 : 18),
-          child: Image.asset(
-            'assets/branding/logo_todo_artesanal_chiapas.jpg',
-            width: logoSize,
-            height: logoSize,
-            fit: BoxFit.cover,
-            semanticLabel: 'Logo de Todo Artesanal Chiapas',
+        Container(
+          width: logoSize,
+          height: logoSize,
+          padding: const EdgeInsets.all(2),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(compact ? 14 : 18),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(compact ? 12 : 16),
+            child: Image.asset(
+              'assets/branding/logo_todo_artesanal_chiapas.jpg',
+              fit: BoxFit.contain,
+              filterQuality: FilterQuality.high,
+              semanticLabel: 'Logo de Todo Artesanal Chiapas',
+            ),
           ),
         ),
         const SizedBox(width: 12),
