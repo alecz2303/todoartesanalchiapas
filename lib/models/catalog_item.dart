@@ -76,7 +76,7 @@ class CatalogItem {
       return null;
     }
 
-    final amount = '\$' + price.toString() + ' MXN';
+    final amount = '\$${price.toString()} MXN';
     return pricingType == ProductPricingType.from ? 'Desde \$amount' : amount;
   }
 

@@ -20,9 +20,9 @@ class ProductDetailScreen extends StatelessWidget {
           ? 'Quiero solicitar una cotización.'
           : 'Quiero consultar disponibilidad.',
       '',
-      'Producto: \${item.name}',
-      'Categoría: \${item.categoryLabel}',
-      if (item.displayPrice != null) 'Precio mostrado: \${item.displayPrice!}',
+      'Producto: ${item.name}',
+      'Categoría: ${item.categoryLabel}',
+      if (item.displayPrice != null) 'Precio mostrado: ${item.displayPrice!}',
       if (item.supportsReferenceImage)
         'Tengo una imagen de referencia para compartir.',
       '',
@@ -30,8 +30,7 @@ class ProductDetailScreen extends StatelessWidget {
     ];
 
     final uri = Uri.parse(
-      'https://wa.me/529612139040?text=' +
-          Uri.encodeComponent(lines.join('\n')),
+      'https://wa.me/529612139040?text=${Uri.encodeComponent(lines.join('\n'))}',
     );
 
     final opened = await launchUrl(
@@ -161,9 +160,7 @@ class ProductDetailScreen extends StatelessWidget {
             const SizedBox(height: 22),
             _InfoRow(
               icon: Icons.schedule_rounded,
-              text: 'Tiempo normal de agenda: mínimo ' +
-                  item.leadTimeDays.toString() +
-                  ' días de anticipación.',
+              text: 'Tiempo normal de agenda: mínimo ${item.leadTimeDays!} días de anticipación.',
             ),
           ],
           if (item.supportsReferenceImage) ...[
