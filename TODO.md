@@ -112,16 +112,16 @@ La experiencia debe conservar la identidad artesanal y chiapaneca de la marca, c
 
 ## Catálogo
 
-- ⬜ **TA-040** Definir categorías oficiales de productos.
-- ⬜ **TA-041** Definir modelo completo de producto.
+- 🟡 **TA-040** Definir categorías oficiales de productos.
+- 🟡 **TA-041** Definir modelo completo de producto.
 - ⬜ **TA-042** Integrar fotografías reales de productos.
-- ⬜ **TA-043** Crear tarjeta definitiva de producto.
-- ⬜ **TA-044** Crear pantalla de detalle de producto.
-- ⬜ **TA-045** Mostrar medidas, variantes y opciones cuando correspondan.
-- ⬜ **TA-046** Diferenciar productos personalizados de productos disponibles en tienda.
-- ⬜ **TA-047** Mostrar precios fijos únicamente cuando aplique.
-- ⬜ **TA-048** Mostrar “Solicitar cotización” cuando el precio dependa del diseño.
-- ⬜ **TA-049** Agregar búsqueda y filtros cuando el catálogo lo justifique.
+- 🟡 **TA-043** Crear tarjeta definitiva de producto.
+- 🟡 **TA-044** Crear pantalla de detalle de producto.
+- 🟡 **TA-045** Mostrar medidas, variantes y opciones cuando correspondan.
+- 🟡 **TA-046** Diferenciar productos personalizados de productos disponibles en tienda.
+- 🟡 **TA-047** Mostrar precios fijos únicamente cuando aplique.
+- 🟡 **TA-048** Mostrar “Solicitar cotización” cuando el precio dependa del diseño.
+- 🟡 **TA-049** Agregar búsqueda y filtros cuando el catálogo lo justifique.
 
 **Criterio para cerrar Fase 1:** la app tiene identidad oficial y el cliente puede entender claramente qué vende Todo Artesanal y cómo solicitar cada producto.
 
