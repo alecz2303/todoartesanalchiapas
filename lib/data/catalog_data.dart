@@ -16,7 +16,7 @@ const catalogItems = <CatalogItem>[
     category: 'Piñatas',
     description: 'Opciones listas para llevar, sujetas a existencia.',
     icon: Icons.storefront_rounded,
-    accent: AppColors.lime,
+    accent: AppColors.green,
     priceLabel: 'Desde \$250',
     isReadyStock: true,
   ),
@@ -32,14 +32,14 @@ const catalogItems = <CatalogItem>[
     category: 'Plástico picado',
     description: 'Tiras resistentes, coloridas y personalizadas.',
     icon: Icons.filter_vintage_rounded,
-    accent: AppColors.purple,
+    accent: AppColors.cyan,
   ),
   CatalogItem(
     name: 'Taza sublimada',
     category: 'Personalizados',
     description: 'Diseños personalizados para regalo, negocio o evento.',
     icon: Icons.coffee_rounded,
-    accent: AppColors.sky,
+    accent: AppColors.cyan,
   ),
   CatalogItem(
     name: 'Playera personalizada',
@@ -53,6 +53,6 @@ const catalogItems = <CatalogItem>[
     category: 'Personalizados',
     description: 'Para dulces, recuerdos, etiquetas y detalles especiales.',
     icon: Icons.local_offer_rounded,
-    accent: AppColors.lime,
+    accent: AppColors.green,
   ),
 ];
