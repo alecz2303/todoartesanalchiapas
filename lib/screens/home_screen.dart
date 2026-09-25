@@ -25,7 +25,7 @@ class HomeScreen extends StatelessWidget {
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [AppColors.pink, AppColors.purple],
+              colors: [AppColors.pink, AppColors.cyan],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -37,29 +37,29 @@ class HomeScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: .17),
+                  color: AppColors.white.withValues(alpha: .17),
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: const Text(
                   'TRADICIÓN + CREATIVIDAD',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 11, letterSpacing: 1),
+                  style: TextStyle(color: AppColors.white, fontWeight: FontWeight.w900, fontSize: 11, letterSpacing: 1),
                 ),
               ),
               const SizedBox(height: 18),
               const Text(
                 'Tu celebración,\nhecha a mano. ✨',
-                style: TextStyle(color: Colors.white, fontSize: 34, fontWeight: FontWeight.w900, height: 1.05),
+                style: TextStyle(color: AppColors.white, fontSize: 34, fontWeight: FontWeight.w900, height: 1.05),
               ),
               const SizedBox(height: 12),
               Text(
                 'Piñatas, papel y plástico picado, detalles personalizados y mucho más.',
-                style: TextStyle(color: Colors.white.withValues(alpha: .9), fontSize: 15.5, height: 1.4, fontWeight: FontWeight.w600),
+                style: TextStyle(color: AppColors.white.withValues(alpha: .9), fontSize: 15.5, height: 1.4, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 22),
               FilledButton.tonalIcon(
                 onPressed: onOpenOrder,
                 style: FilledButton.styleFrom(
-                  backgroundColor: Colors.white,
+                  backgroundColor: AppColors.white,
                   foregroundColor: AppColors.pink,
                 ),
                 icon: const Icon(Icons.brush_rounded),
@@ -98,7 +98,7 @@ class HomeScreen extends StatelessWidget {
           title: 'Personalizados',
           subtitle: 'Tazas, playeras, stickers y detalles especiales',
           icon: Icons.card_giftcard_rounded,
-          accent: AppColors.sky,
+          accent: AppColors.cyan,
         ),
       ],
     );
