@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const pink = Color(0xFFFF2F92);
-  static const lime = Color(0xFFC7FF2F);
-  static const yellow = Color(0xFFFFD93D);
-  static const purple = Color(0xFF7D3CFF);
-  static const sky = Color(0xFF55C9FF);
-  static const ink = Color(0xFF231F2B);
-  static const soft = Color(0xFFF8F5FA);
+  // Paleta oficial tomada del logo de Todo Artesanal Chiapas.
+  static const pink = Color(0xFFFC2E92);
+  static const yellow = Color(0xFFFDD506);
+  static const green = Color(0xFF72DF06);
+  static const cyan = Color(0xFF02BAF4);
+  static const ink = Color(0xFF111111);
+  static const white = Color(0xFFFFFFFF);
 }
 
 class AppTheme {
@@ -16,14 +16,15 @@ class AppTheme {
       seedColor: AppColors.pink,
       brightness: Brightness.light,
       primary: AppColors.pink,
-      secondary: AppColors.purple,
-      surface: Colors.white,
+      secondary: AppColors.cyan,
+      tertiary: AppColors.green,
+      surface: AppColors.white,
     );
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
-      scaffoldBackgroundColor: AppColors.soft,
+      scaffoldBackgroundColor: AppColors.white,
       fontFamily: null,
       appBarTheme: const AppBarTheme(
         centerTitle: false,
@@ -32,23 +33,23 @@ class AppTheme {
         elevation: 0,
       ),
       cardTheme: CardThemeData(
-        color: Colors.white,
+        color: AppColors.white,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(22),
-          side: BorderSide(color: Colors.black.withValues(alpha: .05)),
+          side: BorderSide(color: AppColors.ink.withValues(alpha: .05)),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white,
+        fillColor: AppColors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.black.withValues(alpha: .07)),
+          borderSide: BorderSide(color: AppColors.ink.withValues(alpha: .07)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
@@ -58,7 +59,7 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.pink,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.ink,
           minimumSize: const Size.fromHeight(54),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -67,14 +68,14 @@ class AppTheme {
         ),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         selectedColor: AppColors.pink.withValues(alpha: .12),
-        side: BorderSide(color: Colors.black.withValues(alpha: .08)),
+        side: BorderSide(color: AppColors.ink.withValues(alpha: .08)),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
         labelStyle: const TextStyle(fontWeight: FontWeight.w700),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         indicatorColor: AppColors.pink.withValues(alpha: .14),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
