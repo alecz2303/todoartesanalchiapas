@@ -30,15 +30,14 @@ flutter_launcher_icons:
 
 flutter_native_splash:
   color: "#FFFFFF"
-  image: assets/branding/app_icon_master.png
+  image: assets/branding/splash_icon.png
   android: true
   ios: false
   web: false
   android_min_sdk: 21
   android_12:
     color: "#FFFFFF"
-    image: assets/branding/app_icon_master.png
-    icon_background_color: "#FFFFFF"
+    image: assets/branding/splash_icon.png
 
 flutter:
   uses-material-design: true
