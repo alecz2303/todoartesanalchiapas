@@ -1,7 +1,8 @@
 Recursos oficiales de Todo Artesanal Chiapas.
 
-- logo_todo_artesanal_chiapas.jpg — versión limpia y optimizada del logo oficial para interfaz; no usar miniaturas ni capturas reducidas.
-- icono_app.png — pendiente de TA-031.
+- logo_todo_artesanal_chiapas.png — logo oficial para interfaz.
+- app_icon_master.png — icono maestro oficial de la app, fuente de los launcher icons Android.
+- android/app/src/main/res/mipmap-*/ic_launcher.png — recursos generados desde app_icon_master.png.
 - recursos adicionales de marca — se agregarán conforme avance Fase 1.
 
 Regla de marca: en textos visibles de la aplicación se debe usar siempre el nombre completo
