@@ -19,7 +19,7 @@ class ContactScreen extends StatelessWidget {
       children: [
         const BrandHeader(compact: true),
         const SizedBox(height: 24),
-        const Text('Visítanos', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900, color: AppColors.blue)),
+        const Text('Visítanos', style: AppTypography.pageTitle),
         const SizedBox(height: 6),
         Text('También puedes encontrarnos en nuestra tienda física o escribirnos directamente.', style: TextStyle(color: AppColors.ink.withValues(alpha: .65), height: 1.4)),
         const SizedBox(height: 20),
@@ -59,7 +59,15 @@ class ContactScreen extends StatelessWidget {
           child: const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Hecho a mano significa tiempo 💖', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: AppColors.ink)),
+              Text(
+                'Hecho a mano significa tiempo 💖',
+                style: TextStyle(
+                  fontFamily: AppTypography.displayFamily,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                  color: AppColors.ink,
+                ),
+              ),
               SizedBox(height: 8),
               Text('Cada pieza personalizada lleva un proceso artesanal. Agenda con anticipación para que podamos cuidar cada detalle de tu pedido.', style: TextStyle(height: 1.45, color: AppColors.ink)),
             ],
@@ -99,7 +107,15 @@ class _ContactCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16.5, color: AppColors.ink)),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontFamily: AppTypography.displayFamily,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16.5,
+                      color: AppColors.ink,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Text(text, style: TextStyle(color: AppColors.ink.withValues(alpha: .67), height: 1.35)),
                   const SizedBox(height: 6),
