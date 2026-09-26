@@ -3,7 +3,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../theme/app_theme.dart';
+import '../widgets/brand_action_button.dart';
 import '../widgets/brand_header.dart';
+import '../widgets/brand_notice.dart';
+import '../widgets/brand_page_header.dart';
 import '../widgets/policy_banner.dart';
 
 class OrderScreen extends StatefulWidget {
@@ -98,9 +101,10 @@ Entiendo que los pedidos personalizados requieren mínimo 20 días de anticipaci
       children: [
         const BrandHeader(compact: true),
         const SizedBox(height: 24),
-        const Text('Haz tu pedido', style: AppTypography.pageTitle),
-        const SizedBox(height: 6),
-        Text('Cuéntanos qué necesitas y prepararemos tu solicitud para enviarla por WhatsApp.', style: TextStyle(color: AppColors.ink.withValues(alpha: .65), height: 1.4)),
+        const BrandPageHeader(
+          title: 'Haz tu pedido',
+          subtitle: 'Cuéntanos qué necesitas y prepararemos tu solicitud para enviarla por WhatsApp.',
+        ),
         const SizedBox(height: 18),
         const PolicyBanner(),
         const SizedBox(height: 20),
@@ -160,35 +164,35 @@ Entiendo que los pedidos personalizados requieren mínimo 20 días de anticipaci
                 validator: (value) => value == null || value.trim().length < 8 ? 'Cuéntanos un poco más de tu idea.' : null,
               ),
               const SizedBox(height: 12),
-              OutlinedButton.icon(
+              BrandActionButton(
+                label: _reference == null ? 'Agregar imagen de referencia' : 'Referencia seleccionada',
+                icon: _reference == null
+                    ? Icons.add_photo_alternate_outlined
+                    : Icons.check_circle_rounded,
                 onPressed: _pickImage,
-                icon: Icon(_reference == null ? Icons.add_photo_alternate_outlined : Icons.check_circle_rounded),
-                label: Text(_reference == null ? 'Agregar imagen de referencia' : 'Referencia seleccionada'),
-                style: AppButtonStyles.outlined(AppColors.lime),
+                backgroundColor: AppColors.lime,
+                variant: BrandActionButtonVariant.outlined,
               ),
               if (_reference != null) ...[
                 const SizedBox(height: 6),
                 Text(_reference!.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: AppColors.ink.withValues(alpha: .6), fontSize: 12)),
               ],
               const SizedBox(height: 18),
-              ElevatedButton.icon(
+              BrandActionButton(
+                label: 'Enviar solicitud por WhatsApp',
+                icon: Icons.send_rounded,
                 onPressed: _sendRequest,
-                style: AppButtonStyles.solid(AppColors.cyan),
-                icon: const Icon(Icons.send_rounded),
-                label: const Text('Enviar solicitud por WhatsApp'),
+                backgroundColor: AppColors.cyan,
               ),
               const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.yellow,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: const Text(
-                  'La imagen de referencia no se adjunta automáticamente a WhatsApp; la app te recordará enviarla en el chat.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: AppColors.ink, fontSize: 12, height: 1.35, fontWeight: FontWeight.w700),
-                ),
+              const BrandNotice(
+                text: 'La imagen de referencia no se adjunta automáticamente a WhatsApp; la app te recordará enviarla en el chat.',
+                color: AppColors.yellow,
+                padding: EdgeInsets.all(12),
+                radius: 14,
+                textAlign: TextAlign.center,
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
               ),
             ],
           ),
