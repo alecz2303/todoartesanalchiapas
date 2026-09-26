@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Paleta oficial tomada directamente del logo de Todo Artesanal Chiapas.
+  // Paleta oficial definida por Todo Artesanal Chiapas.
   static const pink = Color(0xFFFF1493);
+  static const blue = Color(0xFF2204CC);
   static const purple = Color(0xFFAA00FF);
   static const green = Color(0xFF39FF14);
-  static const cyan = Color(0xFF5FE8FF);
   static const yellow = Color(0xFFFFFF00);
-  static const lime = Color(0xFFD6FF00);
   static const orange = Color(0xFFFF7300);
-  static const blue = Color(0xFF2204CC);
-  static const rose = Color(0xFFFC49AB);
-  static const red = Color(0xFFFF0534);
+  static const lime = Color(0xFFD6FF00);
+  static const cyan = Color(0xFF5FE8FF);
+  static const pendingAccent = Color(0xFFE6ED07);
 
   static const ink = Color(0xFF111111);
   static const white = Color(0xFFFFFFFF);
@@ -48,7 +47,7 @@ class AppButtonStyles {
       foregroundColor: foreground,
       minimumSize: const Size.fromHeight(52),
       side: BorderSide(color: color, width: 2),
-      backgroundColor: color.withValues(alpha: .10),
+      backgroundColor: color,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
@@ -110,9 +109,9 @@ class AppTheme {
         ),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: AppColors.white,
-        selectedColor: AppColors.yellow.withValues(alpha: .65),
-        side: BorderSide(color: AppColors.ink.withValues(alpha: .08)),
+        backgroundColor: AppColors.green.withValues(alpha: .18),
+        selectedColor: AppColors.green,
+        side: const BorderSide(color: AppColors.green, width: 1.5),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
         labelStyle: const TextStyle(
           fontWeight: FontWeight.w800,
@@ -121,7 +120,7 @@ class AppTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: AppColors.white,
-        indicatorColor: AppColors.cyan.withValues(alpha: .32),
+        indicatorColor: AppColors.pink.withValues(alpha: .16),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
           return TextStyle(
