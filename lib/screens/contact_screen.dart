@@ -19,7 +19,7 @@ class ContactScreen extends StatelessWidget {
       children: [
         const BrandHeader(compact: true),
         const SizedBox(height: 24),
-        const Text('Visítanos', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900, color: AppColors.ink)),
+        const Text('Visítanos', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900, color: AppColors.blue)),
         const SizedBox(height: 6),
         Text('También puedes encontrarnos en nuestra tienda física o escribirnos directamente.', style: TextStyle(color: AppColors.ink.withValues(alpha: .65), height: 1.4)),
         const SizedBox(height: 20),
