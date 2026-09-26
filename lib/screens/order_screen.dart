@@ -156,7 +156,7 @@ Entiendo que los pedidos personalizados requieren mínimo 20 días de anticipaci
                 onPressed: _pickImage,
                 icon: Icon(_reference == null ? Icons.add_photo_alternate_outlined : Icons.check_circle_rounded),
                 label: Text(_reference == null ? 'Agregar imagen de referencia' : 'Referencia seleccionada'),
-                style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(52), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
+                style: AppButtonStyles.outlined(AppColors.blue, foreground: AppColors.blue),
               ),
               if (_reference != null) ...[
                 const SizedBox(height: 6),
@@ -165,6 +165,7 @@ Entiendo que los pedidos personalizados requieren mínimo 20 días de anticipaci
               const SizedBox(height: 18),
               ElevatedButton.icon(
                 onPressed: _sendRequest,
+                style: AppButtonStyles.solid(AppColors.lime),
                 icon: const Icon(Icons.send_rounded),
                 label: const Text('Enviar solicitud por WhatsApp'),
               ),
