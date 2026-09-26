@@ -107,7 +107,7 @@ La experiencia debe conservar la identidad artesanal y chiapaneca de la marca, c
 - ✅ **TA-032** Crear splash screen.
 - ✅ **TA-033** Definir paleta final y sistema visual.
 - ✅ **TA-034** Definir tipografías y jerarquías.
-- ⬜ **TA-035** Crear componentes reutilizables de marca.
+- ✅ **TA-035** Crear componentes reutilizables de marca.
 - ⬜ **TA-036** Revisar contraste, tamaños de texto y accesibilidad básica.
 
 ## Catálogo
@@ -397,6 +397,7 @@ Orden recomendado del siguiente bloque:
 | 2026-09-21 | FASE 0 completada; el siguiente bloque canónico es FASE 1 — identidad visual oficial y catálogo. |\n| 2026-09-22 | Logo oficial integrado y nombre de marca normalizado como `Todo Artesanal Chiapas` en la interfaz. |
 | 2026-09-26 | Paleta oficial y asignación semántica de colores aprobadas para la interfaz; los códigos hexadecimales quedan documentados en `assets/branding/README.txt`. |
 | 2026-09-26 | Tipografía oficial aprobada: Fredoka para títulos y encabezados; Nunito para textos, formularios, botones, filtros y navegación. |
+| 2026-09-26 | Componentes reutilizables de marca aprobados para encabezados, botones, enlaces, avisos e iconos de acento. |
 
 ---
 
