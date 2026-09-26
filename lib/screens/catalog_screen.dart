@@ -29,7 +29,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
       children: [
         const BrandHeader(compact: true),
         const SizedBox(height: 24),
-        const Text('Catálogo', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900, color: AppColors.blue)),
+        const Text('Catálogo', style: AppTypography.pageTitle),
         const SizedBox(height: 6),
         Text('Conoce nuestras opciones. Los diseños personalizados se cotizan según sus características.', style: TextStyle(color: AppColors.ink.withValues(alpha: .65), height: 1.4)),
         const SizedBox(height: 18),
@@ -93,7 +93,7 @@ class _CatalogCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Expanded(child: Text(item.name, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17, color: AppColors.ink))),
+                      Expanded(child: Text(item.name, style: AppTypography.cardTitle)),
                       if (item.isReadyStock)
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
