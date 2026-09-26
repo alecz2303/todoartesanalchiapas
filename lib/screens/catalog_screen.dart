@@ -113,7 +113,9 @@ class _CatalogCard extends StatelessWidget {
                     onPressed: _askByWhatsApp,
                     icon: const Icon(Icons.chat_rounded, size: 18),
                     label: const Text('Preguntar por WhatsApp'),
-                    style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                    style: AppButtonStyles.text(AppColors.green).copyWith(
+                      padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                    ),
                   ),
                 ],
               ),
