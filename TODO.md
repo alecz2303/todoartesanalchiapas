@@ -400,6 +400,7 @@ Orden recomendado del siguiente bloque:
 | 2026-09-26 | Tipografía oficial aprobada: Fredoka para títulos y encabezados; Nunito para textos, formularios, botones, filtros y navegación. |
 | 2026-09-26 | Componentes reutilizables de marca aprobados para encabezados, botones, enlaces, avisos e iconos de acento. |
 | 2026-09-26 | Jerarquía cromática oficial aprobada: #FF1493 como identidad dominante; #2204CC para estructura y contraste; #FFFFFF para espacio y superficies; #111111 para legibilidad; #AA00FF como acción secundaria; #5FE8FF, #39FF14, #FFFF00 y #FF7300 para usos puntuales; #D6FF00 y #E6ED07 como acentos decorativos. El hero de Inicio pasará de degradado rosa-cian a rosa sólido con CTA azul y decoraciones pequeñas multicolor. |
+| 2026-09-26 | Filtros de Catálogo definitivos: Todo #39FF14; Piñatas #FF1493; Papel picado #AA00FF; Plástico picado #2204CC; Personalizados #5FE8FF. |
 
 ---
 
