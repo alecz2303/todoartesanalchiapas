@@ -6,27 +6,21 @@ Recursos oficiales de Todo Artesanal Chiapas.
 - Splash screen Android — fondo blanco con splash_icon.png centrado; splash_icon.png deriva del símbolo oficial con margen transparente adicional para respetar la zona segura de Android 12+.
 - recursos adicionales de marca — se agregarán conforme avance Fase 1.
 
-Paleta oficial de la app, tomada directamente del logo:
-- Rosa principal: #FF1493
-- Morado: #AA00FF
-- Verde neón: #39FF14
-- Cian: #5FE8FF
-- Amarillo: #FFFF00
-- Lima: #D6FF00
-- Naranja: #FF7300
-- Azul intenso: #2204CC
-- Rosa claro: #FC49AB
-- Rojo de acento: #FF0534
-- Blanco: #FFFFFF
-- Negro / tinta de interfaz: #111111
+Paleta oficial de la app y asignación visual definida por Todo Artesanal Chiapas:
+- #FF1493 — botones grandes.
+- #2204CC — títulos importantes y grandes.
+- #AA00FF — enlaces "Preguntar por WhatsApp".
+- #39FF14 — botones/filtros superiores del Catálogo.
+- #FFFF00 — advertencias y notas importantes.
+- #FF7300 — calendario / selector de fecha.
+- #D6FF00 — botón "Agregar imagen de referencia".
+- #5FE8FF — botón "Enviar solicitud por WhatsApp".
+- #E6ED07 — color oficial pendiente de asignación funcional.
+- #FFFFFF — fondos y superficies.
+- #111111 — texto e iconografía de alto contraste.
 
-Uso visual:
-- La interfaz debe aprovechar la variedad cromática del logo, no reducir la marca a uno o dos colores.
-- Los botones pueden usar distintas variantes de la paleta según su función y contexto.
-- Amarillo, lima, verde y cian usan texto oscuro para conservar legibilidad.
-- Azul, morado y rosa intenso pueden usar texto blanco cuando el contraste lo requiera.
-- Rosa claro y rojo quedan disponibles como acentos para futuras acciones y componentes.
-- Blanco se usa en fondos y superficies; negro/tinta se reserva para texto e iconografía de alto contraste.
-
-Regla de marca: en textos visibles de la aplicación se debe usar siempre el nombre completo
-"Todo Artesanal Chiapas".
+Reglas:
+- Las asignaciones anteriores son semánticas: el mismo tipo de acción debe conservar el mismo color en toda la app.
+- No sustituir estos códigos por aproximaciones.
+- El color #E6ED07 no debe utilizarse hasta que se defina su función.
+- En textos visibles de la aplicación se debe usar siempre el nombre completo "Todo Artesanal Chiapas".
