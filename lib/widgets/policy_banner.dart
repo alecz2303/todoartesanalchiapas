@@ -9,9 +9,13 @@ class PolicyBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const BrandNotice(
-      text: 'Los pedidos personalizados se agendan con al menos 20 días de anticipación y 50% de anticipo.',
+      text: 'RECUERDA: Los pedidos PERSONALIZADOS se AGENDAN con al menos 25 DÍAS de ANTICIPACIÓN y el 60% de ANTICIPO.',
       color: AppColors.yellow,
+      backgroundColor: AppColors.white,
+      borderColor: AppColors.yellow,
+      iconBackgroundColor: AppColors.yellow,
       icon: Icons.event_available_rounded,
+      textAlign: TextAlign.justify,
       showBorder: true,
     );
   }

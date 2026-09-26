@@ -109,6 +109,7 @@ La experiencia debe conservar la identidad artesanal y chiapaneca de la marca, c
 - ✅ **TA-034** Definir tipografías y jerarquías.
 - ✅ **TA-035** Crear componentes reutilizables de marca.
 - ⬜ **TA-036** Revisar contraste, tamaños de texto y accesibilidad básica.
+- 🟡 **TA-037** Refinar jerarquía y distribución de la paleta oficial en la interfaz.
 
 ## Catálogo
 
@@ -398,6 +399,8 @@ Orden recomendado del siguiente bloque:
 | 2026-09-26 | Paleta oficial y asignación semántica de colores aprobadas para la interfaz; los códigos hexadecimales quedan documentados en `assets/branding/README.txt`. |
 | 2026-09-26 | Tipografía oficial aprobada: Fredoka para títulos y encabezados; Nunito para textos, formularios, botones, filtros y navegación. |
 | 2026-09-26 | Componentes reutilizables de marca aprobados para encabezados, botones, enlaces, avisos e iconos de acento. |
+| 2026-09-26 | Jerarquía cromática oficial aprobada: #FF1493 como identidad dominante; #2204CC para estructura y contraste; #FFFFFF para espacio y superficies; #111111 para legibilidad; #AA00FF como acción secundaria; #5FE8FF, #39FF14, #FFFF00 y #FF7300 para usos puntuales; #D6FF00 y #E6ED07 como acentos decorativos. El hero de Inicio pasará de degradado rosa-cian a rosa sólido con CTA azul y decoraciones pequeñas multicolor. |
+| 2026-09-26 | Filtros de Catálogo definitivos: Todo #39FF14; Piñatas #FF1493; Papel picado #AA00FF; Plástico picado #2204CC; Personalizados #5FE8FF. |
 
 ---
 

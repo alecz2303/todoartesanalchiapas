@@ -6,24 +6,37 @@ Recursos oficiales de Todo Artesanal Chiapas.
 - Splash screen Android — fondo blanco con splash_icon.png centrado; splash_icon.png deriva del símbolo oficial con margen transparente adicional para respetar la zona segura de Android 12+.
 - recursos adicionales de marca — se agregarán conforme avance Fase 1.
 
-Paleta oficial de la app y asignación visual definida por Todo Artesanal Chiapas:
-- #FF1493 — botones grandes.
-- #2204CC — títulos importantes y grandes.
-- #AA00FF — enlaces "Preguntar por WhatsApp".
-- #39FF14 — botones/filtros superiores del Catálogo.
-- #FFFF00 — advertencias y notas importantes.
-- #FF7300 — calendario / selector de fecha.
-- #D6FF00 — botón "Agregar imagen de referencia".
-- #5FE8FF — botón "Enviar solicitud por WhatsApp".
-- #E6ED07 — color oficial pendiente de asignación funcional.
-- #FFFFFF — fondos y superficies.
-- #111111 — texto e iconografía de alto contraste.
+Paleta oficial de la app y jerarquía cromática aprobada por Todo Artesanal Chiapas:
+- #FF1493 — identidad principal de marca y superficies protagonistas.
+- #2204CC — estructura visual, títulos importantes y contraste fuerte.
+- #FFFFFF — fondos, tarjetas, espacios de descanso y respiración visual.
+- #111111 — texto e iconografía de máxima legibilidad.
+- #AA00FF — enlaces, acciones secundarias y acentos morados.
+- #5FE8FF — información y detalles frescos de apoyo.
+- #39FF14 — selección, confirmación, estados positivos y pequeños acentos.
+- #FFFF00 — advertencias, notas importantes y acentos luminosos.
+- #FF7300 — fechas, calendario y acentos cálidos.
+- #D6FF00 — acento decorativo.
+- #E6ED07 — acento decorativo secundario.
 
-Reglas:
-- Las asignaciones anteriores son semánticas: el mismo tipo de acción debe conservar el mismo color en toda la app.
+Principio visual:
+- La app debe usar todos los colores de marca, pero no con el mismo peso visual.
+- En cada zona debe existir un color dominante y como máximo dos acentos relevantes.
+- El rosa #FF1493 representa la marca; el azul #2204CC organiza, estructura y da contraste.
+- Los fondos generales permanecen blancos para permitir que los colores neón destaquen sin competir entre sí.
+- Cian, verde, amarillo y naranja deben aparecer de forma puntual, no como grandes superficies simultáneas.
+- #D6FF00 y #E6ED07 se reservan principalmente para detalles decorativos, insignias, ornamentos, estados vacíos e ilustraciones.
 - No sustituir estos códigos por aproximaciones.
-- El color #E6ED07 no debe utilizarse hasta que se defina su función.
 - En textos visibles de la aplicación se debe usar siempre el nombre completo "Todo Artesanal Chiapas".
+
+Hero de Inicio aprobado:
+- Eliminar el degradado rosa -> cian.
+- Fondo sólido #FF1493.
+- Título y descripción en blanco.
+- CTA principal en #2204CC con texto blanco.
+- Pastilla "TRADICIÓN + CREATIVIDAD" blanca con texto azul.
+- Decoraciones pequeñas inspiradas en las gotas y espirales del logotipo usando #AA00FF, #39FF14, #FFFF00, #5FE8FF y, cuando convenga, #FF7300.
+- La decoración multicolor acompaña al hero; no debe competir con el contenido ni ocupar superficies grandes.
 
 
 Tipografía oficial de interfaz:
@@ -42,3 +55,12 @@ Componentes reutilizables de marca:
 - BrandNotice — advertencias y notas destacadas.
 - AccentIconBadge — contenedor de icono con acento cromático.
 - BrandHeader y PolicyBanner continúan como componentes oficiales de marca.
+
+
+Filtros de Catálogo:
+- Todo — #39FF14.
+- Piñatas — #FF1493.
+- Papel picado — #AA00FF.
+- Plástico picado — #2204CC.
+- Personalizados — #5FE8FF.
+- Cada filtro conserva su color propio; al estar seleccionado usa el color completo y, sin seleccionar, una versión visualmente más ligera del mismo color.
