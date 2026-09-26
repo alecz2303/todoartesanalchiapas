@@ -22,11 +22,11 @@ class _CatalogScreenState extends State<CatalogScreen> {
   static const categories = ['Todo', 'Piñatas', 'Papel picado', 'Plástico picado', 'Personalizados'];
 
   static const categoryColors = <String, Color>{
-    'Todo': AppColors.blue,
+    'Todo': AppColors.green,
     'Piñatas': AppColors.pink,
-    'Papel picado': AppColors.yellow,
-    'Plástico picado': AppColors.cyan,
-    'Personalizados': AppColors.purple,
+    'Papel picado': AppColors.purple,
+    'Plástico picado': AppColors.blue,
+    'Personalizados': AppColors.cyan,
   };
 
   Color _chipForeground(String category, bool selected) {
@@ -35,7 +35,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
     }
 
     return switch (category) {
-      'Todo' || 'Personalizados' => AppColors.white,
+      'Papel picado' || 'Plástico picado' => AppColors.white,
       _ => AppColors.ink,
     };
   }
