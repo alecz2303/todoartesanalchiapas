@@ -48,7 +48,7 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 18),
               const Text(
                 'Tu celebración,\nhecha a mano. ✨',
-                style: TextStyle(color: AppColors.white, fontSize: 34, fontWeight: FontWeight.w900, height: 1.05),
+                style: AppTypography.heroTitle,
               ),
               const SizedBox(height: 12),
               Text(
@@ -71,7 +71,10 @@ class HomeScreen extends StatelessWidget {
         Row(
           children: [
             const Expanded(
-              child: Text('Explora lo que hacemos', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900, color: AppColors.blue)),
+              child: Text(
+                'Explora lo que hacemos',
+                style: AppTypography.sectionTitle,
+              ),
             ),
             TextButton(
               onPressed: onOpenCatalog,
@@ -132,7 +135,7 @@ class _FeatureCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w900, color: AppColors.ink)),
+                  Text(title, style: AppTypography.cardTitle),
                   const SizedBox(height: 4),
                   Text(subtitle, style: TextStyle(color: AppColors.ink.withValues(alpha: .68), height: 1.3)),
                 ],
