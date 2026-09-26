@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
+import '../widgets/accent_icon_badge.dart';
+import '../widgets/brand_action_button.dart';
 import '../widgets/brand_header.dart';
+import '../widgets/brand_link_button.dart';
 import '../widgets/policy_banner.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -56,11 +59,13 @@ class HomeScreen extends StatelessWidget {
                 style: TextStyle(color: AppColors.white.withValues(alpha: .9), fontSize: 15.5, height: 1.4, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 22),
-              FilledButton.tonalIcon(
+              BrandActionButton(
+                label: 'Quiero algo personalizado',
+                icon: Icons.brush_rounded,
                 onPressed: onOpenOrder,
-                style: AppButtonStyles.solid(AppColors.pink, foreground: AppColors.white),
-                icon: const Icon(Icons.brush_rounded),
-                label: const Text('Quiero algo personalizado', style: TextStyle(fontWeight: FontWeight.w900)),
+                backgroundColor: AppColors.pink,
+                foregroundColor: AppColors.white,
+                variant: BrandActionButtonVariant.filledTonal,
               ),
             ],
           ),
@@ -76,10 +81,10 @@ class HomeScreen extends StatelessWidget {
                 style: AppTypography.sectionTitle,
               ),
             ),
-            TextButton(
+            BrandLinkButton(
+              label: 'Ver todo',
+              color: AppColors.purple,
               onPressed: onOpenCatalog,
-              style: AppButtonStyles.text(AppColors.purple),
-              child: const Text('Ver todo'),
             ),
           ],
         ),
@@ -124,11 +129,10 @@ class _FeatureCard extends StatelessWidget {
         padding: const EdgeInsets.all(18),
         child: Row(
           children: [
-            Container(
-              width: 54,
-              height: 54,
-              decoration: BoxDecoration(color: accent.withValues(alpha: .18), borderRadius: BorderRadius.circular(17)),
-              child: Icon(icon, color: AppColors.ink),
+            AccentIconBadge(
+              icon: icon,
+              accent: accent,
+              alpha: .18,
             ),
             const SizedBox(width: 15),
             Expanded(
