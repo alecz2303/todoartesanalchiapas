@@ -4,7 +4,10 @@ import 'package:url_launcher/url_launcher.dart';
 import '../data/catalog_data.dart';
 import '../models/catalog_item.dart';
 import '../theme/app_theme.dart';
+import '../widgets/accent_icon_badge.dart';
 import '../widgets/brand_header.dart';
+import '../widgets/brand_link_button.dart';
+import '../widgets/brand_page_header.dart';
 
 class CatalogScreen extends StatefulWidget {
   const CatalogScreen({super.key});
@@ -29,9 +32,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
       children: [
         const BrandHeader(compact: true),
         const SizedBox(height: 24),
-        const Text('Catálogo', style: AppTypography.pageTitle),
-        const SizedBox(height: 6),
-        Text('Conoce nuestras opciones. Los diseños personalizados se cotizan según sus características.', style: TextStyle(color: AppColors.ink.withValues(alpha: .65), height: 1.4)),
+        const BrandPageHeader(
+          title: 'Catálogo',
+          subtitle: 'Conoce nuestras opciones. Los diseños personalizados se cotizan según sus características.',
+        ),
         const SizedBox(height: 18),
         SizedBox(
           height: 44,
@@ -80,11 +84,13 @@ class _CatalogCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 58,
-              height: 58,
-              decoration: BoxDecoration(color: item.accent.withValues(alpha: .18), borderRadius: BorderRadius.circular(18)),
-              child: Icon(item.icon, color: AppColors.ink, size: 28),
+            AccentIconBadge(
+              icon: item.icon,
+              accent: item.accent,
+              size: 58,
+              radius: 18,
+              iconSize: 28,
+              alpha: .18,
             ),
             const SizedBox(width: 15),
             Expanded(
@@ -109,13 +115,12 @@ class _CatalogCard extends StatelessWidget {
                     Text(item.priceLabel!, style: const TextStyle(fontWeight: FontWeight.w900, color: AppColors.pink)),
                   ],
                   const SizedBox(height: 10),
-                  TextButton.icon(
+                  BrandLinkButton(
+                    label: 'Preguntar por WhatsApp',
+                    color: AppColors.purple,
                     onPressed: _askByWhatsApp,
-                    icon: const Icon(Icons.chat_rounded, size: 18),
-                    label: const Text('Preguntar por WhatsApp'),
-                    style: AppButtonStyles.text(AppColors.purple).copyWith(
-                      padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                    ),
+                    icon: Icons.chat_rounded,
+                    zeroPadding: true,
                   ),
                 ],
               ),
