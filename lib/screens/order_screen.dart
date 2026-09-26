@@ -70,10 +70,18 @@ class _OrderScreenState extends State<OrderScreen> {
   }
 
   Future<void> _sendRequest() async {
-    if (!_formKey.currentState!.validate() || _eventDate == null) {
-      if (_eventDate == null) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Selecciona la fecha de tu evento.')));
-      }
+    final formIsValid = _formKey.currentState!.validate();
+
+    if (!formIsValid || _eventDate == null) {
+      if (!mounted) return;
+
+      final message = _eventDate == null
+          ? 'Completa los campos marcados y selecciona la fecha de tu evento.'
+          : 'Completa los campos marcados antes de enviar tu solicitud.';
+
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(message)));
       return;
     }
 
@@ -90,8 +98,77 @@ Referencia seleccionada: ${_reference == null ? 'No' : 'Sí (la enviaré por est
 
 Entiendo que los pedidos personalizados requieren mínimo 25 días de anticipación y 60% de anticipo para agendar.''';
 
-    final uri = Uri.parse('https://wa.me/529612139040?text=${Uri.encodeComponent(message)}');
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
+    final directWhatsAppUri = Uri(
+      scheme: 'whatsapp',
+      host: 'send',
+      queryParameters: {
+        'phone': '529612139040',
+        'text': message,
+      },
+    );
+
+    final webWhatsAppUri = Uri.https(
+      'wa.me',
+      '/529612139040',
+      {'text': message},
+    );
+
+    try {
+      var opened = await launchUrl(
+        directWhatsAppUri,
+        mode: LaunchMode.externalApplication,
+      );
+
+      if (!opened) {
+        opened = await launchUrl(
+          webWhatsAppUri,
+          mode: LaunchMode.externalApplication,
+        );
+      }
+
+      if (!opened && mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text(
+                'No pudimos abrir WhatsApp. Verifica que esté instalado e inténtalo de nuevo.',
+              ),
+            ),
+          );
+      }
+    } catch (_) {
+      try {
+        final opened = await launchUrl(
+          webWhatsAppUri,
+          mode: LaunchMode.externalApplication,
+        );
+
+        if (!opened && mounted) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'No pudimos abrir WhatsApp. Verifica que esté instalado e inténtalo de nuevo.',
+                ),
+              ),
+            );
+        }
+      } catch (_) {
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text(
+                'No pudimos abrir WhatsApp. Verifica que esté instalado e inténtalo de nuevo.',
+              ),
+            ),
+          );
+      }
+    }
   }
 
   @override
