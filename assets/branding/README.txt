@@ -33,3 +33,12 @@ Tipografía oficial de interfaz:
 - Nunito funciona como tipografía base de toda la aplicación.
 - Ambas fuentes se almacenan localmente en assets/fonts/ y no requieren una descarga de red para mostrarse.
 - Las licencias OFL de ambas familias se conservan junto a los archivos de fuente y se registran en la aplicación.
+
+
+Componentes reutilizables de marca:
+- BrandPageHeader — título principal y descripción de pantalla.
+- BrandActionButton — acciones grandes con variantes tonal, elevada y contorneada.
+- BrandLinkButton — enlaces y acciones textuales con color semántico.
+- BrandNotice — advertencias y notas destacadas.
+- AccentIconBadge — contenedor de icono con acento cromático.
+- BrandHeader y PolicyBanner continúan como componentes oficiales de marca.
