@@ -98,7 +98,7 @@ Entiendo que los pedidos personalizados requieren mínimo 20 días de anticipaci
       children: [
         const BrandHeader(compact: true),
         const SizedBox(height: 24),
-        const Text('Haz tu pedido', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900, color: AppColors.ink)),
+        const Text('Haz tu pedido', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900, color: AppColors.blue)),
         const SizedBox(height: 6),
         Text('Cuéntanos qué necesitas y prepararemos tu solicitud para enviarla por WhatsApp.', style: TextStyle(color: AppColors.ink.withValues(alpha: .65), height: 1.4)),
         const SizedBox(height: 18),
@@ -134,7 +134,15 @@ Entiendo que los pedidos personalizados requieren mínimo 20 días de anticipaci
                 borderRadius: BorderRadius.circular(16),
                 onTap: _pickDate,
                 child: InputDecorator(
-                  decoration: const InputDecoration(labelText: 'Fecha del evento', prefixIcon: Icon(Icons.calendar_month_outlined)),
+                  decoration: InputDecoration(
+                    labelText: 'Fecha del evento',
+                    prefixIcon: const Icon(Icons.calendar_month_outlined, color: AppColors.orange),
+                    fillColor: AppColors.orange.withValues(alpha: .10),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: const BorderSide(color: AppColors.orange, width: 1.5),
+                    ),
+                  ),
                   child: Text(_eventDate == null ? 'Seleccionar fecha' : _dateLabel(_eventDate!), style: const TextStyle(fontWeight: FontWeight.w700)),
                 ),
               ),
@@ -156,7 +164,7 @@ Entiendo que los pedidos personalizados requieren mínimo 20 días de anticipaci
                 onPressed: _pickImage,
                 icon: Icon(_reference == null ? Icons.add_photo_alternate_outlined : Icons.check_circle_rounded),
                 label: Text(_reference == null ? 'Agregar imagen de referencia' : 'Referencia seleccionada'),
-                style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(52), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
+                style: AppButtonStyles.outlined(AppColors.lime),
               ),
               if (_reference != null) ...[
                 const SizedBox(height: 6),
@@ -165,14 +173,22 @@ Entiendo que los pedidos personalizados requieren mínimo 20 días de anticipaci
               const SizedBox(height: 18),
               ElevatedButton.icon(
                 onPressed: _sendRequest,
+                style: AppButtonStyles.solid(AppColors.cyan),
                 icon: const Icon(Icons.send_rounded),
                 label: const Text('Enviar solicitud por WhatsApp'),
               ),
               const SizedBox(height: 10),
-              Text(
-                'La imagen de referencia no se adjunta automáticamente a WhatsApp; la app te recordará enviarla en el chat.',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: AppColors.ink.withValues(alpha: .56), fontSize: 12, height: 1.35),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.yellow,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Text(
+                  'La imagen de referencia no se adjunta automáticamente a WhatsApp; la app te recordará enviarla en el chat.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.ink, fontSize: 12, height: 1.35, fontWeight: FontWeight.w700),
+                ),
               ),
             ],
           ),

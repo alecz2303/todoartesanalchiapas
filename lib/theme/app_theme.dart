@@ -1,13 +1,59 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const pink = Color(0xFFFF2F92);
-  static const lime = Color(0xFFC7FF2F);
-  static const yellow = Color(0xFFFFD93D);
-  static const purple = Color(0xFF7D3CFF);
-  static const sky = Color(0xFF55C9FF);
-  static const ink = Color(0xFF231F2B);
-  static const soft = Color(0xFFF8F5FA);
+  // Paleta oficial definida por Todo Artesanal Chiapas.
+  static const pink = Color(0xFFFF1493);
+  static const blue = Color(0xFF2204CC);
+  static const purple = Color(0xFFAA00FF);
+  static const green = Color(0xFF39FF14);
+  static const yellow = Color(0xFFFFFF00);
+  static const orange = Color(0xFFFF7300);
+  static const lime = Color(0xFFD6FF00);
+  static const cyan = Color(0xFF5FE8FF);
+  static const pendingAccent = Color(0xFFE6ED07);
+
+  static const ink = Color(0xFF111111);
+  static const white = Color(0xFFFFFFFF);
+}
+
+class AppButtonStyles {
+  static ButtonStyle solid(
+    Color background, {
+    Color foreground = AppColors.ink,
+  }) {
+    return ElevatedButton.styleFrom(
+      backgroundColor: background,
+      foregroundColor: foreground,
+      minimumSize: const Size.fromHeight(54),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      textStyle: const TextStyle(fontWeight: FontWeight.w900),
+    );
+  }
+
+  static ButtonStyle text(Color foreground) {
+    return TextButton.styleFrom(
+      foregroundColor: foreground,
+      textStyle: const TextStyle(fontWeight: FontWeight.w900),
+    );
+  }
+
+  static ButtonStyle outlined(
+    Color color, {
+    Color foreground = AppColors.ink,
+  }) {
+    return OutlinedButton.styleFrom(
+      foregroundColor: foreground,
+      minimumSize: const Size.fromHeight(52),
+      side: BorderSide(color: color, width: 2),
+      backgroundColor: color,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      textStyle: const TextStyle(fontWeight: FontWeight.w900),
+    );
+  }
 }
 
 class AppTheme {
@@ -16,14 +62,15 @@ class AppTheme {
       seedColor: AppColors.pink,
       brightness: Brightness.light,
       primary: AppColors.pink,
-      secondary: AppColors.purple,
-      surface: Colors.white,
+      secondary: AppColors.cyan,
+      tertiary: AppColors.green,
+      surface: AppColors.white,
     );
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
-      scaffoldBackgroundColor: AppColors.soft,
+      scaffoldBackgroundColor: AppColors.white,
       fontFamily: null,
       appBarTheme: const AppBarTheme(
         centerTitle: false,
@@ -32,23 +79,23 @@ class AppTheme {
         elevation: 0,
       ),
       cardTheme: CardThemeData(
-        color: Colors.white,
+        color: AppColors.white,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(22),
-          side: BorderSide(color: Colors.black.withValues(alpha: .05)),
+          side: BorderSide(color: AppColors.ink.withValues(alpha: .05)),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white,
+        fillColor: AppColors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.black.withValues(alpha: .07)),
+          borderSide: BorderSide(color: AppColors.ink.withValues(alpha: .07)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
@@ -56,26 +103,24 @@ class AppTheme {
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.pink,
-          foregroundColor: Colors.white,
-          minimumSize: const Size.fromHeight(54),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          textStyle: const TextStyle(fontWeight: FontWeight.w800),
+        style: AppButtonStyles.solid(
+          AppColors.pink,
+          foreground: AppColors.white,
         ),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: Colors.white,
-        selectedColor: AppColors.pink.withValues(alpha: .12),
-        side: BorderSide(color: Colors.black.withValues(alpha: .08)),
+        backgroundColor: AppColors.green.withValues(alpha: .18),
+        selectedColor: AppColors.green,
+        side: const BorderSide(color: AppColors.green, width: 1.5),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
-        labelStyle: const TextStyle(fontWeight: FontWeight.w700),
+        labelStyle: const TextStyle(
+          fontWeight: FontWeight.w800,
+          color: AppColors.ink,
+        ),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: Colors.white,
-        indicatorColor: AppColors.pink.withValues(alpha: .14),
+        backgroundColor: AppColors.white,
+        indicatorColor: AppColors.pink.withValues(alpha: .16),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
           return TextStyle(

@@ -18,7 +18,7 @@ class BrandHeader extends StatelessWidget {
           height: logoSize,
           padding: const EdgeInsets.all(2),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.white,
             borderRadius: BorderRadius.circular(compact ? 14 : 18),
           ),
           child: ClipRRect(
@@ -55,7 +55,7 @@ class BrandHeader extends StatelessWidget {
                 style: TextStyle(
                   fontSize: compact ? 9 : 10.5,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.purple,
+                  color: AppColors.cyan,
                   letterSpacing: .8,
                 ),
               ),

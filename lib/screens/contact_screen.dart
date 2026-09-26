@@ -19,7 +19,7 @@ class ContactScreen extends StatelessWidget {
       children: [
         const BrandHeader(compact: true),
         const SizedBox(height: 24),
-        const Text('Visítanos', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900, color: AppColors.ink)),
+        const Text('Visítanos', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900, color: AppColors.blue)),
         const SizedBox(height: 6),
         Text('También puedes encontrarnos en nuestra tienda física o escribirnos directamente.', style: TextStyle(color: AppColors.ink.withValues(alpha: .65), height: 1.4)),
         const SizedBox(height: 20),
@@ -29,24 +29,27 @@ class ContactScreen extends StatelessWidget {
           title: 'Tienda física',
           text: '6a Oriente Norte #132, Col. Centro, Tuxtla Gutiérrez, Chiapas.',
           button: 'Abrir ubicación',
+          buttonColor: AppColors.orange,
           onTap: () => _launch('https://maps.app.goo.gl/MdvZvkhHM4y3xJD99'),
         ),
         const SizedBox(height: 12),
         _ContactCard(
           icon: Icons.chat_rounded,
-          accent: AppColors.lime,
+          accent: AppColors.green,
           title: 'WhatsApp',
           text: '961 213 9040',
           button: 'Escribir ahora',
+          buttonColor: AppColors.cyan,
           onTap: () => _launch('https://wa.me/529612139040'),
         ),
         const SizedBox(height: 12),
         _ContactCard(
           icon: Icons.alternate_email_rounded,
-          accent: AppColors.purple,
+          accent: AppColors.cyan,
           title: 'Facebook e Instagram',
           text: '@todoartesanalchiapas',
           button: 'Abrir Instagram',
+          buttonColor: AppColors.pink,
           onTap: () => _launch('https://www.instagram.com/todoartesanalchiapas/'),
         ),
         const SizedBox(height: 22),
@@ -68,13 +71,14 @@ class ContactScreen extends StatelessWidget {
 }
 
 class _ContactCard extends StatelessWidget {
-  const _ContactCard({required this.icon, required this.accent, required this.title, required this.text, required this.button, required this.onTap});
+  const _ContactCard({required this.icon, required this.accent, required this.title, required this.text, required this.button, required this.buttonColor, required this.onTap});
 
   final IconData icon;
   final Color accent;
   final String title;
   final String text;
   final String button;
+  final Color buttonColor;
   final VoidCallback onTap;
 
   @override
@@ -99,7 +103,13 @@ class _ContactCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(text, style: TextStyle(color: AppColors.ink.withValues(alpha: .67), height: 1.35)),
                   const SizedBox(height: 6),
-                  TextButton(onPressed: onTap, style: TextButton.styleFrom(padding: EdgeInsets.zero), child: Text(button)),
+                  TextButton(
+                    onPressed: onTap,
+                    style: AppButtonStyles.text(buttonColor).copyWith(
+                      padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+                    ),
+                    child: Text(button),
+                  ),
                 ],
               ),
             ),

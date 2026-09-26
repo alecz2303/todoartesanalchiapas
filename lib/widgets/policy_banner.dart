@@ -10,9 +10,9 @@ class PolicyBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: AppColors.yellow.withValues(alpha: .22),
+        color: AppColors.yellow,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.yellow.withValues(alpha: .7)),
+        border: Border.all(color: AppColors.yellow),
       ),
       child: const Row(
         crossAxisAlignment: CrossAxisAlignment.start,
