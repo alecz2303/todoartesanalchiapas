@@ -97,7 +97,7 @@ class _CatalogCard extends StatelessWidget {
                       if (item.isReadyStock)
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                          decoration: BoxDecoration(color: AppColors.lime.withValues(alpha: .28), borderRadius: BorderRadius.circular(999)),
+                          decoration: BoxDecoration(color: AppColors.green.withValues(alpha: .28), borderRadius: BorderRadius.circular(999)),
                           child: const Text('TIENDA', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w900)),
                         ),
                     ],
