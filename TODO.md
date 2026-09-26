@@ -5,7 +5,7 @@
 > Este archivo es la fuente de verdad para saber qué está hecho, qué sigue y qué falta.  
 > **No se inicia una funcionalidad nueva sin registrarla aquí primero.**
 
-Última actualización: 2026-09-21  
+Última actualización: 2026-09-26  
 Versión actual: `0.1.0+1`
 
 ---
@@ -141,7 +141,7 @@ La experiencia debe conservar la identidad artesanal y chiapaneca de la marca, c
 - ⬜ **TA-066** Mejorar adjunto de imágenes de referencia.
 - ⬜ **TA-067** Permitir varias referencias cuando sea necesario.
 - ⬜ **TA-068** Validar teléfono y campos obligatorios.
-- ⬜ **TA-069** Convertir regla de 20 días en configuración central, no valor disperso en código.
+- ⬜ **TA-069** Convertir regla de días mínimos de anticipación en configuración central, no valor disperso en código.
 - ⬜ **TA-070** Convertir porcentaje de anticipo en configuración central.
 - ⬜ **TA-071** Crear resumen del pedido antes de enviarlo.
 - ⬜ **TA-072** Mostrar aceptación de políticas antes de continuar.
@@ -401,6 +401,7 @@ Orden recomendado del siguiente bloque:
 | 2026-09-26 | Componentes reutilizables de marca aprobados para encabezados, botones, enlaces, avisos e iconos de acento. |
 | 2026-09-26 | Jerarquía cromática oficial aprobada: #FF1493 como identidad dominante; #2204CC para estructura y contraste; #FFFFFF para espacio y superficies; #111111 para legibilidad; #AA00FF como acción secundaria; #5FE8FF, #39FF14, #FFFF00 y #FF7300 para usos puntuales; #D6FF00 y #E6ED07 como acentos decorativos. El hero de Inicio pasará de degradado rosa-cian a rosa sólido con CTA azul y decoraciones pequeñas multicolor. |
 | 2026-09-26 | Filtros de Catálogo definitivos: Todo #39FF14; Piñatas #FF1493; Papel picado #AA00FF; Plástico picado #2204CC; Personalizados #5FE8FF. |
+| 2026-09-26 | Política comercial vigente actualizada: los pedidos PERSONALIZADOS requieren mínimo 25 días de anticipación y 60% de anticipo para agendar; esta decisión reemplaza la política inicial de 20 días / 50% sin borrar su historial. |
 
 ---
 
