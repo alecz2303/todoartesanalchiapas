@@ -34,7 +34,7 @@ class ContactScreen extends StatelessWidget {
         const SizedBox(height: 12),
         _ContactCard(
           icon: Icons.chat_rounded,
-          accent: AppColors.lime,
+          accent: AppColors.green,
           title: 'WhatsApp',
           text: '961 213 9040',
           button: 'Escribir ahora',
@@ -43,7 +43,7 @@ class ContactScreen extends StatelessWidget {
         const SizedBox(height: 12),
         _ContactCard(
           icon: Icons.alternate_email_rounded,
-          accent: AppColors.purple,
+          accent: AppColors.cyan,
           title: 'Facebook e Instagram',
           text: '@todoartesanalchiapas',
           button: 'Abrir Instagram',
