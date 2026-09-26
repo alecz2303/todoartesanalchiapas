@@ -41,8 +41,9 @@ class BrandHeader extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
+                  fontFamily: AppTypography.displayFamily,
                   fontSize: compact ? 18 : 23,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   color: AppColors.ink,
                   height: 1.05,
                 ),
@@ -53,6 +54,7 @@ class BrandHeader extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
+                  fontFamily: AppTypography.bodyFamily,
                   fontSize: compact ? 9 : 10.5,
                   fontWeight: FontWeight.w800,
                   color: AppColors.cyan,
