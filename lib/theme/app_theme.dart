@@ -1,13 +1,60 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Paleta oficial tomada del logo de Todo Artesanal Chiapas.
-  static const pink = Color(0xFFFC2E92);
-  static const yellow = Color(0xFFFDD506);
-  static const green = Color(0xFF72DF06);
-  static const cyan = Color(0xFF02BAF4);
+  // Paleta oficial tomada directamente del logo de Todo Artesanal Chiapas.
+  static const pink = Color(0xFFFF1493);
+  static const purple = Color(0xFFAA00FF);
+  static const green = Color(0xFF39FF14);
+  static const cyan = Color(0xFF5FE8FF);
+  static const yellow = Color(0xFFFFFF00);
+  static const lime = Color(0xFFD6FF00);
+  static const orange = Color(0xFFFF7300);
+  static const blue = Color(0xFF2204CC);
+  static const rose = Color(0xFFFC49AB);
+  static const red = Color(0xFFFF0534);
+
   static const ink = Color(0xFF111111);
   static const white = Color(0xFFFFFFFF);
+}
+
+class AppButtonStyles {
+  static ButtonStyle solid(
+    Color background, {
+    Color foreground = AppColors.ink,
+  }) {
+    return ElevatedButton.styleFrom(
+      backgroundColor: background,
+      foregroundColor: foreground,
+      minimumSize: const Size.fromHeight(54),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      textStyle: const TextStyle(fontWeight: FontWeight.w900),
+    );
+  }
+
+  static ButtonStyle text(Color foreground) {
+    return TextButton.styleFrom(
+      foregroundColor: foreground,
+      textStyle: const TextStyle(fontWeight: FontWeight.w900),
+    );
+  }
+
+  static ButtonStyle outlined(
+    Color color, {
+    Color foreground = AppColors.ink,
+  }) {
+    return OutlinedButton.styleFrom(
+      foregroundColor: foreground,
+      minimumSize: const Size.fromHeight(52),
+      side: BorderSide(color: color, width: 2),
+      backgroundColor: color.withValues(alpha: .10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      textStyle: const TextStyle(fontWeight: FontWeight.w900),
+    );
+  }
 }
 
 class AppTheme {
@@ -57,26 +104,24 @@ class AppTheme {
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.pink,
-          foregroundColor: AppColors.ink,
-          minimumSize: const Size.fromHeight(54),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          textStyle: const TextStyle(fontWeight: FontWeight.w800),
+        style: AppButtonStyles.solid(
+          AppColors.pink,
+          foreground: AppColors.white,
         ),
       ),
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.white,
-        selectedColor: AppColors.pink.withValues(alpha: .12),
+        selectedColor: AppColors.yellow.withValues(alpha: .65),
         side: BorderSide(color: AppColors.ink.withValues(alpha: .08)),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
-        labelStyle: const TextStyle(fontWeight: FontWeight.w700),
+        labelStyle: const TextStyle(
+          fontWeight: FontWeight.w800,
+          color: AppColors.ink,
+        ),
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: AppColors.white,
-        indicatorColor: AppColors.pink.withValues(alpha: .14),
+        indicatorColor: AppColors.cyan.withValues(alpha: .32),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
           return TextStyle(
