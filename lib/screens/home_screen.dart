@@ -58,10 +58,7 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 22),
               FilledButton.tonalIcon(
                 onPressed: onOpenOrder,
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.white,
-                  foregroundColor: AppColors.pink,
-                ),
+                style: AppButtonStyles.solid(AppColors.yellow),
                 icon: const Icon(Icons.brush_rounded),
                 label: const Text('Quiero algo personalizado', style: TextStyle(fontWeight: FontWeight.w900)),
               ),
@@ -76,7 +73,11 @@ class HomeScreen extends StatelessWidget {
             const Expanded(
               child: Text('Explora lo que hacemos', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900, color: AppColors.ink)),
             ),
-            TextButton(onPressed: onOpenCatalog, child: const Text('Ver todo')),
+            TextButton(
+              onPressed: onOpenCatalog,
+              style: AppButtonStyles.text(AppColors.purple),
+              child: const Text('Ver todo'),
+            ),
           ],
         ),
         const SizedBox(height: 12),
