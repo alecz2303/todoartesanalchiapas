@@ -53,7 +53,7 @@ class _OrderScreenState extends State<OrderScreen> {
 
   Future<void> _pickDate() async {
     final now = DateTime.now();
-    final minimum = DateTime(now.year, now.month, now.day).add(const Duration(days: 20));
+    final minimum = DateTime(now.year, now.month, now.day).add(const Duration(days: 25));
     final picked = await showDatePicker(
       context: context,
       initialDate: minimum,
@@ -88,7 +88,7 @@ Nombre o texto personalizado: ${_customName.text.trim().isEmpty ? 'No indicado' 
 Detalles: ${_details.text.trim()}
 Referencia seleccionada: ${_reference == null ? 'No' : 'Sí (la enviaré por este chat)'}
 
-Entiendo que los pedidos personalizados requieren mínimo 20 días de anticipación y 50% de anticipo para agendar.''';
+Entiendo que los pedidos personalizados requieren mínimo 25 días de anticipación y 60% de anticipo para agendar.''';
 
     final uri = Uri.parse('https://wa.me/529612139040?text=${Uri.encodeComponent(message)}');
     await launchUrl(uri, mode: LaunchMode.externalApplication);
