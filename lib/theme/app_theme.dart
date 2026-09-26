@@ -16,6 +16,43 @@ class AppColors {
   static const white = Color(0xFFFFFFFF);
 }
 
+class AppTypography {
+  static const displayFamily = 'Fredoka';
+  static const bodyFamily = 'Nunito';
+
+  static const pageTitle = TextStyle(
+    fontFamily: displayFamily,
+    fontSize: 30,
+    fontWeight: FontWeight.w700,
+    height: 1.05,
+    color: AppColors.blue,
+  );
+
+  static const heroTitle = TextStyle(
+    fontFamily: displayFamily,
+    fontSize: 34,
+    fontWeight: FontWeight.w700,
+    height: 1.05,
+    color: AppColors.white,
+  );
+
+  static const sectionTitle = TextStyle(
+    fontFamily: displayFamily,
+    fontSize: 21,
+    fontWeight: FontWeight.w700,
+    height: 1.12,
+    color: AppColors.blue,
+  );
+
+  static const cardTitle = TextStyle(
+    fontFamily: displayFamily,
+    fontSize: 17,
+    fontWeight: FontWeight.w700,
+    height: 1.15,
+    color: AppColors.ink,
+  );
+}
+
 class AppButtonStyles {
   static ButtonStyle solid(
     Color background, {
@@ -28,14 +65,20 @@ class AppButtonStyles {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      textStyle: const TextStyle(fontWeight: FontWeight.w900),
+      textStyle: const TextStyle(
+        fontFamily: AppTypography.bodyFamily,
+        fontWeight: FontWeight.w900,
+      ),
     );
   }
 
   static ButtonStyle text(Color foreground) {
     return TextButton.styleFrom(
       foregroundColor: foreground,
-      textStyle: const TextStyle(fontWeight: FontWeight.w900),
+      textStyle: const TextStyle(
+        fontFamily: AppTypography.bodyFamily,
+        fontWeight: FontWeight.w900,
+      ),
     );
   }
 
@@ -51,7 +94,10 @@ class AppButtonStyles {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      textStyle: const TextStyle(fontWeight: FontWeight.w900),
+      textStyle: const TextStyle(
+        fontFamily: AppTypography.bodyFamily,
+        fontWeight: FontWeight.w900,
+      ),
     );
   }
 }
@@ -67,16 +113,58 @@ class AppTheme {
       surface: AppColors.white,
     );
 
+    final baseTextTheme = ThemeData.light().textTheme.apply(
+      fontFamily: AppTypography.bodyFamily,
+    );
+
+    final textTheme = baseTextTheme.copyWith(
+      displayLarge: baseTextTheme.displayLarge?.copyWith(
+        fontFamily: AppTypography.displayFamily,
+        fontWeight: FontWeight.w700,
+      ),
+      displayMedium: baseTextTheme.displayMedium?.copyWith(
+        fontFamily: AppTypography.displayFamily,
+        fontWeight: FontWeight.w700,
+      ),
+      displaySmall: baseTextTheme.displaySmall?.copyWith(
+        fontFamily: AppTypography.displayFamily,
+        fontWeight: FontWeight.w700,
+      ),
+      headlineLarge: baseTextTheme.headlineLarge?.copyWith(
+        fontFamily: AppTypography.displayFamily,
+        fontWeight: FontWeight.w700,
+      ),
+      headlineMedium: baseTextTheme.headlineMedium?.copyWith(
+        fontFamily: AppTypography.displayFamily,
+        fontWeight: FontWeight.w700,
+      ),
+      headlineSmall: baseTextTheme.headlineSmall?.copyWith(
+        fontFamily: AppTypography.displayFamily,
+        fontWeight: FontWeight.w700,
+      ),
+      titleLarge: baseTextTheme.titleLarge?.copyWith(
+        fontFamily: AppTypography.displayFamily,
+        fontWeight: FontWeight.w700,
+      ),
+    );
+
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
       scaffoldBackgroundColor: AppColors.white,
-      fontFamily: null,
+      fontFamily: AppTypography.bodyFamily,
+      textTheme: textTheme,
       appBarTheme: const AppBarTheme(
         centerTitle: false,
         backgroundColor: Colors.transparent,
         foregroundColor: AppColors.ink,
         elevation: 0,
+        titleTextStyle: TextStyle(
+          fontFamily: AppTypography.displayFamily,
+          fontWeight: FontWeight.w700,
+          color: AppColors.ink,
+          fontSize: 20,
+        ),
       ),
       cardTheme: CardThemeData(
         color: AppColors.white,
@@ -89,6 +177,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.white,
+        labelStyle: const TextStyle(
+          fontFamily: AppTypography.bodyFamily,
+          fontWeight: FontWeight.w700,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
@@ -114,6 +206,7 @@ class AppTheme {
         side: const BorderSide(color: AppColors.green, width: 1.5),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
         labelStyle: const TextStyle(
+          fontFamily: AppTypography.bodyFamily,
           fontWeight: FontWeight.w800,
           color: AppColors.ink,
         ),
@@ -124,6 +217,7 @@ class AppTheme {
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
           return TextStyle(
+            fontFamily: AppTypography.bodyFamily,
             fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
             color: selected ? AppColors.pink : AppColors.ink,
           );

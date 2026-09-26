@@ -24,3 +24,12 @@ Reglas:
 - No sustituir estos códigos por aproximaciones.
 - El color #E6ED07 no debe utilizarse hasta que se defina su función.
 - En textos visibles de la aplicación se debe usar siempre el nombre completo "Todo Artesanal Chiapas".
+
+
+Tipografía oficial de interfaz:
+- Fredoka — títulos principales, encabezados, nombre de marca y títulos de tarjetas.
+- Nunito — textos de lectura, formularios, botones, filtros, navegación y etiquetas.
+- Fredoka usa pesos de hasta 700 para respetar el rango de la fuente variable incluida.
+- Nunito funciona como tipografía base de toda la aplicación.
+- Ambas fuentes se almacenan localmente en assets/fonts/ y no requieren una descarga de red para mostrarse.
+- Las licencias OFL de ambas familias se conservan junto a los archivos de fuente y se registran en la aplicación.

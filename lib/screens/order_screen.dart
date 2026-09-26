@@ -98,7 +98,7 @@ Entiendo que los pedidos personalizados requieren mínimo 20 días de anticipaci
       children: [
         const BrandHeader(compact: true),
         const SizedBox(height: 24),
-        const Text('Haz tu pedido', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900, color: AppColors.blue)),
+        const Text('Haz tu pedido', style: AppTypography.pageTitle),
         const SizedBox(height: 6),
         Text('Cuéntanos qué necesitas y prepararemos tu solicitud para enviarla por WhatsApp.', style: TextStyle(color: AppColors.ink.withValues(alpha: .65), height: 1.4)),
         const SizedBox(height: 18),
