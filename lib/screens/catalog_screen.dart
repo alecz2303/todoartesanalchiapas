@@ -21,6 +21,25 @@ class _CatalogScreenState extends State<CatalogScreen> {
 
   static const categories = ['Todo', 'Piñatas', 'Papel picado', 'Plástico picado', 'Personalizados'];
 
+  static const categoryColors = <String, Color>{
+    'Todo': AppColors.blue,
+    'Piñatas': AppColors.pink,
+    'Papel picado': AppColors.yellow,
+    'Plástico picado': AppColors.cyan,
+    'Personalizados': AppColors.purple,
+  };
+
+  Color _chipForeground(String category, bool selected) {
+    if (!selected) {
+      return categoryColors[category] ?? AppColors.ink;
+    }
+
+    return switch (category) {
+      'Todo' || 'Personalizados' => AppColors.white,
+      _ => AppColors.ink,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final filtered = _category == 'Todo'
@@ -45,9 +64,22 @@ class _CatalogScreenState extends State<CatalogScreen> {
             separatorBuilder: (_, __) => const SizedBox(width: 8),
             itemBuilder: (_, index) {
               final value = categories[index];
+              final color = categoryColors[value] ?? AppColors.green;
+              final selected = _category == value;
+
               return ChoiceChip(
                 label: Text(value),
-                selected: _category == value,
+                selected: selected,
+                selectedColor: color,
+                backgroundColor: color.withValues(alpha: .16),
+                side: BorderSide(
+                  color: color.withValues(alpha: selected ? 1 : .55),
+                  width: 1.5,
+                ),
+                labelStyle: TextStyle(
+                  color: _chipForeground(value, selected),
+                  fontWeight: FontWeight.w800,
+                ),
                 onSelected: (_) => setState(() => _category = value),
               );
             },
