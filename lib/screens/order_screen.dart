@@ -53,7 +53,7 @@ class _OrderScreenState extends State<OrderScreen> {
 
   Future<void> _pickDate() async {
     final now = DateTime.now();
-    final minimum = DateTime(now.year, now.month, now.day).add(const Duration(days: 20));
+    final minimum = DateTime(now.year, now.month, now.day).add(const Duration(days: 25));
     final picked = await showDatePicker(
       context: context,
       initialDate: minimum,
@@ -70,10 +70,18 @@ class _OrderScreenState extends State<OrderScreen> {
   }
 
   Future<void> _sendRequest() async {
-    if (!_formKey.currentState!.validate() || _eventDate == null) {
-      if (_eventDate == null) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Selecciona la fecha de tu evento.')));
-      }
+    final formIsValid = _formKey.currentState!.validate();
+
+    if (!formIsValid || _eventDate == null) {
+      if (!mounted) return;
+
+      final message = _eventDate == null
+          ? 'Completa los campos marcados y selecciona la fecha de tu evento.'
+          : 'Completa los campos marcados antes de enviar tu solicitud.';
+
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(message)));
       return;
     }
 
@@ -88,10 +96,79 @@ Nombre o texto personalizado: ${_customName.text.trim().isEmpty ? 'No indicado' 
 Detalles: ${_details.text.trim()}
 Referencia seleccionada: ${_reference == null ? 'No' : 'Sí (la enviaré por este chat)'}
 
-Entiendo que los pedidos personalizados requieren mínimo 20 días de anticipación y 50% de anticipo para agendar.''';
+Entiendo que los pedidos personalizados requieren mínimo 25 días de anticipación y 60% de anticipo para agendar.''';
 
-    final uri = Uri.parse('https://wa.me/529612139040?text=${Uri.encodeComponent(message)}');
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
+    final directWhatsAppUri = Uri(
+      scheme: 'whatsapp',
+      host: 'send',
+      queryParameters: {
+        'phone': '529612139040',
+        'text': message,
+      },
+    );
+
+    final webWhatsAppUri = Uri.https(
+      'wa.me',
+      '/529612139040',
+      {'text': message},
+    );
+
+    try {
+      var opened = await launchUrl(
+        directWhatsAppUri,
+        mode: LaunchMode.externalApplication,
+      );
+
+      if (!opened) {
+        opened = await launchUrl(
+          webWhatsAppUri,
+          mode: LaunchMode.externalApplication,
+        );
+      }
+
+      if (!opened && mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text(
+                'No pudimos abrir WhatsApp. Verifica que esté instalado e inténtalo de nuevo.',
+              ),
+            ),
+          );
+      }
+    } catch (_) {
+      try {
+        final opened = await launchUrl(
+          webWhatsAppUri,
+          mode: LaunchMode.externalApplication,
+        );
+
+        if (!opened && mounted) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'No pudimos abrir WhatsApp. Verifica que esté instalado e inténtalo de nuevo.',
+                ),
+              ),
+            );
+        }
+      } catch (_) {
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text(
+                'No pudimos abrir WhatsApp. Verifica que esté instalado e inténtalo de nuevo.',
+              ),
+            ),
+          );
+      }
+    }
   }
 
   @override
@@ -141,7 +218,7 @@ Entiendo que los pedidos personalizados requieren mínimo 20 días de anticipaci
                   decoration: InputDecoration(
                     labelText: 'Fecha del evento',
                     prefixIcon: const Icon(Icons.calendar_month_outlined, color: AppColors.orange),
-                    fillColor: AppColors.orange.withValues(alpha: .10),
+                    fillColor: AppColors.white,
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: const BorderSide(color: AppColors.orange, width: 1.5),
@@ -164,14 +241,35 @@ Entiendo que los pedidos personalizados requieren mínimo 20 días de anticipaci
                 validator: (value) => value == null || value.trim().length < 8 ? 'Cuéntanos un poco más de tu idea.' : null,
               ),
               const SizedBox(height: 12),
-              BrandActionButton(
-                label: _reference == null ? 'Agregar imagen de referencia' : 'Referencia seleccionada',
-                icon: _reference == null
-                    ? Icons.add_photo_alternate_outlined
-                    : Icons.check_circle_rounded,
+              OutlinedButton.icon(
                 onPressed: _pickImage,
-                backgroundColor: AppColors.lime,
-                variant: BrandActionButtonVariant.outlined,
+                icon: Icon(
+                  _reference == null
+                      ? Icons.add_photo_alternate_outlined
+                      : Icons.check_circle_rounded,
+                  color: AppColors.ink,
+                ),
+                label: Text(
+                  _reference == null
+                      ? 'Agregar imagen de referencia'
+                      : 'Referencia seleccionada',
+                ),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.ink,
+                  backgroundColor: AppColors.white,
+                  minimumSize: const Size.fromHeight(52),
+                  side: const BorderSide(
+                    color: AppColors.lime,
+                    width: 2,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  textStyle: const TextStyle(
+                    fontFamily: AppTypography.bodyFamily,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
               ),
               if (_reference != null) ...[
                 const SizedBox(height: 6),
@@ -182,15 +280,20 @@ Entiendo que los pedidos personalizados requieren mínimo 20 días de anticipaci
                 label: 'Enviar solicitud por WhatsApp',
                 icon: Icons.send_rounded,
                 onPressed: _sendRequest,
-                backgroundColor: AppColors.cyan,
+                backgroundColor: AppColors.blue,
+                foregroundColor: AppColors.white,
               ),
               const SizedBox(height: 10),
               const BrandNotice(
                 text: 'La imagen de referencia no se adjunta automáticamente a WhatsApp; la app te recordará enviarla en el chat.',
-                color: AppColors.yellow,
+                color: AppColors.cyan,
+                backgroundColor: AppColors.white,
+                borderColor: AppColors.cyan,
+                iconBackgroundColor: AppColors.cyan,
+                icon: Icons.info_outline_rounded,
+                showBorder: true,
                 padding: EdgeInsets.all(12),
                 radius: 14,
-                textAlign: TextAlign.center,
                 fontWeight: FontWeight.w700,
                 fontSize: 12,
               ),

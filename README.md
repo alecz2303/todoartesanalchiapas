@@ -11,8 +11,8 @@ Versión inicial `0.1.0+1` enfocada en validar el flujo principal de clientes:
 - Inicio con identidad de marca.
 - Catálogo por categorías.
 - Solicitud de pedido personalizado.
-- Regla de mínimo 20 días de anticipación.
-- Aviso de 50% de anticipo para agendar.
+- Regla de mínimo 25 días de anticipación.
+- Aviso de 60% de anticipo para agendar.
 - Selección de imagen de referencia.
 - Solicitud prellenada por WhatsApp al 961 213 9040.
 - Datos de contacto y ubicación de tienda.
