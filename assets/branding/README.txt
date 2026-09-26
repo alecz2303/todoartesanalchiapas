@@ -55,3 +55,12 @@ Componentes reutilizables de marca:
 - BrandNotice — advertencias y notas destacadas.
 - AccentIconBadge — contenedor de icono con acento cromático.
 - BrandHeader y PolicyBanner continúan como componentes oficiales de marca.
+
+
+Filtros de Catálogo:
+- Todo — #2204CC.
+- Piñatas — #FF1493.
+- Papel picado — #FFFF00.
+- Plástico picado — #5FE8FF.
+- Personalizados — #AA00FF.
+- Cada filtro conserva su color propio; al estar seleccionado usa el color completo y, sin seleccionar, una versión visualmente más ligera del mismo color.
