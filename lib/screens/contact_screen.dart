@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../theme/app_theme.dart';
+import '../widgets/accent_icon_badge.dart';
 import '../widgets/brand_header.dart';
+import '../widgets/brand_link_button.dart';
+import '../widgets/brand_page_header.dart';
 
 class ContactScreen extends StatelessWidget {
   const ContactScreen({super.key});
@@ -19,9 +22,10 @@ class ContactScreen extends StatelessWidget {
       children: [
         const BrandHeader(compact: true),
         const SizedBox(height: 24),
-        const Text('Visítanos', style: AppTypography.pageTitle),
-        const SizedBox(height: 6),
-        Text('También puedes encontrarnos en nuestra tienda física o escribirnos directamente.', style: TextStyle(color: AppColors.ink.withValues(alpha: .65), height: 1.4)),
+        const BrandPageHeader(
+          title: 'Visítanos',
+          subtitle: 'También puedes encontrarnos en nuestra tienda física o escribirnos directamente.',
+        ),
         const SizedBox(height: 20),
         _ContactCard(
           icon: Icons.location_on_rounded,
@@ -96,11 +100,9 @@ class _ContactCard extends StatelessWidget {
         padding: const EdgeInsets.all(18),
         child: Row(
           children: [
-            Container(
-              width: 54,
-              height: 54,
-              decoration: BoxDecoration(color: accent.withValues(alpha: .2), borderRadius: BorderRadius.circular(17)),
-              child: Icon(icon, color: AppColors.ink),
+            AccentIconBadge(
+              icon: icon,
+              accent: accent,
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -119,12 +121,11 @@ class _ContactCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(text, style: TextStyle(color: AppColors.ink.withValues(alpha: .67), height: 1.35)),
                   const SizedBox(height: 6),
-                  TextButton(
+                  BrandLinkButton(
+                    label: button,
+                    color: buttonColor,
                     onPressed: onTap,
-                    style: AppButtonStyles.text(buttonColor).copyWith(
-                      padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-                    ),
-                    child: Text(button),
+                    zeroPadding: true,
                   ),
                 ],
               ),
