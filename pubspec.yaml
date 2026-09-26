@@ -43,3 +43,12 @@ flutter:
   uses-material-design: true
   assets:
     - assets/branding/
+    - assets/fonts/fredoka/OFL.txt
+    - assets/fonts/nunito/OFL.txt
+  fonts:
+    - family: Fredoka
+      fonts:
+        - asset: assets/fonts/fredoka/Fredoka-Variable.ttf
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/nunito/Nunito-Variable.ttf
