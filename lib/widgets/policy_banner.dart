@@ -15,6 +15,7 @@ class PolicyBanner extends StatelessWidget {
       borderColor: AppColors.yellow,
       iconBackgroundColor: AppColors.yellow,
       icon: Icons.event_available_rounded,
+      textAlign: TextAlign.justify,
       showBorder: true,
     );
   }
