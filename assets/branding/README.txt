@@ -58,9 +58,9 @@ Componentes reutilizables de marca:
 
 
 Filtros de Catálogo:
-- Todo — #2204CC.
+- Todo — #39FF14.
 - Piñatas — #FF1493.
-- Papel picado — #FFFF00.
-- Plástico picado — #5FE8FF.
-- Personalizados — #AA00FF.
+- Papel picado — #AA00FF.
+- Plástico picado — #2204CC.
+- Personalizados — #5FE8FF.
 - Cada filtro conserva su color propio; al estar seleccionado usa el color completo y, sin seleccionar, una versión visualmente más ligera del mismo color.
