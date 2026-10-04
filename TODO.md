@@ -1,9 +1,9 @@
 # TODO — Todo Artesanal Chiapas App
 
-> **Documento canónico de trabajo del proyecto.**
+> **Roadmap y registro histórico del proyecto.**
 >
-> Este archivo es la fuente de verdad para saber qué está hecho, qué sigue y qué falta.  
-> **No se inicia una funcionalidad nueva sin registrarla aquí primero.**
+> Desde el 2026-10-04, **Jira (TACAPP)** es la fuente operativa para tareas, estados y seguimiento.  
+> Este archivo conserva el roadmap general, decisiones y contexto histórico; **GitHub** sigue siendo la fuente oficial del código.
 
 Última actualización: 2026-10-04  
 Versión actual: `0.1.0+1`
@@ -14,8 +14,8 @@ Versión actual: `0.1.0+1`
 
 Estas reglas se deben respetar durante todo el desarrollo:
 
-1. **TODO primero.** Toda tarea nueva debe agregarse a este archivo antes de desarrollarse.
-2. **ID permanente.** Cada tarea usa un identificador `TA-###`. El ID no se reutiliza ni se renumera.
+1. **Jira primero.** Toda tarea operativa nueva debe registrarse en el proyecto Jira `TACAPP` antes de desarrollarse; `TODO.md` conserva el roadmap y las decisiones de alto nivel.
+2. **ID permanente.** Cada tarea conserva un identificador funcional `TA-###`, que no se reutiliza ni se renumera. Jira asigna además una clave `TACAPP-###`; ambas referencias deben mantenerse visibles.
 3. **No borrar historial.** Una tarea terminada se marca como completada; no se elimina.
 4. **Un objetivo claro por tarea.** Si una tarea crece demasiado, se divide antes de programarla.
 5. **Verificar antes de cerrar.** Una tarea solo pasa a `✅ Hecho` cuando su implementación fue revisada y, cuando aplique, probada.
@@ -23,9 +23,10 @@ Estas reglas se deben respetar durante todo el desarrollo:
 7. **No introducir secretos al repositorio.** Tokens, contraseñas, llaves, keystores y archivos `.env` nunca se versionan.
 8. **No rehacer trabajo existente.** Antes de implementar una tarea se revisa el estado real del repositorio.
 9. **Cambios funcionales por rama.** Una vez terminada la preparación inicial del proyecto, las funcionalidades se desarrollarán en ramas y se integrarán mediante PR.
-10. **Actualizar este TODO en el mismo ciclo de trabajo.** Si una tarea cambia de alcance, se bloquea o termina, se refleja aquí.
+10. **Sincronizar seguimiento.** El estado operativo se mantiene en Jira; `TODO.md` se actualiza al cerrar tareas relevantes, cambiar el roadmap o registrar decisiones que deban conservarse históricamente.
 11. **No saltar fases por comodidad.** Se pueden adelantar tareas independientes, pero no se construirá una capa que dependa de otra todavía inexistente.
 12. **Prioridad del negocio.** La app debe resolver primero catálogo, pedidos, agenda, anticipos y seguimiento antes de agregar funciones secundarias.
+13. **Resumen al cerrar cada TA.** Cada vez que una tarea TA-### se cierre, se debe mostrar al usuario una tabla breve con lo terminado y lo que sigue pendiente.
 
 ### Estados
 
@@ -108,7 +109,7 @@ La experiencia debe conservar la identidad artesanal y chiapaneca de la marca, c
 - ✅ **TA-033** Definir paleta final y sistema visual.
 - ✅ **TA-034** Definir tipografías y jerarquías.
 - ✅ **TA-035** Crear componentes reutilizables de marca.
-- ⬜ **TA-036** Revisar contraste, tamaños de texto y accesibilidad básica.
+- ✅ **TA-036** Revisar contraste, tamaños de texto y accesibilidad básica.
 - ✅ **TA-037** Refinar jerarquía y distribución de la paleta oficial en la interfaz.
 
 ## Catálogo
@@ -403,6 +404,9 @@ Orden recomendado del siguiente bloque:
 | 2026-09-26 | Filtros de Catálogo definitivos: Todo #39FF14; Piñatas #FF1493; Papel picado #AA00FF; Plástico picado #2204CC; Personalizados #5FE8FF. |
 | 2026-09-26 | Política comercial vigente actualizada: los pedidos PERSONALIZADOS requieren mínimo 25 días de anticipación y 60% de anticipo para agendar; esta decisión reemplaza la política inicial de 20 días / 50% sin borrar su historial. |
 | 2026-10-04 | TA-037 cerrada tras validación visual y funcional en dispositivo Android real; la jerarquía cromática, pantalla de Pedido y apertura de WhatsApp quedaron aprobadas. |
+| 2026-10-04 | TA-036 cerrada tras auditoría, CI en verde y validación visual en dispositivo Android real; se mejoraron contraste, legibilidad, escalado de texto y áreas táctiles sin alterar la identidad aprobada. |
+| 2026-10-04 | Nueva regla de seguimiento: al cerrar cada TA se mostrará una tabla breve con tareas terminadas y pendientes/siguientes. |
+| 2026-10-04 | Jira `TACAPP` se adopta como fuente operativa de tareas y estados; `TODO.md` queda como roadmap/registro histórico y GitHub continúa como fuente oficial del código. Los IDs funcionales `TA-###` se conservan junto con las claves Jira `TACAPP-###`. |
 
 ---
 

@@ -273,7 +273,10 @@ Entiendo que los pedidos personalizados requieren mínimo 25 días de anticipaci
               ),
               if (_reference != null) ...[
                 const SizedBox(height: 6),
-                Text(_reference!.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: AppColors.ink.withValues(alpha: .6), fontSize: 12)),
+                Text(_reference!.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(
+                  color: AppColors.ink.withValues(alpha: .68),
+                  fontSize: 13.5,
+                )),
               ],
               const SizedBox(height: 18),
               BrandActionButton(
@@ -295,7 +298,7 @@ Entiendo que los pedidos personalizados requieren mínimo 25 días de anticipaci
                 padding: EdgeInsets.all(12),
                 radius: 14,
                 fontWeight: FontWeight.w700,
-                fontSize: 12,
+                fontSize: 13.5,
               ),
             ],
           ),

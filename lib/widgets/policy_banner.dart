@@ -32,6 +32,7 @@ class PolicyBanner extends StatelessWidget {
       final painter = TextPainter(
         text: TextSpan(text: candidate, style: _textStyle),
         textDirection: Directionality.of(context),
+        textScaler: MediaQuery.textScalerOf(context),
         maxLines: _sideLines,
       )..layout(maxWidth: availableWidth);
 

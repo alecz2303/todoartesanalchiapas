@@ -17,7 +17,10 @@ class BrandPageHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: AppTypography.pageTitle),
+        Semantics(
+          header: true,
+          child: Text(title, style: AppTypography.pageTitle),
+        ),
         const SizedBox(height: 6),
         Text(
           subtitle,
