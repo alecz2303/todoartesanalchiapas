@@ -51,14 +51,14 @@ class BrandHeader extends StatelessWidget {
               const SizedBox(height: 5),
               Text(
                 'PIÑATAS · PAPEL PICADO · Y MÁS',
-                maxLines: 1,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: AppTypography.bodyFamily,
-                  fontSize: compact ? 9 : 10.5,
+                  fontSize: compact ? 11.5 : 12.5,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.cyan,
-                  letterSpacing: .8,
+                  color: AppColors.blue,
+                  letterSpacing: .6,
                 ),
               ),
             ],
