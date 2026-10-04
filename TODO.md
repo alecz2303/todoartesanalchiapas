@@ -114,8 +114,8 @@ La experiencia debe conservar la identidad artesanal y chiapaneca de la marca, c
 
 ## Catálogo
 
-- ⬜ **TA-040** Definir categorías oficiales de productos.
-- ⬜ **TA-041** Definir modelo completo de producto.
+- ✅ **TA-040** Definir categorías oficiales de productos.
+- ✅ **TA-041** Definir modelo completo de producto.
 - ⬜ **TA-042** Integrar fotografías reales de productos.
 - ⬜ **TA-043** Crear tarjeta definitiva de producto.
 - ⬜ **TA-044** Crear pantalla de detalle de producto.
@@ -407,6 +407,7 @@ Orden recomendado del siguiente bloque:
 | 2026-10-04 | TA-036 cerrada tras auditoría, CI en verde y validación visual en dispositivo Android real; se mejoraron contraste, legibilidad, escalado de texto y áreas táctiles sin alterar la identidad aprobada. |
 | 2026-10-04 | Nueva regla de seguimiento: al cerrar cada TA se mostrará una tabla breve con tareas terminadas y pendientes/siguientes. |
 | 2026-10-04 | Jira `TACAPP` se adopta como fuente operativa de tareas y estados; `TODO.md` queda como roadmap/registro histórico y GitHub continúa como fuente oficial del código. Los IDs funcionales `TA-###` se conservan junto con las claves Jira `TACAPP-###`. |
+| 2026-10-04 | TA-040 y TA-041 cerradas en TACAPP-20: se definieron las categorías oficiales tipadas y el modelo base de producto, reutilizando trabajo válido del PR histórico #2 y descartando decisiones obsoletas. |
 
 ---
 

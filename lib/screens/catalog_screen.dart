@@ -44,7 +44,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
   Widget build(BuildContext context) {
     final filtered = _category == 'Todo'
         ? catalogItems
-        : catalogItems.where((item) => item.category == _category).toList();
+        : catalogItems.where((item) => item.categoryLabel == _category).toList();
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 30),
