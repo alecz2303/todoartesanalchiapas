@@ -75,6 +75,8 @@ class AppButtonStyles {
   static ButtonStyle text(Color foreground) {
     return TextButton.styleFrom(
       foregroundColor: foreground,
+      minimumSize: const Size(48, 48),
+      tapTargetSize: MaterialTapTargetSize.padded,
       textStyle: const TextStyle(
         fontFamily: AppTypography.bodyFamily,
         fontWeight: FontWeight.w900,
@@ -214,12 +216,21 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: AppColors.white,
         indicatorColor: AppColors.pink.withValues(alpha: .16),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          final selected = states.contains(WidgetState.selected);
+          return IconThemeData(
+            color: selected
+                ? AppColors.pink
+                : AppColors.ink.withValues(alpha: .72),
+            size: 25,
+          );
+        }),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
           return TextStyle(
             fontFamily: AppTypography.bodyFamily,
             fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
-            color: selected ? AppColors.pink : AppColors.ink,
+            color: selected ? AppColors.blue : AppColors.ink,
           );
         }),
       ),
