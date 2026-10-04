@@ -108,7 +108,7 @@ La experiencia debe conservar la identidad artesanal y chiapaneca de la marca, c
 - ✅ **TA-033** Definir paleta final y sistema visual.
 - ✅ **TA-034** Definir tipografías y jerarquías.
 - ✅ **TA-035** Crear componentes reutilizables de marca.
-- ⬜ **TA-036** Revisar contraste, tamaños de texto y accesibilidad básica.
+- 🟡 **TA-036** Revisar contraste, tamaños de texto y accesibilidad básica.
 - ✅ **TA-037** Refinar jerarquía y distribución de la paleta oficial en la interfaz.
 
 ## Catálogo
