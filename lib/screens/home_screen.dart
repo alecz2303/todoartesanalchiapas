@@ -72,7 +72,7 @@ class HomeScreen extends StatelessWidget {
                       style: AppTypography.heroTitle,
                     ),
                     const SizedBox(height: 12),
-                    Text(
+                    const Text(
                       'Piñatas, papel y plástico picado, detalles personalizados y mucho más.',
                       style: TextStyle(
                         color: AppColors.white,
