@@ -11,6 +11,9 @@ class BrandNotice extends StatelessWidget {
     this.padding = const EdgeInsets.all(18),
     this.radius = 20,
     this.showBorder = false,
+    this.backgroundColor,
+    this.borderColor,
+    this.iconBackgroundColor,
     this.textAlign = TextAlign.start,
     this.fontWeight = FontWeight.w800,
     this.fontSize,
@@ -22,6 +25,9 @@ class BrandNotice extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final double radius;
   final bool showBorder;
+  final Color? backgroundColor;
+  final Color? borderColor;
+  final Color? iconBackgroundColor;
   final TextAlign textAlign;
   final FontWeight fontWeight;
   final double? fontSize;
@@ -42,16 +48,29 @@ class BrandNotice extends StatelessWidget {
     return Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: color,
+        color: backgroundColor ?? color,
         borderRadius: BorderRadius.circular(radius),
-        border: showBorder ? Border.all(color: color) : null,
+        border: showBorder
+            ? Border.all(color: borderColor ?? color, width: 1.5)
+            : null,
       ),
       child: icon == null
           ? message
           : Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(icon, color: AppColors.ink),
+                if (iconBackgroundColor == null)
+                  Icon(icon, color: AppColors.ink)
+                else
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: iconBackgroundColor,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(icon, color: AppColors.ink, size: 22),
+                  ),
                 const SizedBox(width: 12),
                 Expanded(child: message),
               ],

@@ -25,47 +25,72 @@ class HomeScreen extends StatelessWidget {
         const BrandHeader(),
         const SizedBox(height: 24),
         Container(
-          padding: const EdgeInsets.all(24),
+          clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [AppColors.pink, AppColors.cyan],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            color: AppColors.pink,
             borderRadius: BorderRadius.circular(28),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
-                decoration: BoxDecoration(
-                  color: AppColors.white.withValues(alpha: .17),
-                  borderRadius: BorderRadius.circular(999),
+              const Positioned(
+                top: 18,
+                right: 20,
+                child: _HeroColorBurst(),
+              ),
+              const Positioned(
+                right: 18,
+                bottom: 18,
+                child: _HeroAccentDots(),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 11,
+                        vertical: 7,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: const Text(
+                        'TRADICIÓN + CREATIVIDAD',
+                        style: TextStyle(
+                          color: AppColors.blue,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 11,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    const Text(
+                      'Tu celebración,\nhecha a mano. ✨',
+                      style: AppTypography.heroTitle,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Piñatas, papel y plástico picado, detalles personalizados y mucho más.',
+                      style: TextStyle(
+                        color: AppColors.white.withValues(alpha: .94),
+                        fontSize: 15.5,
+                        height: 1.4,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 22),
+                    BrandActionButton(
+                      label: 'Quiero algo personalizado',
+                      icon: Icons.brush_rounded,
+                      onPressed: onOpenOrder,
+                      backgroundColor: AppColors.blue,
+                      foregroundColor: AppColors.white,
+                    ),
+                  ],
                 ),
-                child: const Text(
-                  'TRADICIÓN + CREATIVIDAD',
-                  style: TextStyle(color: AppColors.white, fontWeight: FontWeight.w900, fontSize: 11, letterSpacing: 1),
-                ),
-              ),
-              const SizedBox(height: 18),
-              const Text(
-                'Tu celebración,\nhecha a mano. ✨',
-                style: AppTypography.heroTitle,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Piñatas, papel y plástico picado, detalles personalizados y mucho más.',
-                style: TextStyle(color: AppColors.white.withValues(alpha: .9), fontSize: 15.5, height: 1.4, fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 22),
-              BrandActionButton(
-                label: 'Quiero algo personalizado',
-                icon: Icons.brush_rounded,
-                onPressed: onOpenOrder,
-                backgroundColor: AppColors.pink,
-                foregroundColor: AppColors.white,
-                variant: BrandActionButtonVariant.filledTonal,
               ),
             ],
           ),
@@ -148,6 +173,89 @@ class _FeatureCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+
+class _HeroColorBurst extends StatelessWidget {
+  const _HeroColorBurst();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 88,
+      height: 64,
+      child: Stack(
+        children: [
+          Positioned(
+            right: 4,
+            top: 2,
+            child: Transform.rotate(
+              angle: .45,
+              child: Container(
+                width: 30,
+                height: 10,
+                decoration: BoxDecoration(
+                  color: AppColors.green,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            right: 34,
+            top: 18,
+            child: Transform.rotate(
+              angle: -.65,
+              child: Container(
+                width: 25,
+                height: 11,
+                decoration: BoxDecoration(
+                  color: AppColors.yellow,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+              ),
+            ),
+          ),
+          const Positioned(
+            right: 3,
+            bottom: 3,
+            child: Icon(
+              Icons.auto_awesome_rounded,
+              color: AppColors.purple,
+              size: 30,
+            ),
+          ),
+          const Positioned(
+            left: 8,
+            bottom: 7,
+            child: Icon(
+              Icons.circle,
+              color: AppColors.cyan,
+              size: 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HeroAccentDots extends StatelessWidget {
+  const _HeroAccentDots();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.circle, color: AppColors.orange, size: 10),
+        SizedBox(width: 7),
+        Icon(Icons.circle, color: AppColors.cyan, size: 7),
+        SizedBox(width: 7),
+        Icon(Icons.circle, color: AppColors.green, size: 12),
+      ],
     );
   }
 }
