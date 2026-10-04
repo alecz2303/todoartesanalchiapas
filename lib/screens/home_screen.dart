@@ -61,7 +61,7 @@ class HomeScreen extends StatelessWidget {
                         style: TextStyle(
                           color: AppColors.blue,
                           fontWeight: FontWeight.w900,
-                          fontSize: 11,
+                          fontSize: 12,
                           letterSpacing: 1,
                         ),
                       ),
@@ -75,10 +75,10 @@ class HomeScreen extends StatelessWidget {
                     Text(
                       'Piñatas, papel y plástico picado, detalles personalizados y mucho más.',
                       style: TextStyle(
-                        color: AppColors.white.withValues(alpha: .94),
-                        fontSize: 15.5,
-                        height: 1.4,
-                        fontWeight: FontWeight.w600,
+                        color: AppColors.white,
+                        fontSize: 19,
+                        height: 1.35,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: 22),
