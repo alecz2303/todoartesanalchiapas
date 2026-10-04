@@ -31,7 +31,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
 
   Color _chipForeground(String category, bool selected) {
     if (!selected) {
-      return categoryColors[category] ?? AppColors.ink;
+      return AppColors.ink;
     }
 
     return switch (category) {
@@ -56,33 +56,41 @@ class _CatalogScreenState extends State<CatalogScreen> {
           subtitle: 'Conoce nuestras opciones. Los diseños personalizados se cotizan según sus características.',
         ),
         const SizedBox(height: 18),
-        SizedBox(
-          height: 44,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: categories.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 8),
-            itemBuilder: (_, index) {
-              final value = categories[index];
-              final color = categoryColors[value] ?? AppColors.green;
-              final selected = _category == value;
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              for (var index = 0; index < categories.length; index++) ...[
+                if (index > 0) const SizedBox(width: 8),
+                Builder(
+                  builder: (context) {
+                    final value = categories[index];
+                    final color =
+                        categoryColors[value] ?? AppColors.green;
+                    final selected = _category == value;
 
-              return ChoiceChip(
-                label: Text(value),
-                selected: selected,
-                selectedColor: color,
-                backgroundColor: color.withValues(alpha: .16),
-                side: BorderSide(
-                  color: color.withValues(alpha: selected ? 1 : .55),
-                  width: 1.5,
+                    return ChoiceChip(
+                      label: Text(value),
+                      selected: selected,
+                      selectedColor: color,
+                      backgroundColor: color.withValues(alpha: .16),
+                      side: BorderSide(
+                        color: color.withValues(
+                          alpha: selected ? 1 : .55,
+                        ),
+                        width: 1.5,
+                      ),
+                      labelStyle: TextStyle(
+                        color: _chipForeground(value, selected),
+                        fontWeight: FontWeight.w800,
+                      ),
+                      onSelected: (_) =>
+                          setState(() => _category = value),
+                    );
+                  },
                 ),
-                labelStyle: TextStyle(
-                  color: _chipForeground(value, selected),
-                  fontWeight: FontWeight.w800,
-                ),
-                onSelected: (_) => setState(() => _category = value),
-              );
-            },
+              ],
+            ],
           ),
         ),
         const SizedBox(height: 18),
@@ -136,7 +144,13 @@ class _CatalogCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                           decoration: BoxDecoration(color: AppColors.green.withValues(alpha: .28), borderRadius: BorderRadius.circular(999)),
-                          child: const Text('TIENDA', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w900)),
+                          child: const Text(
+                            'TIENDA',
+                            style: TextStyle(
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
                         ),
                     ],
                   ),
@@ -144,7 +158,13 @@ class _CatalogCard extends StatelessWidget {
                   Text(item.description, style: TextStyle(color: AppColors.ink.withValues(alpha: .66), height: 1.35)),
                   if (item.priceLabel != null) ...[
                     const SizedBox(height: 9),
-                    Text(item.priceLabel!, style: const TextStyle(fontWeight: FontWeight.w900, color: AppColors.pink)),
+                    Text(
+                      item.priceLabel!,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.blue,
+                      ),
+                    ),
                   ],
                   const SizedBox(height: 10),
                   BrandLinkButton(
