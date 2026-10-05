@@ -26,6 +26,8 @@ class CatalogItem {
     required this.description,
     required this.icon,
     required this.accent,
+    this.imageAsset,
+    this.imageSemanticLabel,
     this.priceLabel,
     this.isReadyStock = false,
     this.requiresCustomization = false,
@@ -42,6 +44,8 @@ class CatalogItem {
   final String description;
   final IconData icon;
   final Color accent;
+  final String? imageAsset;
+  final String? imageSemanticLabel;
   final String? priceLabel;
   final bool isReadyStock;
   final bool requiresCustomization;

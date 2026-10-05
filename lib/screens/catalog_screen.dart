@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../data/catalog_data.dart';
 import '../models/catalog_item.dart';
 import '../theme/app_theme.dart';
-import '../widgets/accent_icon_badge.dart';
 import '../widgets/brand_header.dart';
 import '../widgets/brand_link_button.dart';
 import '../widgets/brand_page_header.dart';
+import '../widgets/product_image.dart';
+import 'product_detail_screen.dart';
 
 class CatalogScreen extends StatefulWidget {
   const CatalogScreen({super.key});
@@ -38,6 +38,14 @@ class _CatalogScreenState extends State<CatalogScreen> {
       'Papel picado' || 'Plástico picado' => AppColors.white,
       _ => AppColors.ink,
     };
+  }
+
+  void _openDetail(CatalogItem item) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => ProductDetailScreen(item: item),
+      ),
+    );
   }
 
   @override
@@ -94,90 +102,116 @@ class _CatalogScreenState extends State<CatalogScreen> {
           ),
         ),
         const SizedBox(height: 18),
-        ...filtered.map((item) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: _CatalogCard(item: item),
-            )),
+        ...filtered.map(
+          (item) => Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: _CatalogCard(
+              item: item,
+              onTap: () => _openDetail(item),
+            ),
+          ),
+        ),
       ],
     );
   }
 }
 
 class _CatalogCard extends StatelessWidget {
-  const _CatalogCard({required this.item});
+  const _CatalogCard({
+    required this.item,
+    required this.onTap,
+  });
 
   final CatalogItem item;
-
-  Future<void> _askByWhatsApp() async {
-    final text = Uri.encodeComponent(
-      'Hola Todo Artesanal Chiapas 👋\nMe interesa: ${item.name}.\n¿Me pueden dar información, por favor?',
-    );
-    final uri = Uri.parse('https://wa.me/529612139040?text=$text');
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
-  }
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AccentIconBadge(
-              icon: item.icon,
-              accent: item.accent,
-              size: 58,
-              radius: 18,
-              iconSize: 28,
-              alpha: .18,
-            ),
-            const SizedBox(width: 15),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(child: Text(item.name, style: AppTypography.cardTitle)),
-                      if (item.isReadyStock)
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                          decoration: BoxDecoration(color: AppColors.green.withValues(alpha: .28), borderRadius: BorderRadius.circular(999)),
-                          child: const Text(
-                            'TIENDA',
-                            style: TextStyle(
-                              fontSize: 11.5,
-                              fontWeight: FontWeight.w900,
-                            ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(18),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 88,
+                child: ProductImage(
+                  item: item,
+                  height: 88,
+                  borderRadius: 18,
+                  iconSize: 34,
+                ),
+              ),
+              const SizedBox(width: 15),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item.name,
+                            style: AppTypography.cardTitle,
                           ),
                         ),
-                    ],
-                  ),
-                  const SizedBox(height: 5),
-                  Text(item.description, style: TextStyle(color: AppColors.ink.withValues(alpha: .66), height: 1.35)),
-                  if (item.priceLabel != null) ...[
-                    const SizedBox(height: 9),
+                        if (item.isReadyStock) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.green.withValues(alpha: .28),
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            child: const Text(
+                              'TIENDA',
+                              style: TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 5),
                     Text(
-                      item.priceLabel!,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w900,
-                        color: AppColors.blue,
+                      item.description,
+                      style: TextStyle(
+                        color: AppColors.ink.withValues(alpha: .66),
+                        height: 1.35,
                       ),
                     ),
+                    if (item.priceLabel != null) ...[
+                      const SizedBox(height: 9),
+                      Text(
+                        item.priceLabel!,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w900,
+                          color: AppColors.blue,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 8),
+                    BrandLinkButton(
+                      label: 'Ver detalles',
+                      color: AppColors.blue,
+                      onPressed: onTap,
+                      icon: Icons.arrow_forward_rounded,
+                      zeroPadding: true,
+                    ),
                   ],
-                  const SizedBox(height: 10),
-                  BrandLinkButton(
-                    label: 'Preguntar por WhatsApp',
-                    color: AppColors.purple,
-                    onPressed: _askByWhatsApp,
-                    icon: Icons.chat_rounded,
-                    zeroPadding: true,
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
