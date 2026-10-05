@@ -23,6 +23,13 @@ void main() {
 
     expect(find.byType(ProductDetailScreen), findsOneWidget);
     expect(find.text('Piñata personalizada'), findsOneWidget);
+
+    await tester.scrollUntilVisible(
+      find.text('Preguntar por WhatsApp'),
+      180,
+      scrollable: find.byType(Scrollable).last,
+    );
+
     expect(find.text('Preguntar por WhatsApp'), findsOneWidget);
   });
 }
