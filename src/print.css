@@ -10,3 +10,6 @@
 
 /* Logotipo oficial con transparencia: mantener proporciones originales. */
 .note-logo-image{background:transparent;border-radius:0;padding:0;min-height:0;display:flex;align-items:center;justify-content:center}.note-logo-image img{display:block;width:100%;height:auto;max-height:165px;object-fit:contain}@media print{.note-logo-image{min-height:0}.note-logo-image img{max-height:135px}}
+
+/* Franja ilustrada original para el pie de la nota. */
+.note-footer{padding:8px 0 0;margin:8px 0 0;break-inside:avoid;page-break-inside:avoid}.note-footer img{display:block;width:100%;height:auto;object-fit:contain}@media print{.note-footer{padding:5px 0 0;margin-top:5px}.note-footer img{max-width:100%}}
