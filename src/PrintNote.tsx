@@ -13,7 +13,7 @@ export default function PrintNote({ order }: { order: Order }) {
   return <article className="print-sheet" aria-label="Nota de pedido imprimible">
     <div className="note-top-border" aria-hidden="true">✿ ❀ ✿ ❀ ✿ ❀ ✿ ❀ ✿ ❀ ✿ ❀ ✿ ❀ ✿</div>
     <div className="note-header">
-      <div className="note-logo"><span className="note-logo-flower">✿</span><strong>TODO<br/>ARTESANAL</strong><span>CHIAPAS</span><small>PIÑATAS · PAPEL PICADO · DECORACIÓN</small></div>
+      <div className="note-logo note-logo-image"><img src="/logo-todo-artesanal.png" alt="Todo Artesanal Chiapas" /></div>
       <div className="note-title"><span>NOTA DE</span><strong><span>P</span><span>E</span><span>D</span><span>I</span><span>D</span><span>O</span></strong><small>PIÑATAS Y DECORACIONES ARTESANALES</small></div>
       <address className="note-contact">6a Oriente Norte #132.<br/>Col. Centro, TGZ, CHIS.<br/>Instagram y Facebook<br/><b>@todoartesanalchiapas</b><br/>WhatsApp: <b>9612139040</b></address>
     </div>
