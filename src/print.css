@@ -86,3 +86,16 @@
   .note-footer{margin:8px 0 0!important;padding:0!important}
   .note-footer img{max-height:0.95in!important;object-fit:contain!important}
 }
+
+/* Afinación final suave: ganar altura sin reducir la tipografía. */
+@media print{
+ .note-header-art img{max-height:1.96in!important}
+ .note-dates{margin:6px 0 9px!important}
+ .note-box,.note-products{margin:7px 0!important}
+ .note-grid .note-box{margin:4px 0!important;padding:9px 11px!important}
+ .note-terms li{margin:3px 0!important}
+ .note-totals>div{padding:4px 7px!important}
+ .note-signature{padding:9px 12px!important}
+ .note-footer{margin-top:5px!important}
+ .note-footer img{max-height:0.87in!important}
+}
