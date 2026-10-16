@@ -13,3 +13,6 @@
 
 /* Franja ilustrada original para el pie de la nota. */
 .note-footer{padding:8px 0 0;margin:8px 0 0;break-inside:avoid;page-break-inside:avoid}.note-footer img{display:block;width:100%;height:auto;object-fit:contain}@media print{.note-footer{padding:5px 0 0;margin-top:5px}.note-footer img{max-width:100%}}
+
+/* Encabezado ilustrado aportado por Todo Artesanal Chiapas. */
+.note-header-art{width:100%;margin:0 0 8px;break-inside:avoid;page-break-inside:avoid}.note-header-art img{display:block;width:100%;height:auto;object-fit:contain}.note-dates{margin-top:6px}@media print{.note-header-art{margin-bottom:4px}.note-header-art img{width:100%;max-height:64mm;object-fit:contain}}
