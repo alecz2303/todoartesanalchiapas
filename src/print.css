@@ -31,3 +31,31 @@
   .note-products tr{break-inside:avoid!important;page-break-inside:avoid!important}
   .note-footer,.note-signature{break-inside:avoid!important}
 }
+
+/* Compactación vertical para pedidos breves en una sola hoja carta.
+   Los pedidos largos siguen pudiendo paginar sin cortar filas. */
+@media print {
+  .print-sheet{padding:0.22in 0.32in 0.18in!important;font-size:9.5px!important;line-height:1.25!important}
+  .note-header-art{margin:0 0 2px!important}
+  .note-header-art img{max-height:1.70in!important;object-fit:contain!important}
+  .note-dates{margin:2px 0 5px!important;gap:2px 12px!important}
+  .note-dates>div{padding:3px 4px!important}
+  .note-box,.note-products{margin:4px 0!important;padding:6px 8px!important;border-radius:8px!important}
+  .print-sheet h3{margin:0 0 4px!important;padding:3px 9px!important;font-size:10px!important}
+  .note-customer .note-client-grid{gap:2px 12px!important}
+  .note-client-grid p,.note-box p{margin:2px 0!important}
+  .note-products{padding:6px 0 0!important}
+  .note-products h3{margin-left:8px!important}
+  .note-products th,.note-products td{padding:5px 5px!important;font-size:9px!important}
+  .note-grid{gap:0 9px!important}
+  .note-grid .note-box{margin:3px 0!important;padding:6px 8px!important}
+  .note-terms ul{margin:2px 0!important;padding-left:14px!important}
+  .note-terms li{margin:2px 0!important}
+  .note-totals{margin-top:3px!important}
+  .note-totals>div{padding:2px 5px!important}
+  .note-payment-history{font-size:8px!important}
+  .note-signature{margin-top:4px!important;padding:6px 8px!important;gap:10px!important}
+  .note-signature-line{margin-top:8px!important}
+  .note-footer{margin:2px 0 0!important;padding:0!important}
+  .note-footer img{max-height:0.72in!important;object-fit:contain!important}
+}
