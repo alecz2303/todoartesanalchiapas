@@ -16,3 +16,18 @@
 
 /* Encabezado ilustrado aportado por Todo Artesanal Chiapas. */
 .note-header-art{width:100%;margin:0 0 8px;break-inside:avoid;page-break-inside:avoid}.note-header-art img{display:block;width:100%;height:auto;object-fit:contain}.note-dates{margin-top:6px}@media print{.note-header-art{margin-bottom:4px}.note-header-art img{width:100%;max-height:64mm;object-fit:contain}}
+
+/* Tamaño carta real: el papel lo define @page; el contenido no debe heredar tamaños de pantalla. */
+@page{size:letter portrait;margin:0}
+@media print{
+  html,body,#root{width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;background:#fff!important}
+  .app,main{display:block!important;width:auto!important;max-width:none!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;overflow:visible!important}
+  .sidebar,main>header,.no-print,.prototype{display:none!important}
+  .print-sheet{display:block!important;width:8.5in!important;max-width:8.5in!important;min-width:0!important;min-height:0!important;height:auto!important;margin:0!important;padding:0.34in 0.36in 0.32in!important;border:0!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important;break-after:auto!important;page-break-after:auto!important}
+  .note-products,.note-grid,.note-products table{max-width:100%!important}
+  .note-products table{table-layout:fixed!important}
+  .note-header-art img,.note-footer img{max-width:100%!important;height:auto!important}
+  .note-products thead{display:table-header-group!important}
+  .note-products tr{break-inside:avoid!important;page-break-inside:avoid!important}
+  .note-footer,.note-signature{break-inside:avoid!important}
+}
