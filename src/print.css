@@ -112,3 +112,32 @@
  .note-signature{margin-top:4px!important}
  .note-footer{margin-top:3px!important}
 }
+
+/* Footer fijo estilo marca de agua: anclado al borde inferior de carta. */
+@media print{
+  .print-sheet{padding-bottom:1.03in!important}
+  .note-footer{
+    position:fixed!important;
+    left:0.36in!important;
+    right:0.36in!important;
+    bottom:0.12in!important;
+    width:auto!important;
+    height:0.76in!important;
+    margin:0!important;
+    padding:0!important;
+    display:flex!important;
+    align-items:end!important;
+    justify-content:center!important;
+    pointer-events:none!important;
+    z-index:0!important;
+  }
+  .note-footer img{
+    width:100%!important;
+    max-width:100%!important;
+    height:0.76in!important;
+    max-height:0.76in!important;
+    object-fit:contain!important;
+    object-position:center bottom!important;
+  }
+  .note-signature{position:relative;z-index:1}
+}
