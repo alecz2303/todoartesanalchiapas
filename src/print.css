@@ -7,3 +7,6 @@
 /* Ajustes para impresión carta y composición visual más cercana a la referencia. */
 @media print{.note-header{grid-template-columns:1.1fr 1.65fr 1.05fr;gap:10px}.note-title>span{font-size:28px}.note-title>strong{font-size:47px}.note-logo{min-height:115px}.note-dates{grid-template-columns:1fr 1fr}.note-products th,.note-products td{padding:7px 6px}.note-grid .note-box{padding:10px}.note-footer{font-size:18px}}
 @media screen and (min-width:681px){.print-sheet{max-width:816px;min-height:1056px}.note-logo{min-height:150px}.note-header{grid-template-columns:1.05fr 1.7fr 1.05fr}.note-title>span{font-size:32px}.note-title>strong{font-size:56px}.note-products td{padding:10px 7px}.note-box{padding:14px}.note-footer{font-size:21px}}
+
+/* Logotipo oficial con transparencia: mantener proporciones originales. */
+.note-logo-image{background:transparent;border-radius:0;padding:0;min-height:0;display:flex;align-items:center;justify-content:center}.note-logo-image img{display:block;width:100%;height:auto;max-height:165px;object-fit:contain}@media print{.note-logo-image{min-height:0}.note-logo-image img{max-height:135px}}
