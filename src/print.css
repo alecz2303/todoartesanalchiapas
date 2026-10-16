@@ -59,3 +59,30 @@
   .note-footer{margin:2px 0 0!important;padding:0!important}
   .note-footer img{max-height:0.72in!important;object-fit:contain!important}
 }
+
+/* Carta: composición legible, reemplaza la compactación excesiva anterior. */
+@media print {
+  .print-sheet{padding:0.34in 0.38in 0.30in!important;font-size:12px!important;line-height:1.42!important}
+  .note-header-art{margin:0 0 8px!important}
+  .note-header-art img{max-height:2.08in!important;object-fit:contain!important}
+  .note-dates{margin:8px 0 12px!important;gap:7px 15px!important}
+  .note-dates>div{padding:7px 6px!important;font-size:11px!important}
+  .note-box,.note-products{margin:9px 0!important;padding:11px 12px!important;border-radius:10px!important}
+  .print-sheet h3{margin:0 0 9px!important;padding:6px 12px!important;font-size:12px!important}
+  .note-customer .note-client-grid{gap:6px 15px!important}
+  .note-client-grid p,.note-box p{margin:4px 0!important}
+  .note-products{padding:10px 0 0!important}
+  .note-products h3{margin-left:12px!important}
+  .note-products th,.note-products td{padding:9px 7px!important;font-size:11px!important}
+  .note-grid{gap:0 13px!important}
+  .note-grid .note-box{margin:5px 0!important;padding:10px 11px!important}
+  .note-terms ul{margin:5px 0!important;padding-left:17px!important}
+  .note-terms li{margin:5px 0!important}
+  .note-totals{margin-top:8px!important}
+  .note-totals>div{padding:5px 7px!important}
+  .note-payment-history{font-size:10px!important}
+  .note-signature{margin-top:8px!important;padding:11px 12px!important;gap:18px!important}
+  .note-signature-line{margin-top:16px!important}
+  .note-footer{margin:8px 0 0!important;padding:0!important}
+  .note-footer img{max-height:0.95in!important;object-fit:contain!important}
+}
