@@ -11,12 +11,7 @@ export default function PrintNote({ order }: { order: Order }) {
   const amount = totals(order);
   const paid = amount.balance <= 0 && amount.total > 0;
   return <article className="print-sheet" aria-label="Nota de pedido imprimible">
-    <div className="note-top-border" aria-hidden="true">✿ ❀ ✿ ❀ ✿ ❀ ✿ ❀ ✿ ❀ ✿ ❀ ✿ ❀ ✿</div>
-    <div className="note-header">
-      <div className="note-logo note-logo-image"><img src="/logo-todo-artesanal.png" alt="Todo Artesanal Chiapas" /></div>
-      <div className="note-title"><span>NOTA DE</span><strong><span>P</span><span>E</span><span>D</span><span>I</span><span>D</span><span>O</span></strong><small>PIÑATAS Y DECORACIONES ARTESANALES</small></div>
-      <address className="note-contact">6a Oriente Norte #132.<br/>Col. Centro, TGZ, CHIS.<br/>Instagram y Facebook<br/><b>@todoartesanalchiapas</b><br/>WhatsApp: <b>9612139040</b></address>
-    </div>
+    <div className="note-header-art"><img src="/header.png" alt="Todo Artesanal Chiapas — Nota de pedido, piñatas y decoraciones artesanales" /></div>
     <div className="note-dates"><div><b>Pedido #</b> <span>{order.folio || 'Sin asignar'}</span></div><div><CalendarDays size={19}/><b>Fecha de pedido:</b> {date(order.createdAt)}</div><div><b>Fecha y hora de entrega:</b> {date(order.deliveryDate)} · {order.deliveryTime || 'Por confirmar'}</div></div>
     <section className="note-box note-customer"><h3>DATOS DEL CLIENTE</h3><div className="note-client-grid"><p><b>Nombre:</b> {order.customer || '—'}</p><p><b>Teléfono:</b> {order.phone || '—'}</p><p className="full"><b>Dirección:</b> {order.address || '—'}</p></div></section>
     <section className="note-products"><h3>DETALLES DEL PEDIDO</h3><table><thead><tr><th>Cant.</th><th>Descripción del producto</th><th>Medidas</th><th>Precio unitario</th><th>Importe</th></tr></thead><tbody>{order.items.map(item=><tr key={item.id}><td>{item.quantity}</td><td>{item.description || '—'}</td><td>{item.dimensions || '—'}</td><td>{money(item.unitPrice)}</td><td>{money(item.quantity * item.unitPrice)}</td></tr>)}</tbody></table></section>
