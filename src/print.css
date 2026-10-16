@@ -99,3 +99,16 @@
  .note-footer{margin-top:5px!important}
  .note-footer img{max-height:0.87in!important}
 }
+
+/* Ajuste milimétrico adicional para evitar que la firma salte de hoja. */
+@media print{
+ .print-sheet{padding-top:0.25in!important;padding-bottom:0.20in!important}
+ .note-header-art img{max-height:1.84in!important}
+ .note-dates{margin:4px 0 6px!important}
+ .note-products th,.note-products td{padding:7px 7px!important}
+ .note-box,.note-products{margin:5px 0!important}
+ .note-grid .note-box{margin:3px 0!important;padding:8px 11px!important}
+ .note-terms li{margin:2px 0!important}
+ .note-signature{margin-top:4px!important}
+ .note-footer{margin-top:3px!important}
+}
