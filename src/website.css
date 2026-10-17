@@ -44,3 +44,12 @@
 @media(max-width:760px){.tac-gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tac-gallery-image{height:170px}.tac-gallery-emoji{font-size:70px}.tac-gallery-caption{padding:14px}.tac-gallery-caption h3{font-size:15px}.tac-floating{font-size:36px}.tac-float-c{display:none}}
 @media(max-width:430px){.tac-gallery-grid{grid-template-columns:1fr}.tac-gallery-image{height:220px}}
 @media(prefers-reduced-motion:reduce){.site *, .site *::before,.site *::after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
+
+
+/* Portada fotográfica: la imagen se entrega en el paquete de recursos. */
+.site-hero-visual{isolation:isolate}
+.tac-hero-photo{position:absolute;inset:3% 0 2% 0;z-index:-1;border-radius:36px;background:linear-gradient(145deg,#e61d8e44,#ffcf5244),url('/galeria/pinatas-1.jpg') center 45%/cover no-repeat;filter:saturate(1.16);box-shadow:0 30px 70px #5e1c8030;animation:tac-card-float 8s ease-in-out infinite}
+.tac-hero-photo:after{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(90deg,#ffedff55,transparent 60%)}
+.site-art-card{position:relative;z-index:1;backdrop-filter:blur(5px);background:#fffdf3dc}
+.tac-gallery-card img{display:block}
+@media(prefers-reduced-motion:reduce){.tac-hero-photo{animation:none}}
