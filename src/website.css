@@ -161,3 +161,6 @@
 @keyframes tac-whatsapp-pulse{0%,100%{box-shadow:0 9px 28px #037e5760}50%{box-shadow:0 9px 28px #037e5760,0 0 0 9px #18ca871c}}
 @media(max-width:760px){.tac-floating-whatsapp{right:13px;bottom:15px;padding:13px}.tac-floating-whatsapp span{display:none}.tac-scene-balloon.b4{left:2%;top:15%}.tac-scene-sparkles{top:23%;opacity:.35}}
 @media(prefers-reduced-motion:reduce){.tac-product-tile,.tac-benefits>div,.tac-story-polaroid,.tac-story-copy,.tac-more-card,.tac-how-grid>div{opacity:1!important;translate:none!important}.tac-floating-whatsapp{animation:none!important}}
+
+/* Menú público estático: permanece arriba de la página y no sigue el desplazamiento. */
+.tac-festival .site-header.tac-topbar{position:relative;top:auto}
