@@ -6,3 +6,6 @@ dist/
 .DS_Store
 *.local
 coverage/
+
+# Caché de compilación de TypeScript
+*.tsbuildinfo
