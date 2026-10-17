@@ -175,3 +175,22 @@
 .tac-showcase .tac-papel-hero{display:none!important}
 .tac-showcase .tac-hero-scroll{display:none!important}
 @media(max-width:760px){.tac-showcase{aspect-ratio:1312/640!important}.tac-showcase .tac-scene-bg{background-size:cover!important}}
+
+
+/* Capas animadas independientes sobre la portada existente */
+.tac-showcase .tac-moving-pinata,.tac-showcase .tac-moving-mugs{position:absolute;z-index:3;pointer-events:none;will-change:transform}
+.tac-showcase .tac-moving-pinata{left:-2%;top:9%;width:31%;height:83%;transform-origin:50% 5%;animation:tac-pinata-swing 5.2s ease-in-out infinite}
+.tac-showcase .tac-moving-pinata img{display:block;width:100%;height:100%;object-fit:cover;object-position:30% center;mask-image:radial-gradient(ellipse at 42% 48%,#000 30%,#000c 46%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse at 42% 48%,#000 30%,#000c 46%,transparent 75%);filter:saturate(1.24) drop-shadow(0 14px 12px #4d173f44)}
+.tac-showcase .tac-moving-mugs{right:-1%;bottom:-8%;width:29%;height:70%;animation:tac-mugs-bob 6.2s ease-in-out infinite}
+.tac-showcase .tac-moving-mugs img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 60%;mask-image:radial-gradient(ellipse at 53% 55%,#000 28%,#000b 49%,transparent 76%);-webkit-mask-image:radial-gradient(ellipse at 53% 55%,#000 28%,#000b 49%,transparent 76%);filter:saturate(1.2)}
+.tac-showcase .tac-moving-balloon,.tac-showcase .tac-moving-confetti{position:absolute;z-index:4;pointer-events:none;filter:drop-shadow(0 4px 5px #441d3b45)}
+.tac-moving-balloon{font-size:clamp(24px,4vw,65px);animation:tac-balloon-fly 5s ease-in-out infinite}
+.tac-moving-balloon-one{top:6%;right:6%}.tac-moving-balloon-two{top:22%;right:23%;animation-delay:-2.2s}
+.tac-moving-confetti{font-size:clamp(16px,2.5vw,32px);animation:tac-confetti-dance 7s ease-in-out infinite}
+.tac-moving-confetti-one{top:15%;left:38%;color:#ff1389}.tac-moving-confetti-two{top:65%;left:54%;color:#ef007b;animation-delay:-3s}.tac-moving-confetti-three{top:18%;right:31%;color:#ffc400;animation-delay:-5s}
+@keyframes tac-pinata-swing{0%,100%{transform:rotate(-4deg) translateY(0)}50%{transform:rotate(4deg) translateY(-12px)}}
+@keyframes tac-mugs-bob{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-13px) rotate(1.5deg)}}
+@keyframes tac-balloon-fly{0%,100%{transform:translateY(0) rotate(-9deg)}50%{transform:translateY(-24px) rotate(7deg)}}
+@keyframes tac-confetti-dance{0%,100%{transform:translateY(0) rotate(-15deg);opacity:.65}50%{transform:translateY(25px) rotate(25deg);opacity:1}}
+@media(max-width:760px){.tac-showcase .tac-moving-pinata{width:47%;left:-17%;top:20%;height:65%}.tac-showcase .tac-moving-mugs{width:45%;right:-18%;height:55%}.tac-moving-balloon-two{right:13%;top:12%}.tac-moving-confetti-two{left:48%}}
+@media(prefers-reduced-motion:reduce){.tac-showcase .tac-moving-pinata,.tac-showcase .tac-moving-mugs,.tac-showcase .tac-moving-balloon,.tac-showcase .tac-moving-confetti{animation:none!important;will-change:auto}}
