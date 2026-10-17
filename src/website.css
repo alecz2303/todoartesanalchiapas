@@ -194,3 +194,8 @@
 @keyframes tac-confetti-dance{0%,100%{transform:translateY(0) rotate(-15deg);opacity:.65}50%{transform:translateY(25px) rotate(25deg);opacity:1}}
 @media(max-width:760px){.tac-showcase .tac-moving-pinata{width:47%;left:-17%;top:20%;height:65%}.tac-showcase .tac-moving-mugs{width:45%;right:-18%;height:55%}.tac-moving-balloon-two{right:13%;top:12%}.tac-moving-confetti-two{left:48%}}
 @media(prefers-reduced-motion:reduce){.tac-showcase .tac-moving-pinata,.tac-showcase .tac-moving-mugs,.tac-showcase .tac-moving-balloon,.tac-showcase .tac-moving-confetti{animation:none!important;will-change:auto}}
+
+/* Corrección real del menú pegajoso: overflow-x:hidden en .site
+   crea un contenedor de scroll que impide que position:sticky funcione. */
+.site.tac-festival{overflow-x:clip!important;overflow-y:visible!important}
+.tac-festival .site-header.tac-topbar{position:sticky!important;top:0!important;z-index:1000!important}
