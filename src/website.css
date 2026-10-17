@@ -164,3 +164,14 @@
 
 /* Menú público estático: permanece arriba de la página y no sigue el desplazamiento. */
 .tac-festival .site-header.tac-topbar{position:relative;top:auto}
+
+
+/* La portada ya incluye la marca oficial dentro de la imagen, sin textos duplicados. */
+.tac-festival .site-header.tac-topbar{position:sticky!important;top:0!important;z-index:100!important;background:#fff}
+.tac-showcase{min-height:0!important;height:auto!important;aspect-ratio:1312/485!important;display:block!important;background:#fff!important}
+.tac-showcase .tac-scene{position:absolute;inset:0}
+.tac-showcase .tac-scene-bg{position:absolute;inset:0;background:url('/galeria/portada-fiesta.jpg') center center/cover no-repeat!important;filter:none!important}
+.tac-showcase .tac-scene:after{display:none!important}
+.tac-showcase .tac-papel-hero{display:none!important}
+.tac-showcase .tac-hero-scroll{display:none!important}
+@media(max-width:760px){.tac-showcase{aspect-ratio:1312/640!important}.tac-showcase .tac-scene-bg{background-size:cover!important}}
