@@ -138,3 +138,26 @@
 @media(max-width:760px){.tac-festival .site-nav{gap:12px}.tac-festival .site-nav a{font-size:12px}.tac-showcase{min-height:660px}.tac-showcase-content{width:min(94vw,480px);padding:105px 18px 75px}.tac-showcase-logo{width:150px;height:135px}.tac-showcase h1{font-size:35px}.tac-showcase-sub{font-size:12px;max-width:300px}.tac-scene-pinata{left:-20%;top:26%;width:58vw;height:55%;opacity:.75}.tac-scene-mugs{right:-20%;width:55vw;height:46%;opacity:.7}.tac-scene:after{background:radial-gradient(ellipse at center,#fff8eaf0 5%,#fff7e3bf 45%,transparent 78%)}.tac-scene-balloon.b2{right:1%}.tac-product-strip{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.tac-product-tile:last-child{grid-column:1/-1}.tac-product-photo{height:165px}.tac-benefits{grid-template-columns:repeat(2,1fr);gap:12px}.tac-benefits>div{justify-content:flex-start;border:0}.tac-benefits>div:last-child{grid-column:1/-1}.tac-story{grid-template-columns:1fr 1fr;gap:20px;padding:55px 22px}.tac-story-copy{grid-column:1/-1;grid-row:1}.tac-story-polaroid{max-width:200px}.tac-story-polaroid img{aspect-ratio:1}.tac-more-grid{grid-template-columns:repeat(2,1fr)}.tac-how-grid{grid-template-columns:repeat(2,1fr)}.tac-contact{flex-direction:column;align-items:flex-start}.tac-showcase-flower{font-size:18px}}
 @media(max-width:420px){.tac-product-photo{height:130px}.tac-product-label{font-size:11px;padding:9px}.tac-hero-mini{gap:9px;font-size:10px}.tac-how-grid{grid-template-columns:1fr}.tac-story-polaroid span{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.tac-festival *, .tac-festival *:before,.tac-festival *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+
+/* Microinteracciones festivas y revelado progresivo */
+.tac-festival{scroll-behavior:smooth}
+.tac-festival section[id]{scroll-margin-top:85px}
+.tac-festival .site-nav a:not(.tac-order-top){position:relative}
+.tac-festival .site-nav a:not(.tac-order-top):after{content:'';position:absolute;left:0;right:100%;height:3px;bottom:-7px;border-radius:10px;background:#ee087f;transition:right .25s}
+.tac-festival .site-nav a:not(.tac-order-top):hover:after{right:0}
+.tac-scene-sparkles{position:absolute;z-index:2;left:0;right:0;top:16%;text-align:center;color:#e71985;font-size:clamp(16px,2.5vw,30px);letter-spacing:clamp(16px,6vw,90px);opacity:.7;white-space:nowrap;animation:tac-sparkle-drift 9s ease-in-out infinite}
+.tac-scene-balloon.b4{top:10%;left:10%;animation-delay:-4s}
+.tac-festoon{font-size:21px;text-align:center;letter-spacing:clamp(4px,2vw,28px);color:#f10b80;background:#fff;padding:8px 5px 0;white-space:nowrap;overflow:hidden}
+.tac-floating-whatsapp{position:fixed;right:22px;bottom:24px;z-index:35;display:flex;align-items:center;gap:10px;padding:14px 18px;border-radius:50px;color:#fff!important;background:linear-gradient(120deg,#08a971,#18ca87);font-weight:900;font-size:13px;box-shadow:0 9px 28px #037e5760;animation:tac-whatsapp-pulse 3.5s ease-in-out infinite;transition:transform .2s}
+.tac-floating-whatsapp:hover{transform:translateY(-5px)}
+.tac-product-tile,.tac-benefits>div,.tac-story-polaroid,.tac-story-copy,.tac-more-card,.tac-how-grid>div{opacity:0;translate:0 25px;transition:opacity .65s ease,translate .65s ease,transform .3s ease}
+.tac-revealed{opacity:1!important;translate:0 0!important}
+.tac-product-tile:nth-child(2),.tac-more-card:nth-child(2){transition-delay:.08s}
+.tac-product-tile:nth-child(3),.tac-more-card:nth-child(3){transition-delay:.16s}
+.tac-product-tile:nth-child(4),.tac-more-card:nth-child(4){transition-delay:.24s}
+.tac-product-tile:nth-child(5),.tac-more-card:nth-child(5){transition-delay:.32s}
+@keyframes tac-sparkle-drift{0%,100%{transform:translateY(0);opacity:.45}50%{transform:translateY(16px);opacity:.8}}
+@keyframes tac-whatsapp-pulse{0%,100%{box-shadow:0 9px 28px #037e5760}50%{box-shadow:0 9px 28px #037e5760,0 0 0 9px #18ca871c}}
+@media(max-width:760px){.tac-floating-whatsapp{right:13px;bottom:15px;padding:13px}.tac-floating-whatsapp span{display:none}.tac-scene-balloon.b4{left:2%;top:15%}.tac-scene-sparkles{top:23%;opacity:.35}}
+@media(prefers-reduced-motion:reduce){.tac-product-tile,.tac-benefits>div,.tac-story-polaroid,.tac-story-copy,.tac-more-card,.tac-how-grid>div{opacity:1!important;translate:none!important}.tac-floating-whatsapp{animation:none!important}}
