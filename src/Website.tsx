@@ -17,7 +17,7 @@ export function Website(){const [menu,setMenu]=useState(false);useEffect(()=>{co
 <main>
 <section className="tac-showcase" id="inicio">
 <div className="tac-scene" aria-hidden="true"><div className="tac-scene-bg"/></div><div className="tac-papel tac-papel-hero" aria-hidden="true">{Array.from({length:16},(_,i)=><span key={i} style={{animationDelay:`${i*.14}s`}}>{['✿','✦','❀','♥'][i%4]}</span>)}</div>
-<div className="tac-showcase-content"><img className="tac-showcase-logo-official" src="/logo-todo-artesanal.png" alt="Todo Artesanal Chiapas"/></div><div className="tac-hero-scroll"><a href="#productos">Descubre lo que hacemos <span>↓</span></a></div>
+<div className="tac-hero-scroll"><a href="#productos">Descubre lo que hacemos <span>↓</span></a></div>
 </section>
 <div className="tac-festoon" aria-hidden="true">✿ ✦ ♥ ✿ ✦ ♥ ✿ ✦ ♥ ✿ ✦ ♥ ✿</div><section className="tac-product-strip" id="productos" aria-label="Nuestros productos">{categories.map(c=><a href={wa} target="_blank" rel="noreferrer" className={`tac-product-tile tac-tile-${c.color}`} key={c.title}><div className="tac-product-photo"><Photo src={c.photo} alt={c.title}/></div><div className="tac-product-label"><span>{c.icon} {c.title}</span><span className="tac-product-arrow"><ChevronRight size={20}/></span></div></a>)}</section>
 <section className="tac-benefits" aria-label="Nuestros valores"><div><Truck/><span>Pedidos<br/>personalizados</span></div><div><Heart/><span>Hecho a mano<br/>con mucho amor</span></div><div><BadgeCheck/><span>Detalles cuidados<br/>con cariño</span></div><div><CalendarDays/><span>Para todo tipo<br/>de eventos</span></div><div><MapPin/><span>En Tuxtla Gutiérrez,<br/>Chiapas</span></div></section>
