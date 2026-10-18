@@ -1,7 +1,7 @@
-export type Item = { id: string; quantity: number; description: string; dimensions: string; unitPrice: number };
+export type Item = { id: string; quantity: number; description: string; dimensions: string; observations?: string; unitPrice: number };
 export type Payment = { id: string; date: string; amount: number; method: 'Efectivo' | 'Transferencia' };
 export type Order = { id: string; folio: string; createdAt: string; customer: string; phone: string; address: string; deliveryDate: string; deliveryTime: string; eventDate: string; delivery: 'Recoger en tienda' | 'Envío a domicilio'; deliveryAddress: string; directions: string; instructions: string; iva: boolean; shipping: number; items: Item[]; payments: Payment[]; consent: boolean; status: string };
 export const money=(n:number)=>new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(n);
 export function totals(o:Order){const subtotal=o.items.reduce((s,i)=>s+i.quantity*i.unitPrice,0);const tax=o.iva?Math.round(subtotal*0.16*100)/100:0;const shipping=o.delivery==='Envío a domicilio'?o.shipping:0;const total=subtotal+tax+shipping;const paid=o.payments.reduce((s,p)=>s+p.amount,0);return {subtotal,tax,shipping,total,requiredDeposit:Math.round(total*0.6*100)/100,paid,balance:Math.max(0,total-paid)};}
-export const newItem=():Item=>({id:crypto.randomUUID(),quantity:1,description:'',dimensions:'',unitPrice:0});
+export const newItem=():Item=>({id:crypto.randomUUID(),quantity:1,description:'',dimensions:'',observations:'',unitPrice:0});
 export function blankOrder():Order{return {id:crypto.randomUUID(),folio:'',createdAt:new Date().toISOString(),customer:'',phone:'',address:'',deliveryDate:'',deliveryTime:'',eventDate:'',delivery:'Recoger en tienda',deliveryAddress:'',directions:'',instructions:'',iva:false,shipping:85,items:[newItem()],payments:[],consent:false,status:'Solicitud recibida'};}
