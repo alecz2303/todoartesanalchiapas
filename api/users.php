@@ -9,7 +9,7 @@ if($_SERVER['REQUEST_METHOD']==='GET'){
 requirePost();requireCsrf();$b=body();$action=$b['action']??'';
 if($action==='create'){
  $username=trim((string)($b['username']??''));$name=trim((string)($b['display_name']??''));$password=(string)($b['password']??'');
- if(!preg_match('/^[a-zA-Z0-9_.-]{3,80}$/',$username)||mb_strlen($name)<2||mb_strlen($name)>120||strlen($password)<12||strlen($password)>4096)respond(400,['error'=>'Usuario, nombre o contraseña inválidos (mínimo 12 caracteres)']);
+ if(!preg_match('/^[a-zA-Z0-9_.-]{3,80}$/',$username)||mb_strlen($name)<2||mb_strlen($name)>120||strlen($password)<8||strlen($password)>4096)respond(400,['error'=>'Usuario, nombre o contraseña inválidos (mínimo 8 caracteres)']);
  try {$pdo->prepare('INSERT INTO users(username,display_name,password_hash) VALUES(?,?,?)')->execute([$username,$name,password_hash($password,PASSWORD_DEFAULT)]);}
  catch(PDOException $e){respond(409,['error'=>'El usuario ya existe']);}
  $pdo->prepare('INSERT INTO audit_log(user_id,action,subject) VALUES(?,?,?)')->execute([$actor['id'],'user.create',$username]);
