@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { CheckCircle2, CircleUserRound, Plus, RefreshCw, ShieldCheck, UserRoundCheck, UserRoundX } from 'lucide-react';
 import './users-panel.css';
 
@@ -23,7 +23,7 @@ export default function UsersPanel({csrf,onSessionExpired}:Props){
  }
  async function load(){setLoading(true);try{const data=await request();setUsers(data.users||[]);setError('')}catch(e){setError(e instanceof Error?e.message:'Error de conexión')}finally{setLoading(false)}}
  useEffect(()=>{void load()},[csrf]);
- async function create(e:React.FormEvent){e.preventDefault();if(password.length<12){setError('La contraseña debe tener al menos 12 caracteres.');return}setBusy(true);setError('');setSuccess('');try{await request({action:'create',username:username.trim(),display_name:name.trim(),password});setUsername('');setName('');setPassword('');setShowForm(false);setSuccess('¡Usuario creado! Ya puede iniciar sesión.');await load()}catch(e){setError(e instanceof Error?e.message:'No se pudo crear el usuario')}finally{setBusy(false)}}
+ async function create(e:FormEvent){e.preventDefault();if(password.length<12){setError('La contraseña debe tener al menos 12 caracteres.');return}setBusy(true);setError('');setSuccess('');try{await request({action:'create',username:username.trim(),display_name:name.trim(),password});setUsername('');setName('');setPassword('');setShowForm(false);setSuccess('¡Usuario creado! Ya puede iniciar sesión.');await load()}catch(e){setError(e instanceof Error?e.message:'No se pudo crear el usuario')}finally{setBusy(false)}}
  async function toggle(u:User){const active=String(u.is_active)==='1'||u.is_active===true;const action=active?'desactivar':'activar';if(!window.confirm('¿Deseas '+action+' la cuenta de '+u.display_name+'?'))return;setBusy(true);setError('');setSuccess('');try{await request({action:'set_active',id:u.id,is_active:!active});setSuccess('Cuenta actualizada correctamente.');await load()}catch(e){setError(e instanceof Error?e.message:'No se pudo actualizar la cuenta')}finally{setBusy(false)}}
  const activeCount=users.filter(u=>String(u.is_active)==='1'||u.is_active===true).length;
  return <div className="tac-users">
