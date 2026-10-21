@@ -183,3 +183,38 @@
   .print-sheet.print-sheet-quotation { padding-top:0.25in!important; }
   .print-sheet-quotation .note-quotation-header { break-inside:avoid;page-break-inside:avoid; }
 }
+
+/* Cotizaciones: paginación independiente del membrete de notas.
+   Evita que un bloque completo de productos salte por restricciones heredadas. */
+@media print {
+  .print-sheet.print-sheet-quotation {
+    padding:0.18in 0.32in 0.20in!important;
+    font-size:10px!important;
+    line-height:1.25!important;
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+  }
+  .print-sheet-quotation .note-quotation-header {
+    padding:5px 10px!important;
+    margin:0 0 4px!important;
+    min-height:0!important;
+  }
+  .print-sheet-quotation .note-quotation-header img {width:65px!important;height:65px!important}
+  .print-sheet-quotation .note-quotation-header h2 {font-size:24px!important;margin:1px 0!important}
+  .print-sheet-quotation .note-quotation-header p {font-size:9px!important}
+  .print-sheet-quotation .note-dates {margin:3px 0 4px!important;gap:2px 10px!important}
+  .print-sheet-quotation .note-dates>div {padding:3px 4px!important;font-size:10px!important}
+  .print-sheet-quotation .note-box,
+  .print-sheet-quotation .note-products {margin:4px 0!important;padding:6px 8px!important}
+  .print-sheet-quotation h3 {font-size:10px!important;margin-bottom:4px!important;padding:3px 9px!important}
+  .print-sheet-quotation .note-products {padding:5px 0 0!important;break-inside:auto!important;page-break-inside:auto!important}
+  .print-sheet-quotation .note-products table,
+  .print-sheet-quotation .note-products tbody {break-inside:auto!important;page-break-inside:auto!important}
+  .print-sheet-quotation .note-products th,
+  .print-sheet-quotation .note-products td {padding:5px!important;font-size:9px!important}
+  .print-sheet-quotation .note-grid .note-box {padding:6px 8px!important;margin:3px 0!important}
+  .print-sheet-quotation .note-terms li {margin:2px 0!important}
+  .print-sheet-quotation .note-totals>div {padding:2px 5px!important}
+  .print-sheet-quotation .note-footer {position:static!important;height:auto!important;width:100%!important;margin-top:4px!important}
+  .print-sheet-quotation .note-footer img {height:auto!important;max-height:0.55in!important}
+}
