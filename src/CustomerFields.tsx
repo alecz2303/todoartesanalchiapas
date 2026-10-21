@@ -1,0 +1,24 @@
+import { useEffect, useRef, useState } from 'react';
+import { Check, Search, UserRound } from 'lucide-react';
+import type { Order } from './model';
+import './customer-fields.css';
+type Customer={id:number;name:string;phone:string;address:string};
+export default function CustomerFields({draft,update,csrf,onSessionExpired}:{draft:Order;update:(patch:Partial<Order>)=>void;csrf:string;onSessionExpired:()=>void}){
+ const [customers,setCustomers]=useState<Customer[]>([]);
+ const [selectedId,setSelectedId]=useState<number|null>(null);
+ const [open,setOpen]=useState(false);
+ const [message,setMessage]=useState('');
+ const [ready,setReady]=useState(false);
+ const lastSaved=useRef('');
+ const customerName=draft.customer.trim();
+ useEffect(()=>{let active=true;fetch('/api/customers.php',{credentials:'same-origin',cache:'no-store'}).then(async r=>{if(r.status===401){onSessionExpired();return null}if(!r.ok)throw new Error('Catálogo no disponible');return r.json()}).then(d=>{if(active&&d){setCustomers(d.customers||[]);setReady(true)}}).catch(()=>{if(active)setMessage('No se pudo cargar el catálogo de clientes')});return()=>{active=false}},[csrf,onSessionExpired]);
+ const matches=customerName.length>=2?customers.filter(c=>c.name.toLocaleLowerCase('es-MX').includes(customerName.toLocaleLowerCase('es-MX'))).slice(0,6):[];
+ const select=(c:Customer)=>{setSelectedId(c.id);lastSaved.current=JSON.stringify([c.name,c.phone,c.address]);update({customer:c.name,phone:c.phone,address:c.address});setOpen(false);setMessage('Cliente encontrado: datos completados automáticamente.')};
+ useEffect(()=>{if(!ready||!customerName||!draft.phone.trim()||customerName.length<2)return;
+ const signature=JSON.stringify([customerName,draft.phone.trim(),draft.address.trim()]);
+ if(signature===lastSaved.current)return;
+ const timer=window.setTimeout(async()=>{try{const res=await fetch('/api/customers.php',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify({action:'save',id:selectedId||undefined,name:customerName,phone:draft.phone.trim(),address:draft.address.trim()})});if(res.status===401){onSessionExpired();return}if(!res.ok)throw new Error('No se pudo guardar el cliente');const data=await res.json();lastSaved.current=signature;setSelectedId(data.id);setMessage('Datos del cliente guardados automáticamente.');const list=await fetch('/api/customers.php',{credentials:'same-origin'});if(list.ok){const payload=await list.json();setCustomers(payload.customers||[])}}catch{setMessage('No se guardaron los datos del cliente. Revisa la conexión.')}},1800);
+ return()=>window.clearTimeout(timer);
+ },[customerName,draft.phone,draft.address,selectedId,ready,csrf,onSessionExpired]);
+ return <div className="form-grid tac-customer-fields"><div className="tac-customer-name"><label>Nombre completo *<span className="tac-customer-input"><Search size={17}/><input value={draft.customer} autoComplete="off" onFocus={()=>setOpen(true)} onBlur={()=>window.setTimeout(()=>setOpen(false),160)} onChange={e=>{setSelectedId(null);setOpen(true);setMessage('');update({customer:e.target.value})}} placeholder="Escribe para buscar o registrar…"/></span></label>{open&&matches.length>0&&<div className="tac-customer-suggestions" role="listbox" aria-label="Clientes guardados">{matches.map(c=><button type="button" key={c.id} role="option" aria-selected={selectedId===c.id} onMouseDown={e=>e.preventDefault()} onClick={()=>select(c)}><UserRound size={17}/><span><strong>{c.name}</strong><small>{c.phone||'Sin teléfono'} · {c.address||'Sin dirección'}</small></span><Check size={15}/></button>)}</div>}</div><label>Teléfono *<input type="tel" value={draft.phone} onChange={e=>update({phone:e.target.value})}/></label><label className="wide">Dirección del cliente<input value={draft.address} onChange={e=>update({address:e.target.value})}/></label><p className="tac-customer-message wide" aria-live="polite">{message||'Los datos se guardan automáticamente cuando hay nombre y teléfono. No necesitas salir de esta pantalla.'}</p></div>;
+}
