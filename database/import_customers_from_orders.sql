@@ -3,7 +3,7 @@
 -- Lee orders.payload (JSON) y NO cambia ningún pedido.
 -- Evita repetir nombre + teléfono, incluso al ejecutar de nuevo.
 INSERT INTO customers (name,phone,address)
-SELECT extracted.name,extracted.phone,extracted.address
+SELECT MAX(extracted.name),MAX(extracted.phone),MAX(extracted.address)
 FROM (
  SELECT TRIM(JSON_UNQUOTE(JSON_EXTRACT(payload,'$.customer'))) AS name,
         TRIM(COALESCE(JSON_UNQUOTE(JSON_EXTRACT(payload,'$.phone')),'')) AS phone,
