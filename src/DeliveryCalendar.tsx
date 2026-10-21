@@ -1,3 +1,4 @@
+import './calendar-print.css';
 import { useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight, CalendarDays, Clock3, ArrowUpRight, Printer } from 'lucide-react';
 import { type Order, totals, money } from './model';
