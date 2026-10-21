@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { AlertTriangle, ArrowUpRight, CalendarDays, Columns3, CalendarClock, CheckCircle2, CircleDollarSign, ClipboardList, CreditCard, PackageCheck, Plus, TrendingUp, Wallet } from 'lucide-react';
+import { AlertTriangle, ArrowUpRight, CalendarDays, Columns3, CalendarClock, CheckCircle2, CircleDollarSign, ClipboardList, CreditCard, PackageCheck, Plus, TrendingUp, Wallet, FileText } from 'lucide-react';
 import { money, totals, type Order } from './model';
 import './dashboard.css';
 
@@ -10,7 +10,7 @@ const monthKey = (d:Date) => `${d.getFullYear()}-${String(d.getMonth()+1).padSta
 const moneyShort = (n:number) => n >= 1000 ? `$${(n/1000).toFixed(n%1000===0?0:1)} mil` : money(n);
 const finished = (o:Order) => o.status==='Entregado' || o.status==='Cancelado';
 
-export default function Dashboard({orders,onNew,onOpen,onAll,onCalendar,onProduction}:{orders:Order[];onNew:()=>void;onOpen:(order:Order)=>void;onAll:()=>void;onCalendar:()=>void;onProduction:()=>void}){
+export default function Dashboard({orders,onNew,onOpen,onAll,onCalendar,onProduction,onAlert}:{orders:Order[];onNew:()=>void;onOpen:(order:Order)=>void;onAll:()=>void;onCalendar:()=>void;onProduction:()=>void;onAlert:(kind:'overdue'|'upcoming'|'deposit'|'quotes')=>void}){
   const [period,setPeriod]=useState<'30'|'90'|'all'>('90');
   const today=monthKey(new Date())+'-'+String(new Date().getDate()).padStart(2,'0');
   const todayDate=new Date();todayDate.setHours(12,0,0,0);
@@ -25,6 +25,7 @@ export default function Dashboard({orders,onNew,onOpen,onAll,onCalendar,onProduc
   const receivable=orders.filter(o=>o.status!=='Cancelado').reduce((n,o)=>n+totals(o).balance,0);
   const completed=visible.filter(o=>o.status==='Entregado').length;
   const pendingDeposits=active.filter(o=>totals(o).paid<totals(o).requiredDeposit);
+  const quotations=orders.filter(o=>o.status==='En cotización');
   const statusData=Object.entries(orders.reduce<Record<string,number>>((a,o)=>{a[o.status]=(a[o.status]||0)+1;return a},{})).sort((a,b)=>b[1]-a[1]);
   const colors=['#FF1493','#2204CC','#00A1C7','#52BF23','#FF7300','#AA00FF','#F2C400','#697386'];
   const months=Array.from({length:6},(_,i)=>{const d=new Date(todayDate.getFullYear(),todayDate.getMonth()-5+i,1);return {key:monthKey(d),label:d.toLocaleDateString('es-MX',{month:'short'}),orders:orders.filter(o=>o.createdAt.slice(0,7)===monthKey(d)).reduce((n,o)=>n+totals(o).total,0),paid:orders.flatMap(o=>o.payments).filter(p=>p.date.slice(0,7)===monthKey(d)).reduce((n,p)=>n+p.amount,0)}});
@@ -46,9 +47,10 @@ export default function Dashboard({orders,onNew,onOpen,onAll,onCalendar,onProduc
       <article className="dash-kpi orange"><div className="dash-kpi-top"><span>Saldo por cobrar</span><CircleDollarSign size={20}/></div><strong>{money(receivable)}</strong><small>Todos los pedidos no cancelados</small></article>
     </div>
     <div className="dash-alerts">
-      <div className={overdue.length?'dash-alert danger':'dash-alert calm'}><AlertTriangle size={21}/><div><strong>{overdue.length} entrega{overdue.length===1?'':'s'} vencida{overdue.length===1?'':'s'}</strong><span>{overdue.length?'Revisa los pedidos con fecha anterior a hoy.':'No hay entregas vencidas.'}</span></div></div>
-      <div className="dash-alert amber"><CalendarClock size={21}/><div><strong>{urgent.length} entrega{urgent.length===1?'':'s'} en los próximos 7 días</strong><span>Pedidos activos próximos a entregarse.</span></div></div>
-      <div className="dash-alert blue"><CreditCard size={21}/><div><strong>{pendingDeposits.length} pedido{pendingDeposits.length===1?'':'s'} sin anticipo completo</strong><span>Abonos inferiores al 60 % requerido.</span></div></div>
+      <button type="button" className={overdue.length?'dash-alert danger':'dash-alert calm'} onClick={()=>onAlert('overdue')}><AlertTriangle size={21}/><div><strong>{overdue.length} entrega{overdue.length===1?'':'s'} vencida{overdue.length===1?'':'s'}</strong><span>Ver pedidos con fecha anterior a hoy.</span></div><ArrowUpRight size={16} className="dash-alert-arrow"/></button>
+      <button type="button" className="dash-alert amber" onClick={()=>onAlert('upcoming')}><CalendarClock size={21}/><div><strong>{urgent.length} entrega{urgent.length===1?'':'s'} en los próximos 7 días</strong><span>Ver entregas próximas.</span></div><ArrowUpRight size={16} className="dash-alert-arrow"/></button>
+      <button type="button" className="dash-alert blue" onClick={()=>onAlert('deposit')}><CreditCard size={21}/><div><strong>{pendingDeposits.length} pedido{pendingDeposits.length===1?'':'s'} sin anticipo completo</strong><span>Ver pedidos con anticipo pendiente.</span></div><ArrowUpRight size={16} className="dash-alert-arrow"/></button>
+      <button type="button" className="dash-alert quote" onClick={()=>onAlert('quotes')}><FileText size={21}/><div><strong>{quotations.length} cotización{quotations.length===1?'':'es'} pendiente{quotations.length===1?'':'s'}</strong><span>Ver cotizaciones y dar seguimiento.</span></div><ArrowUpRight size={16} className="dash-alert-arrow"/></button>
     </div>
     <div className="dash-charts">
       <section className="dash-card dash-chart-main"><div className="dash-card-heading"><div><h3>Pedidos y pagos por mes</h3><p>Comparación de los últimos seis meses</p></div><div className="dash-legend"><span><i className="dot pink-dot"/> Valor de pedidos</span><span><i className="dot cyan-dot"/> Pagos recibidos</span></div></div><div className="dash-bars" role="img" aria-label="Gráfica de barras con valor de pedidos y pagos recibidos en los últimos seis meses">{months.map(m=><div className="dash-bar-group" key={m.key}><div className="dash-bar-values"><div className="dash-bar pink-bar" style={{height:`${Math.max(m.orders?3:0,m.orders/peak*100)}%`}} title={`Pedidos: ${money(m.orders)}`}/><div className="dash-bar cyan-bar" style={{height:`${Math.max(m.paid?3:0,m.paid/peak*100)}%`}} title={`Pagos: ${money(m.paid)}`}/></div><span>{m.label}</span></div>)}</div><div className="dash-chart-note">Máximo de escala: {moneyShort(peak)} · Los pagos se agrupan por fecha de abono.</div></section>
