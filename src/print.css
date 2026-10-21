@@ -174,3 +174,6 @@
   }
   .note-dates{position:relative;z-index:1;margin-top:0!important}
 }
+
+/* Encabezado propio de cotizaciones: conserva el diseño oficial de notas para pedidos normales. */
+.note-quotation-header{display:flex;align-items:center;justify-content:center;gap:25px;padding:20px;background:linear-gradient(110deg,#fdf0fa,#f2eaff);border:2px solid #ff1493;border-radius:14px;margin-bottom:12px}.note-quotation-header img{width:125px;height:125px;object-fit:contain}.note-quotation-header span{font-size:12px;font-weight:900;letter-spacing:2px;color:#6c33ba}.note-quotation-header h2{font-size:39px;font-weight:900;letter-spacing:2px;color:#2204cc;margin:5px 0}.note-quotation-header p{font-size:12px;color:#6b4b87;margin:0}@media print{.note-quotation-header{padding:9px!important;margin-bottom:7px!important;gap:15px!important}.note-quotation-header img{width:95px!important;height:95px!important}.note-quotation-header h2{font-size:31px!important}}@media(max-width:600px){.note-quotation-header{gap:12px;padding:10px}.note-quotation-header img{width:80px;height:80px}.note-quotation-header h2{font-size:24px}}
