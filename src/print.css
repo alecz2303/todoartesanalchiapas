@@ -218,3 +218,69 @@
   .print-sheet-quotation .note-footer {position:static!important;height:auto!important;width:100%!important;margin-top:4px!important}
   .print-sheet-quotation .note-footer img {height:auto!important;max-height:0.55in!important}
 }
+
+/* Nota de pedido: distribución compacta independiente de cotizaciones. */
+@media print {
+  .print-sheet:not(.print-sheet-quotation) {
+    padding-top:1.62in!important;
+    padding-bottom:0.84in!important;
+    font-size:10px!important;
+    line-height:1.26!important;
+  }
+  .print-sheet:not(.print-sheet-quotation) .note-header-art {
+    top:0.04in!important;
+    height:1.44in!important;
+  }
+  .print-sheet:not(.print-sheet-quotation) .note-header-art img {
+    height:1.44in!important;
+    max-height:1.44in!important;
+  }
+  .print-sheet:not(.print-sheet-quotation) .note-dates {
+    margin:2px 0 5px!important;
+    gap:3px 12px!important;
+  }
+  .print-sheet:not(.print-sheet-quotation) .note-dates>div {
+    padding:4px 5px!important;
+    font-size:10px!important;
+  }
+  .print-sheet:not(.print-sheet-quotation) .note-box,
+  .print-sheet:not(.print-sheet-quotation) .note-products {
+    margin:4px 0!important;
+    padding:6px 8px!important;
+  }
+  .print-sheet:not(.print-sheet-quotation) h3 {
+    margin-bottom:4px!important;
+    padding:4px 9px!important;
+    font-size:10px!important;
+  }
+  .print-sheet:not(.print-sheet-quotation) .note-products {
+    padding:6px 0 0!important;
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+  }
+  .print-sheet:not(.print-sheet-quotation) .note-products table,
+  .print-sheet:not(.print-sheet-quotation) .note-products tbody {
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+  }
+  .print-sheet:not(.print-sheet-quotation) .note-products th,
+  .print-sheet:not(.print-sheet-quotation) .note-products td {
+    padding:5px!important;
+    font-size:9px!important;
+  }
+  .print-sheet:not(.print-sheet-quotation) .note-grid .note-box {
+    margin:3px 0!important;
+    padding:6px 8px!important;
+  }
+  .print-sheet:not(.print-sheet-quotation) .note-terms li {margin:2px 0!important}
+  .print-sheet:not(.print-sheet-quotation) .note-totals>div {padding:3px 5px!important}
+  .print-sheet:not(.print-sheet-quotation) .note-signature {
+    padding:6px 8px!important;
+    margin-top:3px!important;
+  }
+  .print-sheet:not(.print-sheet-quotation) .note-footer,
+  .print-sheet:not(.print-sheet-quotation) .note-footer img {
+    height:0.65in!important;
+    max-height:0.65in!important;
+  }
+}
