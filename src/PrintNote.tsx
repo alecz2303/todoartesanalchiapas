@@ -11,7 +11,7 @@ export default function PrintNote({ order }: { order: Order }) {
   const quote = order.status === 'En cotización';
   const amount = totals(order);
   const paid = amount.balance <= 0 && amount.total > 0;
-  return <article className="print-sheet" aria-label={quote?"Cotización imprimible":"Nota de pedido imprimible"}>
+  return <article className={`print-sheet${quote ? " print-sheet-quotation" : ""}`} aria-label={quote?"Cotización imprimible":"Nota de pedido imprimible"}>
     {quote?<div className="note-quotation-header"><img src="/logo-todo-artesanal.png" alt="Todo Artesanal Chiapas"/><div><span>TODO ARTESANAL CHIAPAS</span><h2>COTIZACIÓN</h2><p>Una propuesta hecha especialmente para ti ✨</p></div></div>:<div className="note-header-art"><img src="/header.png" alt="Todo Artesanal Chiapas — Nota de pedido, piñatas y decoraciones artesanales" /></div>}
     <div className="note-dates"><div><b>{quote?"Cotización #":"Pedido #"}</b> <span>{order.folio || 'Sin asignar'}</span></div><div><CalendarDays size={19}/><b>Fecha de pedido:</b> {date(order.createdAt)}</div><div><b>Fecha y hora de entrega:</b> {date(order.deliveryDate)} · {order.deliveryTime || 'Por confirmar'}</div></div>
     <section className="note-box note-customer"><h3>DATOS DEL CLIENTE</h3><div className="note-client-grid"><p><b>Nombre:</b> {order.customer || '—'}</p><p><b>Teléfono:</b> {order.phone || '—'}</p><p className="full"><b>Dirección:</b> {order.address || '—'}</p></div></section>
