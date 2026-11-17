@@ -13,7 +13,12 @@ RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
 # La aplicación React gestiona /sistema_tac.
-RewriteRule ^sistema_tac/?$ /index.html [L]
+# (Sin barra inicial: funciona tanto en la raíz del dominio como en
+# una subcarpeta como http://localhost/todoartesanal/.)
+RewriteRule ^sistema_tac/?$ index.html [L]
+
+# La página pública de consulta de cotización.
+RewriteRule ^cotizacion/?$ index.html [L]
 
 # No redirigir otros recursos inexistentes a la página pública.
 </IfModule>

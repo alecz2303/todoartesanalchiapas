@@ -199,3 +199,48 @@
    crea un contenedor de scroll que impide que position:sticky funcione. */
 .site.tac-festival{overflow-x:clip!important;overflow-y:visible!important}
 .tac-festival .site-header.tac-topbar{position:sticky!important;top:0!important;z-index:1000!important}
+
+/* Cotizador público: formulario en #cotizar y página /cotizacion */
+.tac-quote{padding:70px clamp(20px,4vw,65px);background:#fff4fa}
+.tac-quote-card{max-width:860px;margin:auto;background:#fff;border-radius:24px;box-shadow:0 14px 40px #48134a1c;padding:clamp(24px,4vw,48px)}
+.tac-quote-card h2{font-size:clamp(28px,3.4vw,44px);line-height:1.1;color:#63117f;margin:12px 0 10px}
+.tac-quote-card>p{color:#635368;line-height:1.8;font-size:14px;margin-bottom:24px}
+.tac-quote-form{display:grid;gap:18px}
+.tac-quote-fields{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.tac-quote-fields label{display:grid;gap:7px;font-size:12px;font-weight:900;color:#41334d}
+.tac-quote-fields label small{font-weight:400;color:#776a7e}
+.tac-quote-fields input,.tac-quote-fields select,.tac-quote-fields textarea{font:inherit;font-size:14px;font-weight:400;color:#22123c;padding:13px 14px;border:1px solid #eadce7;border-radius:12px;background:#fffdfb;width:100%}
+.tac-quote-fields input:focus,.tac-quote-fields select:focus,.tac-quote-fields textarea:focus{outline:2px solid #ff1493;outline-offset:1px;border-color:#ff1493}
+.tac-quote-wide{grid-column:1/-1}
+.tac-quote-check{display:flex!important;flex-direction:row!important;align-items:flex-start;gap:10px;font-weight:400!important;line-height:1.6}
+.tac-quote-check input{width:auto!important;margin-top:3px;accent-color:#ed087e}
+.tac-quote-form .tac-hero-cta{justify-self:start}
+.tac-quote-note{font-size:12px;line-height:1.7;color:#776a7e;margin:0}
+.tac-quote-alt{font-size:13px;color:#635368;margin-top:22px}
+.tac-quote-alt a{color:#d30c78;font-weight:900}
+.tac-quote-error{background:#fff0ed;color:#9e2222;border:1px solid #ffc9bd;border-radius:12px;padding:13px 15px;font-size:13px;line-height:1.6;margin:0}
+.tac-quote-success{display:flex;align-items:flex-start;gap:9px;background:#eafff7;border:1px solid #9fe8c9;color:#05603f;border-radius:12px;padding:13px 15px;font-size:13px;line-height:1.6;margin:0}
+.tac-quote-success svg{flex-shrink:0;margin-top:1px}
+.tac-quote-success-box{display:grid;justify-items:center;text-align:center;gap:8px;padding:10px 0}
+.tac-quote-success-box svg{color:#009f9e}
+.tac-quote-success-box h3{color:#63117f;font-size:24px;margin:6px 0 0}
+.tac-quote-success-box p{color:#635368;margin:0}
+.tac-quote-success-box strong{font-size:30px;letter-spacing:1px;color:#d30c78}
+.tac-quote-success-box small{color:#776a7e;line-height:1.6}
+.tac-quote-result{margin-top:26px;border-top:2px dashed #f2d7ea;padding-top:22px;display:grid;gap:18px}
+.tac-quote-head{display:flex;gap:18px;flex-wrap:wrap}
+.tac-quote-head>div{display:grid;gap:3px}
+.tac-quote-head span{font-size:11px;letter-spacing:1px;font-weight:900;color:#b00074}
+.tac-quote-head strong{font-size:16px;color:#22123c}
+.tac-quote-table{width:100%;border-collapse:collapse;font-size:13px}
+.tac-quote-table th{text-align:left;font-size:11px;letter-spacing:1px;color:#b00074;padding:8px;border-bottom:2px solid #f2d7ea}
+.tac-quote-table td{padding:10px 8px;border-bottom:1px solid #f6eaf2;vertical-align:top;line-height:1.6}
+.tac-quote-totals{display:grid;gap:8px;max-width:380px;margin-left:auto}
+.tac-quote-totals>div{display:flex;justify-content:space-between;gap:20px;font-size:14px}
+.tac-quote-totals span{color:#635368}
+.tac-quote-deposit{font-weight:900;color:#63117f}
+.tac-quote-foot{font-size:12px;color:#776a7e;margin-top:24px}
+.tac-quote-foot a{color:#d30c78;font-weight:900}
+.tac-contact-alt{margin:14px 0 0;font-size:13px}
+.tac-contact-alt a{color:#fff;text-decoration:underline;font-weight:900}
+@media(max-width:760px){.tac-quote-fields{grid-template-columns:1fr}.tac-quote-form .tac-hero-cta{justify-self:stretch}.tac-quote-totals{max-width:none}}
