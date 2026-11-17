@@ -1,0 +1,25 @@
+Options -Indexes
+DirectoryIndex index.html
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# No interceptar la API PHP ni sus rutas.
+RewriteRule ^api(?:/|$) - [L]
+
+# Servir archivos y directorios existentes directamente.
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# La aplicación React gestiona /sistema_tac.
+RewriteRule ^sistema_tac/?$ /index.html [L]
+
+# No redirigir otros recursos inexistentes a la página pública.
+</IfModule>
+
+<IfModule mod_headers.c>
+<FilesMatch "^(?:index\.html|sw\.js|registerSW\.js|manifest\.webmanifest)$">
+Header set Cache-Control "no-cache, no-store, must-revalidate"
+</FilesMatch>
+</IfModule>

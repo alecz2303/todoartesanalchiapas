@@ -1,63 +1,51 @@
-# Todo Artesanal Chiapas App
+# Todo Artesanal Chiapas — Sitio público + Sistema TAC
 
-Aplicación móvil oficial de **Todo Artesanal Chiapas**, desarrollada en Flutter.
+Proyecto web en **React 19, TypeScript y Vite**. Alojamiento previsto: **Neubox con cPanel**, backend **PHP** y base de datos **MySQL** (todavía por implementar).
 
-> 📌 **Plan de trabajo oficial:** consultar [TODO.md](TODO.md). Ese archivo es la fuente canónica para el orden, estado y alcance de las tareas del proyecto.
+## Rutas
+- `/`: sitio público de Todo Artesanal Chiapas, con información de servicios y contacto.
+- `/sistema_tac`: pantalla visual de inicio de sesión del sistema administrativo.
 
-## Estado actual
+**Importante:** el login todavía NO autentica; el panel de gestión (`src/App.tsx`) existe, pero no está conectado a una sesión segura ni accesible desde el login. Los pedidos que maneja el prototipo siguen en **localStorage**, sin sincronización ni respaldo remoto. **No usar datos reales de clientes en producción.**
 
-Versión inicial `0.1.0+1` enfocada en validar el flujo principal de clientes:
-
-- Inicio con identidad de marca.
-- Catálogo por categorías.
-- Solicitud de pedido personalizado.
-- Regla de mínimo 25 días de anticipación.
-- Aviso de 60% de anticipo para agendar.
-- Selección de imagen de referencia.
-- Solicitud prellenada por WhatsApp al 961 213 9040.
-- Datos de contacto y ubicación de tienda.
-
-## Estructura
-
-```text
-lib/
-├── data/
-├── models/
-├── screens/
-├── theme/
-└── widgets/
-assets/
-└── branding/
-```
-
-## Requisitos
-
-- Flutter compatible con Dart `>=3.10.0 <4.0.0`.
-- Android Studio o VS Code con soporte Flutter.
-
-## Preparar el proyecto localmente
-
-El repositorio ya contiene la estructura nativa Android/iOS y el lockfile de dependencias.
+## Desarrollo local
+Requiere Node.js compatible con Vite 7.
 
 ```bash
-git clone https://github.com/alecz2303/todoartesanalchiapas.git
-cd todoartesanalchiapas
-flutter pub get
-flutter analyze
-flutter run
+npm install
+npm run dev
+npm run build
 ```
 
-Consulta **[DEVELOPMENT.md](DEVELOPMENT.md)** para el procedimiento completo y **[CONTRIBUTING.md](CONTRIBUTING.md)** para el flujo de ramas, commits y PR.
+`dist/` es la salida de compilación y no debe subirse a Git. `node_modules/` tampoco.
 
-## Dependencias principales
+## Archivos principales
+- `src/Website.tsx`, `src/website.css`: página comercial y login visual.
+- `src/App.tsx`, `src/model.ts`: panel de pedidos y modelo de datos.
+- `src/OrdersView.tsx`, `src/orders.css`: pedidos, estados, filtros y abonos.
+- `src/Dashboard.tsx`, `src/dashboard.css`: indicadores y gráficos.
+- `src/PrintNote.tsx`, `src/print.css`: nota imprimible.
+- `src/main.tsx`: selección de página según ruta.
+- `vite.config.ts`: PWA con inicio y alcance en `/sistema_tac`.
 
-- `url_launcher`
-- `image_picker`
+## Recursos pendientes de verificar
+El código hace referencia a los siguientes archivos, pero **no están registrados en la rama de GitHub al momento de esta revisión**:
+- `public/logo-todo-artesanal.png`
+- `public/header.png`
+- `public/nota-footer.png`
 
-## Próximos pasos
+Si existen localmente, agregarlos con Git antes de desplegar. No sustituirlos sin revisar el diseño.
 
-El orden oficial de trabajo se mantiene en **[TODO.md](TODO.md)**. No se deben utilizar listas paralelas que puedan contradecirlo.
+## Antes de producción
+1. Implementar backend PHP, sesiones seguras y autenticación con contraseñas hasheadas.
+2. Crear esquema MySQL, permisos, copias de seguridad y API protegida.
+3. Conectar panel y migrar pedidos desde localStorage cuando corresponda.
+4. Configurar HTTPS, reglas de Apache para rutas SPA y aislamiento del servicio PWA.
+5. Revisar impresión, iconos, imágenes, compilación y pruebas en dispositivos.
 
----
+## Respaldos
+- `backup/flutter-v0.1-before-pwa`: versión antigua Flutter.
+- `backup/pwa-before-cleanup-2026-10-17`: instantánea de la PWA antes de la revisión y limpieza.
+- `feat/pwa-react-rebuild`: rama de trabajo actual.
 
-Proyecto de Todo Artesanal Chiapas.
+No subir contraseñas, credenciales MySQL, secretos PHP ni archivos `.env` al repositorio.
