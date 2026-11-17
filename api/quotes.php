@@ -14,8 +14,11 @@ declare(strict_types=1);
 // pone el precio unitario en el panel y cambia el estado a 'En cotización'.
 // El anticipo es el 60 % del total (totals() en src/model.ts); no se toca.
 //
-// Nota: el aviso "Te avisaremos por WhatsApp cuando tenga precio" es MANUAL
-// por ahora: nada envía ese mensaje automáticamente.
+// Nota: el aviso "Te avisaremos por WhatsApp cuando tenga precio" es
+// AUTOMÁTICO: cuando el admin le pone precio en el panel (el pedido pasa
+// a 'En cotización'), api/orders.php manda el mensaje con la plantilla
+// 'cotizacion_lista' (ver api/whatsapp.php). Sin configuración de WhatsApp
+// no se manda nada y el panel sigue funcionando igual.
 require __DIR__.'/bootstrap.php';
 
 date_default_timezone_set('America/Mexico_City');
