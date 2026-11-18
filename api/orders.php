@@ -26,9 +26,13 @@ if($action==='save'){
  // sigue siendo exitoso y el fallo queda auditado.
  $wa=['sent'=>false,'error'=>null];
  $oldStatus=is_array($old)?(string)($old['status']??''):'';
- if($oldStatus!=='En cotización'&&($order['status']??'')==='En cotización'&&!empty($order['phone'])&&empty($order['wa_price_notified_at'])){
+ if(is_array($old)&&($old['source']??'')==='public_quote'&&$oldStatus!=='En cotización'&&($order['status']??'')==='En cotización'&&!empty($order['phone'])&&empty($order['wa_price_notified_at'])&&count($order['items']??[])>0){
+   $fullyPriced=true;
+   foreach($order['items'] as $item){if((float)($item['unitPrice']??0)<=0||(float)($item['quantity']??0)<=0){$fullyPriced=false;break;}}
+   if($fullyPriced){
    try {$wa=waNotifyQuotePriced($pdo,$order,$actor);}
    catch(Throwable $e) {$wa=['sent'=>false,'error'=>$e->getMessage()];}
+   }
  }
  respond(200,['ok'=>true,'whatsapp'=>$wa]);
 }
