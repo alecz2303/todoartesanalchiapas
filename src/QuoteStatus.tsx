@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { CheckCircle2, Search } from 'lucide-react';
-import { money, totals, type Order } from './model';
+import { money, type Order } from './model';
 import './website.css';
 
 type PublicQuote = {
   folio: string;
   status: string;
   items: Order['items'];
-  totals: ReturnType<typeof totals>;
+  totals: { subtotal: number; tax: number; shipping: number; total: number; requiredDeposit: number; paid: number; balance: number };
   deliveryDate: string;
   eventDate: string;
 };
@@ -94,10 +94,8 @@ export default function QuoteStatus() {
     }
   }
 
-  // Totales con la misma fórmula del panel (src/model.ts totals()).
-  const t = quote
-    ? totals({ items: quote.items, iva: false, shipping: 0, delivery: 'Recoger en tienda', payments: [] } as unknown as Order)
-    : null;
+  // Los importes oficiales los calcula la API; incluyen IVA, envío y pagos.
+  const t = quote?.totals ?? null;
 
   return (
     <div className="site tac-festival">
