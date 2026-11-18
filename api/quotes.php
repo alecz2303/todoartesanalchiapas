@@ -117,7 +117,7 @@ if ($action === 'view') {
   if ($folio === '' || strlen($folio) > 40 || $phone === '') respond(400, ['error' => 'Folio y teléfono son obligatorios']);
   $order = findOrder(db(), $folio);
   // Mismo mensaje exista o no, y coincida o no el teléfono: no filtrar datos.
-  if ($order === null || !hash_equals(canonicalPhone((string) ($order['phone'] ?? '')), canonicalPhone($phone))) {
+  if ($order === null || ($order['source'] ?? '') !== 'public_quote' || !hash_equals(canonicalPhone((string) ($order['phone'] ?? '')), canonicalPhone($phone))) {
     respond(404, ['error' => 'No encontramos una cotización con ese folio y teléfono']);
   }
   respond(200, ['ok' => true, 'quote' => publicView($order)]);
@@ -163,6 +163,7 @@ if ($action === 'request') {
     'id' => $id,
     'folio' => '',
     'createdAt' => gmdate('Y-m-d\TH:i:s.v\Z'),
+    'source' => 'public_quote',
     'customer' => $name,
     'phone' => $phone,
     'address' => '',
@@ -223,6 +224,15 @@ if ($action === 'confirm') {
   }
   if ($order['status'] !== 'En cotización') {
     respond(409, ['error' => 'Esta cotización ya no se puede confirmar (estado actual: ' . $order['status'] . ').', 'status' => $order['status']]);
+  }
+  $totals = publicTotals($order);
+  if ($totals['total'] <= 0 || $totals['requiredDeposit'] <= 0 || count($order['items'] ?? []) === 0) {
+    respond(409, ['error' => 'La cotización todavía no tiene un precio válido']);
+  }
+  foreach ($order['items'] as $item) {
+    if ((float) ($item['unitPrice'] ?? 0) <= 0 || (float) ($item['quantity'] ?? 0) <= 0) {
+      respond(409, ['error' => 'La cotización tiene productos pendientes de precio']);
+    }
   }
   $order['status'] = 'Esperando anticipo';
   $json = json_encode($order, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
