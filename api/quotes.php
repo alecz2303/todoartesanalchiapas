@@ -216,7 +216,7 @@ if ($action === 'confirm') {
   if ($folio === '' || strlen($folio) > 40 || $phone === '') respond(400, ['error' => 'Folio y teléfono son obligatorios']);
   $pdo = db();
   $order = findOrder($pdo, $folio);
-  if ($order === null || !hash_equals(canonicalPhone((string) ($order['phone'] ?? '')), canonicalPhone($phone))) {
+  if ($order === null || ($order['source'] ?? '') !== 'public_quote' || !hash_equals(canonicalPhone((string) ($order['phone'] ?? '')), canonicalPhone($phone))) {
     respond(404, ['error' => 'No encontramos una cotización con ese folio y teléfono']);
   }
   if ($order['status'] === 'Solicitud recibida') {
