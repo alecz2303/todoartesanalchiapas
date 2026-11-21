@@ -45,3 +45,16 @@ El código original del escritorio usa `GET /api/conversaciones` y `GET /api/rob
 Cuando no se configura, responde `connected:false` y la interfaz indica que falta conexión; no presenta contactos de pedidos como conversaciones. Cuando responde, expone exclusivamente `telefono`, `modo_atencion` y `actualizado_en` de hasta 200 conversaciones, además del estado de robot si está disponible. No recupera contenido de mensajes, porque el contrato inspeccionado no lo ofrece.
 
 **Pendiente antes de habilitar acciones:** inspeccionar código del servidor Node anterior, identificar puerto real, autenticar de manera segura y confirmar que la lectura se realiza contra la instancia correcta. Los POST de control del robot y transferencias Robot/Karo siguen intencionadamente sin implementar en este puente, hasta verificar permisos, protección CSRF y auditoría en el servicio real.
+
+## Contrato verificado del backend Node original (21-11-2026)
+
+Inspección de `server/index.js` y los módulos `sesiones.mjs`, `auth.mjs`, `seguridad.mjs`, `csrf.mjs`, `conversaciones.mjs`, `control-conversaciones.mjs`, `robot.mjs` y `control-robot.mjs` suministrados por el operador:
+
+- Instancia local: Docker `panel-tac`, bind mount `C:\\Users\\7400\\panel-tac:/app`, puerto publicado `127.0.0.1:3001`.
+- PostgreSQL: contenedor `postgres-tac`, base `tac_cotizador`, usuario `tac_robot`. Los datos de conversación están en `public.conversaciones_whatsapp`; estado en `public.configuracion_robot`.
+- Sesiones: `express-session` + `connect-pg-simple`, cookie HTTP-only `tac.sid`, `sameSite:lax`, expiración 8 horas, persistida en `sesiones_panel`. Login con Argon2 y rol `administrador`; `GET /api/auth/sesion` devuelve 401 sin cookie válida.
+- Escrituras: `protegerOrigen` exige `Origin: http://localhost:3001` y JSON; `exigirCsrf` exige token de sesión obtenido por `GET /api/csrf/token`. No está demostrado soporte para tokens Bearer ni autenticación servicio-a-servicio.
+- `GET /api/conversaciones`: `{totalMostradas, conversaciones:[{telefono,modo_atencion,actualizado_en}]}`, máximo 100; `GET /api/conversaciones/telefono/:telefono`: `{conversacion}`; `GET /api/robot/estado`: `{estado,actualizadoEn}`.
+- `POST /api/conversaciones/control/modo`: `{telefono,modo:'robot'|'karo'}`, llama `public.cambiar_modo_conversacion`. `POST /api/robot/control/estado`: `{estado:'activo'|'pausado'}`, llama `public.cambiar_estado_general`. Ambas son operaciones reales que pueden afectar n8n; no ejecutar sin autorización, revisión de las funciones SQL y prueba controlada.
+
+**Consecuencia:** el adaptador actual `api/tac-legacy-read.php` usa Bearer y **no es operativo contra el Node original sin un cambio de autenticación**. No establecer `TAC_LEGACY_READ_TOKEN` como si fuera un token válido del servidor. No trasladar `SESSION_SECRET`, contraseñas, cookies ni tokens CSRF al frontend o a variables compartidas. Para una integración segura, evaluar un endpoint interno de solo lectura autenticado por servicio, con permisos mínimos, antes de habilitar escrituras; revisar la definición SQL de las funciones almacenadas y su auditoría. No se ha cambiado el backend original ni los workflows de n8n.
