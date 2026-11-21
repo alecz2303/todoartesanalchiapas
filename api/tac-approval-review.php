@@ -46,8 +46,16 @@ try {
   if ($row['status'] !== 'submitted' || (int)$row['version'] !== $input['version']) {
     $pdo->rollBack(); respond(409,['error'=>'Solicitud modificada; actualiza la bandeja']);
   }
+  if ($row['submitted_by'] === null) {
+    $pdo->rollBack(); respond(409,['error'=>'Solicitud sin autor; requiere revisión administrativa']);
+  }
   if ((int)$row['submitted_by'] === (int)$user['id']) {
     $pdo->rollBack(); respond(403,['error'=>'No puedes revisar tu propia solicitud']);
+  }
+  $q = $pdo->prepare('SELECT MAX(version) FROM tac_approval_requests WHERE request_key=(SELECT request_key FROM tac_approval_requests WHERE id=?)');
+  $q->execute([$input['id']]);
+  if ((int)$q->fetchColumn() !== (int)$row['version']) {
+    $pdo->rollBack(); respond(409,['error'=>'Existe una versión posterior; actualiza la bandeja']);
   }
   $q = $pdo->prepare("UPDATE tac_approval_requests
     SET status=?,reviewed_by=?,reason_code=?,reason_text=?,reviewed_at=NOW()
