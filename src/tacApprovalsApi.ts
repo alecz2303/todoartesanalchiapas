@@ -37,7 +37,7 @@ export async function getTacApprovals(signal?: AbortSignal): Promise<{items: App
 
 export async function createTacApprovalDraft(
  csrf: string,
- input: {title: string; description: string},
+ input: {title: string; description: string; order_id?: string},
 ): Promise<{id: number; request_key: string}> {
  const response = await fetch('/api/tac-approval-drafts.php', {
   method: 'POST', credentials: 'same-origin', cache: 'no-store',
