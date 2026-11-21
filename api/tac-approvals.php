@@ -10,19 +10,17 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 tacRequirePermission('approvals.read', $user);
 // No retornar snapshots, teléfonos ni información sensible en el listado.
 try {
-  $query = db()->query("SELECT id, request_key, order_id, version, status, submitted_by, submitted_at, created_at
-    FROM tac_approval_requests ORDER BY
-    CASE WHEN status = 'submitted' THEN 0 WHEN status = 'returned' THEN 1 ELSE 2 END,
-    submitted_at ASC, id ASC LIMIT 100");
+  $query = db()->query("SELECT a.id, a.request_key, a.order_id, a.version, a.status,
+    a.submitted_by, a.submitted_at, a.created_at
+    FROM tac_approval_requests a
+    INNER JOIN (
+      SELECT request_key, MAX(version) AS latest_version
+      FROM tac_approval_requests GROUP BY request_key
+    ) latest ON latest.request_key = a.request_key AND latest.latest_version = a.version
+    ORDER BY
+    CASE WHEN a.status = 'submitted' THEN 0 WHEN a.status = 'returned' THEN 1 ELSE 2 END,
+    a.submitted_at ASC, a.id ASC LIMIT 100");
   $items = $query->fetchAll();
-  // Keep the historical rows accessible via detail/history, but show only the newest
-  // version of each request in the active queue to avoid counting returned ancestors.
-  $latest = db()->query('SELECT request_key, MAX(version) AS latest_version FROM tac_approval_requests GROUP BY request_key')->fetchAll();
-  $latestVersions = [];
-  foreach ($latest as $versionRow) $latestVersions[$versionRow['request_key']] = (int)$versionRow['latest_version'];
-  $items = array_values(array_filter($items, static function ($item) use ($latestVersions) {
-    return (int)$item['version'] === ($latestVersions[$item['request_key']] ?? 0);
-  }));
 } catch (PDOException $e) {
   error_log('TAC approvals list unavailable');
   respond(503, ['error' => 'Bandeja de aprobaciones no disponible; verifica la migración 002 en la base de prueba']);
