@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ClipboardCheck, LockKeyhole, RefreshCw, ShieldAlert } from 'lucide-react';
-import { getTacApprovals, createTacApprovalDraft, submitTacApproval, getTacApprovalDetail, reviewTacApproval, type TacApprovalDetail, type ApprovalSummary } from './tacApprovalsApi';
+import { getTacApprovals, createTacApprovalDraft, submitTacApproval, getTacApprovalDetail, reviewTacApproval, reviseTacApproval, type TacApprovalDetail, type ApprovalSummary } from './tacApprovalsApi';
 import './PanelTac.css';
 
 type ViewState = 'loading' | 'forbidden' | 'not-ready' | 'ready';
@@ -17,6 +17,8 @@ export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; on
  const [detail, setDetail] = useState<TacApprovalDetail | null>(null);
  const [reasonCode, setReasonCode] = useState('');
  const [reasonText, setReasonText] = useState('');
+ const [revisionTitle, setRevisionTitle] = useState('');
+ const [revisionDescription, setRevisionDescription] = useState('');
  const [reload, setReload] = useState(0);
  const [title, setTitle] = useState('');
  const [description, setDescription] = useState('');
@@ -62,7 +64,7 @@ export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; on
  }
  async function openDetail(id: number) {
   setSaveError(''); setSaveMessage(''); setDetail(null); setReasonCode(''); setReasonText('');
-  try { setDetail(await getTacApprovalDetail(id)); }
+  try { const loaded=await getTacApprovalDetail(id);setDetail(loaded);setRevisionTitle(typeof loaded.after.title==='string'?loaded.after.title:'');setRevisionDescription(typeof loaded.after.description==='string'?loaded.after.description:''); }
   catch (error) {
    if (error instanceof Error && error.message==='SESSION_EXPIRED') onSessionExpired();
    else setSaveError(error instanceof Error ? error.message : 'No se pudo abrir');
@@ -83,6 +85,21 @@ export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; on
    if (error instanceof Error && error.message==='SESSION_EXPIRED') onSessionExpired();
    else setSaveError(error instanceof Error ? error.message : 'No se pudo registrar');
   } finally { setSubmittingId(null); }
+ }
+ async function revise() {
+  if (!detail || detail.status!=='returned' || detail.submitted_by!==currentUserId || submittingId!==null) return;
+  if (revisionTitle.trim().length<5 || revisionDescription.trim().length<10) {
+   setSaveError('Completa título y descripción de la corrección.');return;
+  }
+  setSubmittingId(detail.id);setSaveError('');setSaveMessage('');
+  try {
+   const result=await reviseTacApproval(csrf,{id:detail.id,version:detail.version,title:revisionTitle.trim(),description:revisionDescription.trim()});
+   setDetail(null);setSaveMessage('Nueva versión '+result.version+' creada como borrador #'+result.id+'. Puedes enviarla a revisión desde la bandeja.');
+   setReload(n=>n+1);
+  } catch(error) {
+   if(error instanceof Error && error.message==='SESSION_EXPIRED')onSessionExpired();
+   else setSaveError(error instanceof Error?error.message:'No se pudo corregir');
+  } finally {setSubmittingId(null);}
  }
  const pending = items.filter(item => item.status === 'submitted').length;
  const returned = items.filter(item => item.status === 'returned').length;
@@ -126,6 +143,13 @@ export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; on
    <p><strong>Título:</strong> {typeof detail.after.title==='string' ? detail.after.title : '—'}</p>
    <p className="tac-detail-description"><strong>Descripción:</strong> {typeof detail.after.description==='string' ? detail.after.description : '—'}</p>
    {detail.reason_code && <p><strong>Motivo:</strong> {detail.reason_code} {detail.reason_text ?? ''}</p>}
+   {detail.status==='returned' && detail.submitted_by===currentUserId && <div className="tac-draft-form">
+    <h3>Crear nueva versión corregida</h3>
+    <p>La versión devuelta permanece en el historial. La corrección se guarda como un nuevo borrador.</p>
+    <label>Título corregido<input maxLength={120} value={revisionTitle} onChange={e=>setRevisionTitle(e.target.value)}/></label>
+    <label>Descripción corregida<textarea rows={4} maxLength={2000} value={revisionDescription} onChange={e=>setRevisionDescription(e.target.value)}/></label>
+    <button type="button" className="primary" disabled={submittingId!==null || revisionTitle.trim().length<5 || revisionDescription.trim().length<10} onClick={()=>void revise()}>Crear versión {detail.version+1}</button>
+   </div>}
    {canReview && detail.status==='submitted' && detail.submitted_by !== currentUserId && <>
     <h3>Decisión de Karo</h3>
     <label className="tac-review-field">Motivo para rechazar o devolver
