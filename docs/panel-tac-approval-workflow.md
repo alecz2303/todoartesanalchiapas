@@ -45,3 +45,12 @@ La migración 002 ya incorpora la identidad estable `request_key`. Se puede eval
 4. Rechazo/devolución exige motivo válido; «Otro» exige explicación.
 5. Todo cambio se audita en la misma transacción.
 6. Robot, WhatsApp y producción permanecen independientes.
+
+
+## Borradores aislados (fase de prueba)
+
+El endpoint autenticado `POST /api/tac-approval-drafts.php` crea únicamente un registro en `tac_approval_requests` y su evento en `tac_audit_events`, en una sola transacción. Requiere sesión, token `X-CSRF-Token` y rol TAC `alec` o `karo`. No actualiza `orders`, no envía mensajes y no aprueba cambios.
+
+Cuerpo JSON permitido: `{"title":"Cambio solicitado","description":"Descripción detallada del cambio","order_id":null}`. `order_id` puede omitirse o ser el UUID de un pedido existente. No se aceptan campos comerciales arbitrarios. El servidor genera un `request_key` UUID v4 y crea la versión 1 con estado `draft`. Si ya hay versión 1 para ese pedido, responde 409; esto es una restricción temporal del esquema actual.
+
+Este endpoint todavía no tiene formulario conectado. No enviar solicitudes a revisión ni habilitar decisiones comerciales hasta implementar y probar las transiciones y los permisos específicos de Karo.
