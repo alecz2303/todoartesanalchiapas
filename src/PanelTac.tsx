@@ -3,6 +3,7 @@ import './PanelTac.css';
 import RobotAdmin from './RobotAdmin';
 import TacApprovals from './TacApprovals';
 import TacOperations from './TacOperations';
+import TacContacts from './TacContacts';
 import type { Order } from './model';
 
 type Module = 'operations' | 'conversations' | 'robot' | 'approvals' | 'settings';
@@ -32,6 +33,7 @@ const definitions = {
 
 export default function PanelTac({ module, csrf, onSessionExpired, orders, onOpenOrders, onOpenOrder }: Props) {
  if (module === 'operations') return <TacOperations orders={orders} onOpenOrders={onOpenOrders} onOpenOrder={onOpenOrder}/>;
+ if (module === 'conversations') return <TacContacts orders={orders} onOpenOrder={onOpenOrder}/>;
  if (module === 'robot') return <RobotAdmin/>;
  if (module === 'approvals') return <TacApprovals csrf={csrf} onSessionExpired={onSessionExpired} orders={orders.map(o=>({id:o.id,folio:o.folio}))}/>;
  const item = definitions[module];
