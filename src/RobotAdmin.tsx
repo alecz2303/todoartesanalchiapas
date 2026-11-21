@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getRobotCapabilities, type RobotCapabilities } from './robotApi';
-import { AlertTriangle, Bot, CheckCircle2, CircleHelp, Clock3, Database, LockKeyhole, MessageCircle, Network, RefreshCw, ShieldCheck, SlidersHorizontal } from 'lucide-react';
+import { AlertTriangle, Bot, CheckCircle2, CircleHelp, Clock3, Database, LockKeyhole, MessageCircle, Network, RefreshCw, ShieldCheck, SlidersHorizontal, UsersRound } from 'lucide-react';
 import './RobotAdmin.css';
 
 const rules = [
@@ -60,6 +60,21 @@ export default function RobotAdmin() {
    <div className="robot-admin-card-title"><ShieldCheck size={21} aria-hidden="true"/><h3>Reglas comerciales previstas</h3></div>
    <p>Resumen de reglas acordadas; no implica que estén implementadas ni configuradas en el robot.</p>
    <div className="robot-admin-rules">{rules.map(rule=><article key={rule.title}><h4>{rule.title}</h4><span className="robot-admin-rule-status">{rule.state}</span><ul>{rule.details.map(detail=><li key={detail}><CheckCircle2 size={15} aria-hidden="true"/>{detail}</li>)}</ul></article>)}</div>
+  </section>
+
+  <section className="panel robot-admin-card" aria-label="Diseño de permisos TAC">
+   <div className="robot-admin-card-title"><UsersRound size={21} aria-hidden="true"/><h3>Permisos y auditoría · diseño pendiente</h3></div>
+   <p>Esta es una matriz de permisos propuesta, no permisos asignados. El sistema actual todavía no distingue roles Karo y Alec en su base de usuarios.</p>
+   <div className="robot-admin-permissions-wrap">
+    <table className="robot-admin-permissions"><thead><tr><th>Acción futura</th><th>Karo</th><th>Alec</th></tr></thead><tbody>
+     <tr><td>Ver diagnósticos</td><td>Previsto</td><td>Previsto</td></tr>
+     <tr><td>Transferir atención robot / Karo</td><td>Previsto</td><td>Previsto</td></tr>
+     <tr><td>Corregir y enviar a revisión</td><td>Previsto</td><td>Previsto</td></tr>
+     <tr><td>Aprobar o rechazar cambios comerciales</td><td>Solo Karo</td><td>No autorizado</td></tr>
+     <tr><td>Activar robot</td><td>Bloqueado</td><td>Bloqueado</td></tr>
+    </tbody></table>
+   </div>
+   <p className="robot-admin-permissions-note"><LockKeyhole size={16} aria-hidden="true"/> No hay asignación de roles ni escritura de auditoría implementadas. Toda autorización futura se verificará en PHP.</p>
   </section>
 
   <section className="panel robot-admin-card robot-admin-next">
