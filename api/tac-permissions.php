@@ -20,6 +20,7 @@ function tacCan(string $permission, ?string $role): bool {
     'approvals.read' => ['karo', 'alec'],
     'approvals.draft.create' => ['karo', 'alec'],
     'approvals.submit' => ['karo', 'alec'],
+    'approvals.review' => ['karo'],
   ];
   return $role !== null && in_array($role, $allowed[$permission] ?? [], true);
 }
