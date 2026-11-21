@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ClipboardCheck, LockKeyhole, RefreshCw, ShieldAlert } from 'lucide-react';
-import { getTacApprovals, createTacApprovalDraft, submitTacApproval, getTacApprovalDetail, reviewTacApproval, reviseTacApproval, type TacApprovalDetail, type ApprovalSummary } from './tacApprovalsApi';
+import { getTacApprovals, createTacApprovalDraft, submitTacApproval, getTacApprovalDetail, reviewTacApproval, reviseTacApproval, getTacApprovalHistory, type TacApprovalHistoryItem, type TacApprovalDetail, type ApprovalSummary } from './tacApprovalsApi';
 import './PanelTac.css';
 
 type ViewState = 'loading' | 'forbidden' | 'not-ready' | 'ready';
@@ -15,6 +15,7 @@ export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; on
  const [submittingId, setSubmittingId] = useState<number | null>(null);
  const [canReview, setCanReview] = useState(false);
  const [detail, setDetail] = useState<TacApprovalDetail | null>(null);
+ const [history, setHistory] = useState<TacApprovalHistoryItem[]>([]);
  const [reasonCode, setReasonCode] = useState('');
  const [reasonText, setReasonText] = useState('');
  const [revisionTitle, setRevisionTitle] = useState('');
@@ -63,8 +64,8 @@ export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; on
   } finally { setSubmittingId(null); }
  }
  async function openDetail(id: number) {
-  setSaveError(''); setSaveMessage(''); setDetail(null); setReasonCode(''); setReasonText('');
-  try { const loaded=await getTacApprovalDetail(id);setDetail(loaded);setRevisionTitle(typeof loaded.after.title==='string'?loaded.after.title:'');setRevisionDescription(typeof loaded.after.description==='string'?loaded.after.description:''); }
+  setSaveError(''); setSaveMessage(''); setDetail(null); setHistory([]); setReasonCode(''); setReasonText('');
+  try { const [loaded, versions]=await Promise.all([getTacApprovalDetail(id),getTacApprovalHistory(id)]);setHistory(versions);setDetail(loaded);setRevisionTitle(typeof loaded.after.title==='string'?loaded.after.title:'');setRevisionDescription(typeof loaded.after.description==='string'?loaded.after.description:''); }
   catch (error) {
    if (error instanceof Error && error.message==='SESSION_EXPIRED') onSessionExpired();
    else setSaveError(error instanceof Error ? error.message : 'No se pudo abrir');
@@ -142,6 +143,7 @@ export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; on
    <p><strong>Estado:</strong> {statusLabels[detail.status]} · <strong>Pedido:</strong> {detail.order_id ?? 'Sin pedido vinculado'}</p>
    <p><strong>Título:</strong> {typeof detail.after.title==='string' ? detail.after.title : '—'}</p>
    <p className="tac-detail-description"><strong>Descripción:</strong> {typeof detail.after.description==='string' ? detail.after.description : '—'}</p>
+   {history.length>0 && <div className="tac-history"><h3>Historial de versiones</h3><ol>{history.map(version=><li key={version.id}><button type="button" className="outline" onClick={()=>void openDetail(version.id)}>Versión {version.version}</button> · {statusLabels[version.status]} · {version.created_at}{version.reason_code?' · Motivo: '+version.reason_code:''}</li>)}</ol></div>}
    {detail.reason_code && <p><strong>Motivo:</strong> {detail.reason_code} {detail.reason_text ?? ''}</p>}
    {detail.status==='returned' && detail.submitted_by===currentUserId && <div className="tac-draft-form">
     <h3>Crear nueva versión corregida</h3>
