@@ -1,56 +1,36 @@
-# Flujo de aprobaciones TAC — contrato previo a habilitar escrituras
+# Flujo de solicitudes y revisiones TAC (base local de prueba)
 
-## Estado actual
-- Alec (`arueda`, id 1) fue asignado en Laragon según la ejecución confirmada por el usuario.
-- Karo no tiene cuenta asignada. Ninguna aprobación comercial está habilitada.
-- Migración 002: archivo SQL preparado, no aplicado por el asistente.
-- La API `GET /api/tac-approvals.php` es solo lectura, con permiso `approvals.read`.
+## Estado implementado en la rama feature/panel-tac-unificado
 
-## Estados y transiciones previstas (NO implementadas)
-- `draft` → `submitted`: Alec o Karo envía a revisión; validación del snapshot comercial.
-- `submitted` → `returned`: Karo devuelve para corrección, con motivo.
-- `submitted` → `approved` o `rejected`: **solo Karo**, con razón para rechazo.
-- `returned` → nueva versión `draft` / `submitted`: conservar historial, nunca sobrescribir una versión aprobada.
-- Cualquier cambio comercial tras aprobación requiere una nueva versión y nueva aprobación.
-- Las acciones se diseñarán con comprobación de rol en servidor, CSRF, transacción y bloqueo optimista de versión. Ningún botón de frontend sustituye estas comprobaciones.
+La cuenta local `admin` (Alec) y la cuenta `kramirez` (Karo) tienen roles TAC separados. La migración 002 ya está instalada en la base local de prueba según el preflight confirmado por el usuario; **no volver a ejecutar CREATE TABLE**.
 
-## Integridad y concurrencia
-- Para pedidos existentes, `UNIQUE(order_id, version)` impide versiones duplicadas.
-- Cada solicitud tiene `request_key CHAR(36)` estable entre versiones, con `UNIQUE(request_key, version)`. Esto impide repetir una versión aunque `order_id` sea `NULL`.
-- Para pedidos existentes también se conserva `UNIQUE(order_id, version)`. El backend futuro deberá definir y validar la correspondencia entre solicitud y pedido; los índices no sustituyen esa regla.
-- El backend futuro deberá generar `request_key` y comprobar la transición de estado en transacción; **todavía no existen escrituras**.
-- La versión y el estado se comprobarán dentro de transacciones; no se aprobará si la solicitud cambió desde su lectura.
-- Auditoría con actor, entidad, versión, resultado y metadatos sin datos personales innecesarios.
-- La tabla 002 por sí sola no impone exclusividad de aprobación por Karo; esa restricción será obligatoria en backend.
+Las siguientes acciones requieren sesión activa, CSRF para escrituras y comprobación de rol en el servidor:
 
-## Reglas comerciales por validar antes de operar
-- Picado personalizado: 10–100 tiras en decenas; número máximo de diseños y precios según reglas aprobadas.
-- Picado prediseñado: verificar existencias con Karo; pedidos superiores a 100 requieren intervención.
-- Piñatas personalizadas: revisión manual de Karo, sin cotización automática del robot.
-- Solicitudes urgentes (entrega en 3 días o menos): prioridad visible, sin saltarse aprobaciones.
-- Catálogo de motivos de devolución/rechazo, con texto obligatorio para «Otro».
+| Endpoint | Rol | Efecto |
+| --- | --- | --- |
+| GET /api/tac-approvals.php | Alec, Karo | Lista hasta 100 solicitudes, sin snapshots |
+| GET /api/tac-approval-detail.php?id=N | Karo o autor | Muestra título, descripción, motivo y versión |
+| POST /api/tac-approval-drafts.php | Alec, Karo | Crea borrador versión 1 |
+| POST /api/tac-approval-submit.php | Autor | Cambia borrador a submitted |
+| POST /api/tac-approval-review.php | Solo Karo, no autor | Cambia submitted a approved/rejected/returned |
+| POST /api/tac-approval-revise.php | Autor | Crea versión N+1 en draft desde returned |
 
-## Preflight en Laragon
-```cmd
-php scripts/tac-approvals-preflight.php
-```
-Este comando es **solo lectura**: informa nombre de base, dependencias, rol asignado y existencia de la tabla 002.
+La revisión de Karo no actualiza pedidos: solo decide sobre la solicitud. Ninguna de estas APIs envía WhatsApp, altera n8n ni activa el Robot Cotizador.
 
-La migración 002 ya incorpora la identidad estable `request_key`. Se puede evaluar para la **base de prueba**, pero crear la tabla no habilita escrituras ni decisiones comerciales. Antes de ejecutarla, revisar el SQL actualizado y confirmar que el preflight indica `tac_approval_requests: FALTA`.
+## Correcciones versionadas
 
-## Criterios de aceptación de una futura fase operativa
-1. Sin sesión → 401; sin rol → 403; Alec nunca puede aprobar/rechazar.
-2. Dos revisiones simultáneas no pueden aprobar versiones diferentes accidentalmente.
-3. Un cambio comercial genera nueva versión y conserva historial.
-4. Rechazo/devolución exige motivo válido; «Otro» exige explicación.
-5. Todo cambio se audita en la misma transacción.
-6. Robot, WhatsApp y producción permanecen independientes.
+`POST /api/tac-approval-revise.php` acepta `{"id":1,"version":1,"title":"Título corregido","description":"Explicación corregida"}`. Exige estado `returned`, autor original y versión coincidente. En transacción bloquea la fila anterior, comprueba que no exista versión posterior, inserta un nuevo registro `draft` con el mismo `request_key`, versión incrementada, `before_snapshot` igual al snapshot previo y `after_snapshot` con los datos corregidos. Registra auditoría en la misma transacción. No edita ni borra versiones anteriores. El índice único `(request_key,version)` impide duplicados concurrentes.
 
+La nueva versión debe enviarse nuevamente a revisión. Las versiones `approved` y `rejected` son terminales en esta fase.
 
-## Borradores aislados (fase de prueba)
+## Revisión de Karo
 
-El endpoint autenticado `POST /api/tac-approval-drafts.php` crea únicamente un registro en `tac_approval_requests` y su evento en `tac_audit_events`, en una sola transacción. Requiere sesión, token `X-CSRF-Token` y rol TAC `alec` o `karo`. No actualiza `orders`, no envía mensajes y no aprueba cambios.
+`POST /api/tac-approval-review.php` acepta `id`, `version`, `decision` (approved/rejected/returned). Para rechazar o devolver se exige `reason_code` entre `price`, `quantity`, `delivery_date`, `design`, `missing_info`, `other`; `other` exige `reason_text` de 10 a 1000 caracteres. No se permite revisar solicitudes propias. El servidor valida estado y versión en transacción.
 
-Cuerpo JSON permitido: `{"title":"Cambio solicitado","description":"Descripción detallada del cambio","order_id":null}`. `order_id` puede omitirse o ser el UUID de un pedido existente. No se aceptan campos comerciales arbitrarios. El servidor genera un `request_key` UUID v4 y crea la versión 1 con estado `draft`. Si ya hay versión 1 para ese pedido, responde 409; esto es una restricción temporal del esquema actual.
+## Pendientes y límites
 
-Este endpoint todavía no tiene formulario conectado. No enviar solicitudes a revisión ni habilitar decisiones comerciales hasta implementar y probar las transiciones y los permisos específicos de Karo.
+- Validar sintaxis y flujo real en Laragon antes de considerar operativa esta fase. No se han ejecutado pruebas sobre el MySQL del usuario.
+- Los snapshots actuales contienen solo título y descripción; **no** representan un diff comercial validado contra `orders`.
+- No aplicar automáticamente aprobaciones a pedidos hasta definir el modelo de cambios comerciales, reglas de precio, firmas de snapshot y pruebas.
+- Mantener n8n/WhatsApp y robot separados y deshabilitados hasta autorización explícita.
+- Futuro: historial agrupado por `request_key`, alertas de urgencia, catálogo visual de motivos y pruebas de concurrencia.
