@@ -90,7 +90,7 @@ export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; on
  return <div className="tac-module">
   <div className="tac-module-intro">
    <div className="tac-module-icon"><ClipboardCheck size={29} aria-hidden="true"/></div>
-   <div><span className="tac-module-tag">Bandeja de solicitudes · decisiones bloqueadas</span><h2>Aprobaciones de Karo</h2><p>Consulta solicitudes y crea borradores aislados. Aprobar, rechazar y modificar pedidos sigue bloqueado.</p></div>
+   <div><span className="tac-module-tag">Bandeja de solicitudes · revisión controlada</span><h2>Aprobaciones de Karo</h2><p>Consulta solicitudes y crea borradores aislados. Karo puede registrar decisiones sobre solicitudes ajenas. Ninguna decisión modifica pedidos.</p></div>
   </div>
   {state === 'ready' && <section className="panel tac-module-panel" aria-labelledby="tac-draft-heading">
    <h3 id="tac-draft-heading">Nueva solicitud · borrador</h3>
@@ -147,7 +147,7 @@ export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; on
     <p>La decisión solo cambia el estado de la solicitud; no actualiza pedidos ni envía mensajes.</p>
    </>}
   </section>}
-  <section className="panel tac-module-notice"><div><ShieldAlert size={21}/><strong>Operaciones bloqueadas</strong></div>
+  <section className="panel tac-module-notice"><div><ShieldAlert size={21}/><strong>Pedidos y automatizaciones protegidos</strong></div>
    <p><LockKeyhole size={15}/> Las decisiones de Karo solo cambian el estado de la solicitud; modificar pedidos y enviar mensajes permanece bloqueado. Los permisos se verifican en el servidor y el listado no devuelve snapshots comerciales.</p>
   </section>
  </div>;
