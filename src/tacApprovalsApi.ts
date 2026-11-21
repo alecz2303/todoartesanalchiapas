@@ -32,3 +32,24 @@ export async function getTacApprovals(signal?: AbortSignal): Promise<ApprovalSum
  })) throw new Error('INVALID_DATA');
  return v.items as ApprovalSummary[];
 }
+
+export async function createTacApprovalDraft(
+ csrf: string,
+ input: {title: string; description: string},
+): Promise<{id: number; request_key: string}> {
+ const response = await fetch('/api/tac-approval-drafts.php', {
+  method: 'POST', credentials: 'same-origin', cache: 'no-store',
+  headers: {'Content-Type':'application/json','X-CSRF-Token':csrf},
+  body: JSON.stringify(input),
+ });
+ const data: unknown = await response.json().catch(() => null);
+ if (response.status === 401) throw new Error('SESSION_EXPIRED');
+ if (response.status === 403) throw new Error('FORBIDDEN');
+ if (!response.ok) {
+  const message = data && typeof data === 'object' && 'error' in data && typeof data.error === 'string' ? data.error : 'No se pudo guardar el borrador';
+  throw new Error(message);
+ }
+ if (!data || typeof data !== 'object' || !('id' in data) || !Number.isInteger(data.id) ||
+     !('request_key' in data) || typeof data.request_key !== 'string') throw new Error('Respuesta inválida del servidor');
+ return data as {id:number; request_key:string};
+}
