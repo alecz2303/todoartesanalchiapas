@@ -1,5 +1,6 @@
 import { Bot, CheckCircle2, ClipboardCheck, Clock3, MessageCircle, Settings2, ShieldAlert } from 'lucide-react';
 import './PanelTac.css';
+import RobotAdmin from './RobotAdmin';
 
 type Module = 'conversations' | 'robot' | 'approvals' | 'settings';
 type Props = { module: Module };
@@ -27,6 +28,7 @@ const definitions = {
 } as const;
 
 export default function PanelTac({ module }: Props) {
+ if (module === 'robot') return <RobotAdmin/>;
  const item = definitions[module];
  const Icon = item.icon;
  return <div className="tac-module">
