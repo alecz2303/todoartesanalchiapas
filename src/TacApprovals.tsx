@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ClipboardCheck, LockKeyhole, RefreshCw, ShieldAlert } from 'lucide-react';
-import { getTacApprovals, createTacApprovalDraft, submitTacApproval, type ApprovalSummary } from './tacApprovalsApi';
+import { getTacApprovals, createTacApprovalDraft, submitTacApproval, getTacApprovalDetail, reviewTacApproval, type TacApprovalDetail, type ApprovalSummary } from './tacApprovalsApi';
 import './PanelTac.css';
 
 type ViewState = 'loading' | 'forbidden' | 'not-ready' | 'ready';
@@ -13,6 +13,10 @@ export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; on
  const [items, setItems] = useState<ApprovalSummary[]>([]);
  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
  const [submittingId, setSubmittingId] = useState<number | null>(null);
+ const [canReview, setCanReview] = useState(false);
+ const [detail, setDetail] = useState<TacApprovalDetail | null>(null);
+ const [reasonCode, setReasonCode] = useState('');
+ const [reasonText, setReasonText] = useState('');
  const [reload, setReload] = useState(0);
  const [title, setTitle] = useState('');
  const [description, setDescription] = useState('');
@@ -23,6 +27,7 @@ export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; on
  useEffect(() => {
   const controller = new AbortController();
   setState('loading');
+  fetch('/api/tac-permissions-check.php',{credentials:'same-origin',cache:'no-store',signal:controller.signal}).then(r=>r.ok?r.json():null).then(p=>{if(!controller.signal.aborted)setCanReview(p?.permissions?.approvalsReview===true)}).catch(()=>{if(!controller.signal.aborted)setCanReview(false)});
   getTacApprovals(controller.signal)
    .then(data => { if (!controller.signal.aborted) { setItems(data.items); setCurrentUserId(data.currentUserId); setState('ready'); } })
    .catch(e => { if (!controller.signal.aborted) setState(e instanceof Error && e.message === 'FORBIDDEN' ? 'forbidden' : 'not-ready'); });
@@ -53,6 +58,30 @@ export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; on
   } catch (error) {
    if (error instanceof Error && error.message === 'SESSION_EXPIRED') onSessionExpired();
    else setSaveError(error instanceof Error ? error.message : 'No se pudo enviar');
+  } finally { setSubmittingId(null); }
+ }
+ async function openDetail(id: number) {
+  setSaveError(''); setSaveMessage(''); setDetail(null); setReasonCode(''); setReasonText('');
+  try { setDetail(await getTacApprovalDetail(id)); }
+  catch (error) {
+   if (error instanceof Error && error.message==='SESSION_EXPIRED') onSessionExpired();
+   else setSaveError(error instanceof Error ? error.message : 'No se pudo abrir');
+  }
+ }
+ async function decide(decision: 'approved'|'rejected'|'returned') {
+  if (!detail || submittingId !== null || !canReview) return;
+  if (decision !== 'approved' && (!reasonCode || (reasonCode === 'other' && reasonText.trim().length < 10))) {
+   setSaveError('Selecciona un motivo y explica Otro cuando corresponda.'); return;
+  }
+  if (!window.confirm('¿Confirmar ' + (decision==='approved'?'aprobación':decision==='returned'?'devolución':'rechazo') + ' de la solicitud #' + detail.id + '? No se modificará el pedido.')) return;
+  setSubmittingId(detail.id); setSaveError('');
+  try {
+   await reviewTacApproval(csrf,{id:detail.id,version:detail.version,decision,...(decision==='approved'?{}:{reason_code:reasonCode,reason_text:reasonText.trim()||undefined})});
+   setDetail(null); setSaveMessage('Decisión registrada en la solicitud. El pedido no fue modificado.');
+   setReload(n=>n+1);
+  } catch (error) {
+   if (error instanceof Error && error.message==='SESSION_EXPIRED') onSessionExpired();
+   else setSaveError(error instanceof Error ? error.message : 'No se pudo registrar');
   } finally { setSubmittingId(null); }
  }
  const pending = items.filter(item => item.status === 'submitted').length;
@@ -87,12 +116,39 @@ export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; on
     {saveError && <p role="alert" className="tac-draft-error">{saveError}</p>}
     {items.length === 0 ? <p>No hay solicitudes registradas en la base de prueba.</p> : visibleItems.length === 0 ? <p>No hay solicitudes con ese estado.</p> :
      <div className="tac-approval-scroll"><table className="tac-approval-table"><thead><tr><th>Solicitud</th><th>Identidad</th><th>Pedido</th><th>Versión</th><th>Estado</th><th>Enviada</th><th>Acción</th></tr></thead><tbody>
-      {visibleItems.map(item => <tr key={item.id}><td>#{item.id}</td><td><code title={item.request_key}>{item.request_key.slice(0, 8)}…</code></td><td>{item.order_id ?? 'Sin pedido vinculado'}</td><td>{item.version}</td><td>{statusLabels[item.status]}</td><td>{item.submitted_at ?? '—'}</td><td>{item.status === 'draft' && item.submitted_by === currentUserId ? <button type="button" className="outline" disabled={submittingId !== null} onClick={() => void sendForReview(item)}>{submittingId === item.id ? 'Enviando…' : 'Enviar a revisión'}</button> : '—'}</td></tr>)}
+      {visibleItems.map(item => <tr key={item.id}><td>#{item.id}</td><td><code title={item.request_key}>{item.request_key.slice(0, 8)}…</code></td><td>{item.order_id ?? 'Sin pedido vinculado'}</td><td>{item.version}</td><td>{statusLabels[item.status]}</td><td>{item.submitted_at ?? '—'}</td><td><button type="button" className="outline" onClick={() => void openDetail(item.id)}>Ver detalle</button> {item.status === 'draft' && item.submitted_by === currentUserId ? <button type="button" className="outline" disabled={submittingId !== null} onClick={() => void sendForReview(item)}>{submittingId === item.id ? 'Enviando…' : 'Enviar a revisión'}</button> : null}</td></tr>)}
      </tbody></table></div>}
    </> : <p role="status">{state === 'loading' ? 'Consultando solicitudes…' : state === 'forbidden' ? 'Tu cuenta no tiene permiso para consultar aprobaciones TAC. Es necesario asignar un rol autorizado.' : 'La bandeja aún no está disponible. La migración 002 debe revisarse y aplicarse en la base de prueba antes de consultar solicitudes.'}</p>}
   </section>
+  {detail && <section className="panel tac-module-panel" aria-labelledby="tac-review-heading">
+   <div className="tac-approval-toolbar"><h3 id="tac-review-heading">Solicitud #{detail.id} · v{detail.version}</h3><button className="outline" type="button" onClick={()=>setDetail(null)}>Cerrar detalle</button></div>
+   <p><strong>Estado:</strong> {statusLabels[detail.status]} · <strong>Pedido:</strong> {detail.order_id ?? 'Sin pedido vinculado'}</p>
+   <p><strong>Título:</strong> {typeof detail.after.title==='string' ? detail.after.title : '—'}</p>
+   <p className="tac-detail-description"><strong>Descripción:</strong> {typeof detail.after.description==='string' ? detail.after.description : '—'}</p>
+   {detail.reason_code && <p><strong>Motivo:</strong> {detail.reason_code} {detail.reason_text ?? ''}</p>}
+   {canReview && detail.status==='submitted' && detail.submitted_by !== currentUserId && <>
+    <h3>Decisión de Karo</h3>
+    <label className="tac-review-field">Motivo para rechazar o devolver
+     <select value={reasonCode} onChange={e=>setReasonCode(e.target.value)}>
+      <option value="">Seleccionar motivo</option>
+      <option value="price">Precio</option><option value="quantity">Cantidad</option>
+      <option value="delivery_date">Fecha de entrega</option><option value="design">Diseño</option>
+      <option value="missing_info">Información incompleta</option><option value="other">Otro</option>
+     </select>
+    </label>
+    <label className="tac-review-field">Observaciones
+     <textarea rows={3} maxLength={1000} value={reasonText} onChange={e=>setReasonText(e.target.value)} placeholder="Explica la decisión cuando sea necesario"/>
+    </label>
+    <div className="tac-review-actions">
+     <button type="button" className="outline" disabled={submittingId!==null} onClick={()=>void decide('approved')}>Aprobar solicitud</button>
+     <button type="button" className="outline" disabled={submittingId!==null || !reasonCode} onClick={()=>void decide('returned')}>Devolver</button>
+     <button type="button" className="outline" disabled={submittingId!==null || !reasonCode} onClick={()=>void decide('rejected')}>Rechazar</button>
+    </div>
+    <p>La decisión solo cambia el estado de la solicitud; no actualiza pedidos ni envía mensajes.</p>
+   </>}
+  </section>}
   <section className="panel tac-module-notice"><div><ShieldAlert size={21}/><strong>Operaciones bloqueadas</strong></div>
-   <p><LockKeyhole size={15}/> Se permite crear y enviar borradores a revisión. Aprobar, rechazar y modificar pedidos permanece bloqueado. Los permisos se verifican en el servidor y el listado no devuelve snapshots comerciales.</p>
+   <p><LockKeyhole size={15}/> Las decisiones de Karo solo cambian el estado de la solicitud; modificar pedidos y enviar mensajes permanece bloqueado. Los permisos se verifican en el servidor y el listado no devuelve snapshots comerciales.</p>
   </section>
  </div>;
 }
