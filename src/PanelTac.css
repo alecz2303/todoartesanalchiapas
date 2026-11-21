@@ -4,3 +4,5 @@
 .tac-draft-form{display:grid;gap:14px;max-width:680px}.tac-draft-form label{display:grid;gap:6px;font-weight:700;color:#38217e}.tac-draft-form input,.tac-draft-form textarea{width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #d5c8e9;border-radius:10px;font:inherit;color:#26146c;background:#fff}.tac-draft-form textarea{resize:vertical}.tac-draft-form button{justify-self:start}.tac-draft-success{color:#236348;font-weight:700}.tac-draft-error{color:#a02032;font-weight:700}
 
 .tac-review-field{display:grid;gap:8px;max-width:680px;margin:12px 0;font-weight:700;color:#38217e}.tac-review-field select,.tac-review-field textarea{width:100%;box-sizing:border-box;border:1px solid #d5c8e9;border-radius:10px;padding:10px;font:inherit}.tac-review-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}.tac-detail-description{white-space:pre-wrap;overflow-wrap:anywhere}
+
+.tac-draft-form select{width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #d5c8e9;border-radius:10px;font:inherit;color:#26146c;background:#fff}.tac-history ol{padding-left:24px;display:grid;gap:8px}.tac-history li{line-height:1.6}
