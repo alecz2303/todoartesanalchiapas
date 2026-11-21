@@ -43,8 +43,10 @@ try {
          PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
          PDO::ATTR_EMULATE_PREPARES => false]);
     $pdo->beginTransaction();
-    $stmt = $pdo->prepare('SELECT id, username, display_name, is_active FROM users WHERE id IN (?,?,?) FOR UPDATE');
-    $stmt->execute(array_values($ids));
+    $uniqueIds = array_values(array_unique(array_values($ids)));
+    $placeholders = implode(',', array_fill(0, count($uniqueIds), '?'));
+    $stmt = $pdo->prepare('SELECT id, username, display_name, is_active FROM users WHERE id IN ('.$placeholders.') FOR UPDATE');
+    $stmt->execute($uniqueIds);
     $users = [];
     foreach ($stmt->fetchAll() as $row) $users[(int)$row['id']] = $row;
     foreach ($ids as $key => $id) {
