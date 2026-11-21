@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getRobotCapabilities, type RobotCapabilities } from './robotApi';
+import { getTacRole, type TacRoleStatus } from './tacRoleApi';
 import { AlertTriangle, Bot, CheckCircle2, CircleHelp, Clock3, Database, LockKeyhole, MessageCircle, Network, RefreshCw, ShieldCheck, SlidersHorizontal, UsersRound } from 'lucide-react';
 import './RobotAdmin.css';
 
@@ -13,12 +14,17 @@ export default function RobotAdmin() {
  const [apiState, setApiState] = useState<'loading' | 'ready' | 'unavailable'>('loading');
  const [refreshCount, setRefreshCount] = useState(0);
  const [lastChecked, setLastChecked] = useState<string | null>(null);
+ const [roleStatus, setRoleStatus] = useState<'loading' | 'unavailable' | TacRoleStatus['role']>('loading');
  const [n8nState, setN8nState] = useState<RobotCapabilities['integrations']['n8n']>('not_configured');
  const [workflowState, setWorkflowState] = useState<RobotCapabilities['integrations']['robotWorkflow']>('not_configured');
  useEffect(() => {
   const controller = new AbortController();
   setApiState('loading');
+  setRoleStatus('loading');
   setLastChecked(null);
+  getTacRole(controller.signal)
+   .then(result => { if (!controller.signal.aborted) setRoleStatus(result.role); })
+   .catch(() => { if (!controller.signal.aborted) setRoleStatus('unavailable'); });
   getRobotCapabilities(controller.signal)
    .then((result) => { if (!controller.signal.aborted) { setApiState('ready'); setN8nState(result.integrations.n8n); setWorkflowState(result.integrations.robotWorkflow); setLastChecked(new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' })); } })
    .catch(() => { if (!controller.signal.aborted) setApiState('unavailable'); });
@@ -64,7 +70,8 @@ export default function RobotAdmin() {
 
   <section className="panel robot-admin-card" aria-label="Diseño de permisos TAC">
    <div className="robot-admin-card-title"><UsersRound size={21} aria-hidden="true"/><h3>Permisos y auditoría · diseño pendiente</h3></div>
-   <p>Esta es una matriz de permisos propuesta, no permisos asignados. El sistema actual todavía no distingue roles Karo y Alec en su base de usuarios.</p>
+   <p>Esta matriz muestra permisos propuestos. La consulta autenticada del rol de tu sesión es de solo lectura; no habilita acciones.</p>
+   <div className="robot-admin-role-status"><ShieldCheck size={18} aria-hidden="true"/><div><strong>Rol de la sesión actual</strong><small>{roleStatus === 'loading' ? 'Consultando…' : roleStatus === 'unavailable' ? 'No se pudo verificar' : roleStatus === 'unassigned' ? 'Sin rol TAC asignado' : roleStatus === 'karo' ? 'Karo (solo lectura)' : 'Alec (solo lectura)'}</small></div></div>
    <div className="robot-admin-permissions-wrap">
     <table className="robot-admin-permissions"><thead><tr><th>Acción futura</th><th>Karo</th><th>Alec</th></tr></thead><tbody>
      <tr><td>Ver diagnósticos</td><td>Previsto</td><td>Previsto</td></tr>
@@ -74,7 +81,7 @@ export default function RobotAdmin() {
      <tr><td>Activar robot</td><td>Bloqueado</td><td>Bloqueado</td></tr>
     </tbody></table>
    </div>
-   <p className="robot-admin-permissions-note"><LockKeyhole size={16} aria-hidden="true"/> No hay asignación de roles ni escritura de auditoría implementadas. Toda autorización futura se verificará en PHP.</p>
+   <p className="robot-admin-permissions-note"><LockKeyhole size={16} aria-hidden="true"/> No existe interfaz de asignación de roles ni escritura de auditoría. Las acciones operativas siguen bloqueadas, incluso si se asigna un rol en la base de prueba.</p>
   </section>
 
   <section className="panel robot-admin-card robot-admin-next">
