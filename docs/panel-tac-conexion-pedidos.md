@@ -25,3 +25,9 @@ El sistema actual de pedidos no debe reemplazarse ni duplicarse.
 ## Acceso manual a WhatsApp
 
 El botón **WhatsApp** en la atención prioritaria abre `wa.me` con el número guardado en el pedido. Para números mexicanos de diez dígitos se agrega el prefijo `52`; para números internacionales de 11 a 15 dígitos se conserva el número completo. No se transmite ningún texto ni dato del pedido en la URL. El botón no se muestra si el número no tiene una longitud utilizable. Abrir el enlace no cambia el modo de atención de n8n ni permite leer el historial de mensajes.
+
+## Diagnóstico de conversaciones (sin escrituras)
+
+`GET /api/tac-conversations-diagnostics.php` requiere sesión activa y permiso TAC `diagnostics.read`. Consulta exclusivamente los nombres de tablas de la base MySQL actualmente configurada que parezcan relacionadas con chats, mensajes o WhatsApp. Devuelve `connected:false` deliberadamente: encontrar una tabla no equivale a haber conectado el proveedor. No lee filas de clientes, mensajes ni secretos. La sección Conversaciones muestra las tablas candidatas o un error de conexión, sin activar ninguna transferencia ni robot.
+
+Las rutas `/api/conversaciones`, `/api/robot/estado` y `/api/conversaciones/control/modo` identificadas en el escritorio TAC legado no se consideran compatibles automáticamente con el PHP actual; antes de implementar un adaptador operativo deben identificarse el servidor, esquema y autenticación de esas rutas.
