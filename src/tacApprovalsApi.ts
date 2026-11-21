@@ -112,3 +112,13 @@ export async function reviseTacApproval(csrf:string,input:{id:number;version:num
     !('version' in data) || !Number.isInteger(data.version))throw new Error('Respuesta inválida');
  return data as {id:number;version:number};
 }
+
+export type TacApprovalHistoryItem={id:number;version:number;status:ApprovalSummary['status'];created_at:string;reason_code:string|null};
+export async function getTacApprovalHistory(id:number):Promise<TacApprovalHistoryItem[]>{
+ const response=await fetch('/api/tac-approval-history.php?id='+encodeURIComponent(id),{credentials:'same-origin',cache:'no-store'});
+ if(response.status===401)throw new Error('SESSION_EXPIRED');
+ const data:unknown=await response.json().catch(()=>null);
+ if(!response.ok)throw new Error(data && typeof data==='object' && 'error' in data && typeof data.error==='string'?data.error:'No se pudo cargar el historial');
+ if(!data || typeof data!=='object' || !('items' in data) || !Array.isArray(data.items))throw new Error('Historial inválido');
+ return data.items as TacApprovalHistoryItem[];
+}
