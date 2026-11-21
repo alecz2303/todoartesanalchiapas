@@ -3,17 +3,22 @@ declare(strict_types=1);
 // CLI ONLY. Assign roles in a local TEST database, with explicit verified identities.
 // Dry-run is the default; use --apply --confirm-db=<actual database name>.
 if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
-$options = getopt('', ['karo-id:', 'alec-id:', 'actor-id:', 'apply', 'confirm-db:']);
+$options = getopt('', ['karo-id:', 'alec-id:', 'actor-id:', 'expect-alec-username:', 'apply', 'confirm-db:']);
 $ids = [];
-foreach (['karo-id', 'alec-id', 'actor-id'] as $key) {
+foreach (['alec-id', 'actor-id'] as $key) {
     $raw = $options[$key] ?? '';
     if (!is_string($raw) || !ctype_digit($raw) || (int)$raw < 1) {
-        fwrite(STDERR, "Uso: php scripts/tac-assign-roles.php --karo-id=N --alec-id=N --actor-id=N [--apply --confirm-db=NOMBRE_BD]\n");
+        fwrite(STDERR, "Uso: php scripts/tac-assign-roles.php --alec-id=N --actor-id=N [--karo-id=N] [--expect-alec-username=USUARIO] [--apply --confirm-db=NOMBRE_BD]\n");
         exit(2);
     }
     $ids[$key] = (int)$raw;
 }
-if ($ids['karo-id'] === $ids['alec-id']) {
+if (isset($options['karo-id'])) {
+    $raw = $options['karo-id'];
+    if (!is_string($raw) || !ctype_digit($raw) || (int)$raw < 1) { fwrite(STDERR, "ID Karo inválido.\n"); exit(2); }
+    $ids['karo-id'] = (int)$raw;
+}
+if (isset($ids['karo-id']) && $ids['karo-id'] === $ids['alec-id']) {
     fwrite(STDERR, "Karo y Alec deben tener cuentas diferentes.\n");
     exit(2);
 }
@@ -49,7 +54,12 @@ try {
     }
     $existing = $pdo->query('SELECT user_id, role_code FROM tac_user_roles FOR UPDATE')->fetchAll();
     if ($existing) throw new RuntimeException('Ya existen roles TAC. No sobrescribir ni duplicar: revisar manualmente.');
-    foreach (['karo-id' => 'karo', 'alec-id' => 'alec'] as $key => $role) {
+    $assignments = ['alec-id' => 'alec'];
+    if (isset($ids['karo-id'])) $assignments['karo-id'] = 'karo';
+    if (isset($options['expect-alec-username']) && $users[$ids['alec-id']]['username'] !== $options['expect-alec-username']) {
+        throw new RuntimeException('El usuario Alec no coincide con --expect-alec-username');
+    }
+    foreach ($assignments as $key => $role) {
         $user = $users[$ids[$key]];
         echo strtoupper($role).': id='.$user['id'].' usuario='.$user['username'].' nombre='.$user['display_name']."\n";
     }
@@ -60,13 +70,13 @@ try {
     $insertAudit = $pdo->prepare("INSERT INTO tac_audit_events
         (actor_user_id, action_code, entity_type, entity_id, outcome, metadata)
         VALUES (?, 'tac.role.assign', 'user', ?, 'success', ?)");
-    foreach (['karo-id' => 'karo', 'alec-id' => 'alec'] as $key => $role) {
+    foreach ($assignments as $key => $role) {
         $id = $ids[$key];
         $insertRole->execute([$id, $role, $ids['actor-id']]);
         $insertAudit->execute([$ids['actor-id'], (string)$id, json_encode(['role' => $role], JSON_THROW_ON_ERROR)]);
     }
     $pdo->commit();
-    echo "Roles asignados y 2 eventos de auditoría registrados en la base de prueba.\n";
+    echo count($assignments)." rol(es) y ".count($assignments)." evento(s) de auditoría registrados en la base de prueba.\n";
 } catch (Throwable $e) {
     if (isset($pdo) && $pdo->inTransaction()) $pdo->rollBack();
     fwrite(STDERR, "Operación cancelada: ".$e->getMessage()."\n");
