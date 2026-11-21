@@ -69,3 +69,29 @@ export async function submitTacApproval(csrf: string, id: number, version: numbe
   throw new Error(error);
  }
 }
+
+export type TacApprovalDetail = {
+ id: number; version: number; status: ApprovalSummary['status']; submitted_by: number;
+ order_id: string | null; after: {title?: string; description?: string};
+ before: unknown; reason_code: string | null; reason_text: string | null;
+};
+export async function getTacApprovalDetail(id: number): Promise<TacApprovalDetail> {
+ const response = await fetch('/api/tac-approval-detail.php?id='+encodeURIComponent(id), {credentials:'same-origin',cache:'no-store'});
+ if (response.status === 401) throw new Error('SESSION_EXPIRED');
+ const data = await response.json().catch(()=>null);
+ if (!response.ok) throw new Error(data?.error || 'No se pudo abrir la solicitud');
+ if (!data?.item || typeof data.item !== 'object') throw new Error('Detalle inválido');
+ return data.item as TacApprovalDetail;
+}
+export async function reviewTacApproval(csrf: string, input: {
+ id:number; version:number; decision:'approved'|'rejected'|'returned';
+ reason_code?:string; reason_text?:string;
+}): Promise<void> {
+ const response=await fetch('/api/tac-approval-review.php',{
+  method:'POST',credentials:'same-origin',cache:'no-store',
+  headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify(input),
+ });
+ if (response.status===401) throw new Error('SESSION_EXPIRED');
+ const data=await response.json().catch(()=>null);
+ if (!response.ok) throw new Error(data?.error || 'No se pudo registrar la decisión');
+}
