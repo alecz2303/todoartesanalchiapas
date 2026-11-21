@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 tacRequirePermission('approvals.read', $user);
 // No retornar snapshots, teléfonos ni información sensible en el listado.
 try {
-  $query = db()->query("SELECT id, order_id, version, status, submitted_at, created_at
+  $query = db()->query("SELECT id, request_key, order_id, version, status, submitted_at, created_at
     FROM tac_approval_requests ORDER BY
     CASE WHEN status = 'submitted' THEN 0 WHEN status = 'returned' THEN 1 ELSE 2 END,
     submitted_at ASC, id ASC LIMIT 100");
