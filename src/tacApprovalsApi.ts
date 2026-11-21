@@ -1,5 +1,6 @@
 export type ApprovalSummary = {
  id: number;
+ request_key: string;
  order_id: string | null;
  version: number;
  status: 'draft' | 'submitted' | 'returned' | 'approved' | 'rejected';
@@ -23,7 +24,7 @@ export async function getTacApprovals(signal?: AbortSignal): Promise<ApprovalSum
  if (!v.items.every((i: unknown) => {
   if (!i || typeof i !== 'object') return false;
   const x = i as Record<string, unknown>;
-  return Number.isInteger(x.id) && typeof x.version === 'number' &&
+  return Number.isInteger(x.id) && typeof x.request_key === 'string' && /^[0-9a-fA-F-]{36}$/.test(x.request_key) && Number.isInteger(x.version) && x.version >= 1 &&
    allowed.includes(String(x.status)) &&
    (x.order_id === null || typeof x.order_id === 'string') &&
    (x.submitted_at === null || typeof x.submitted_at === 'string') &&
