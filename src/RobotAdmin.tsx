@@ -12,17 +12,18 @@ const rules = [
 export default function RobotAdmin() {
  const [apiState, setApiState] = useState<'loading' | 'ready' | 'unavailable'>('loading');
  const [n8nState, setN8nState] = useState<RobotCapabilities['integrations']['n8n']>('not_configured');
+ const [workflowState, setWorkflowState] = useState<RobotCapabilities['integrations']['robotWorkflow']>('not_configured');
  useEffect(() => {
   const controller = new AbortController();
   getRobotCapabilities(controller.signal)
-   .then((result) => { if (!controller.signal.aborted) { setApiState('ready'); setN8nState(result.integrations.n8n); } })
+   .then((result) => { if (!controller.signal.aborted) { setApiState('ready'); setN8nState(result.integrations.n8n); setWorkflowState(result.integrations.robotWorkflow); } })
    .catch(() => { if (!controller.signal.aborted) setApiState('unavailable'); });
   return () => controller.abort();
  }, []);
  return <div className="robot-admin">
   <div className="robot-admin-heading">
    <div className="robot-admin-symbol"><Bot size={30} aria-hidden="true"/></div>
-   <div><span className="tac-module-tag">Administración · interfaz de desarrollo</span><h2>Robot Cotizador TAC</h2><p>Vista de administración en preparación. Puede comprobar la disponibilidad del servicio n8n, pero no el estado del robot ni ejecutar operaciones.</p></div>
+   <div><span className="tac-module-tag">Administración · interfaz de desarrollo</span><h2>Robot Cotizador TAC</h2><p>Vista de administración en preparación. Puede comprobar la disponibilidad del servicio n8n, y, con una clave API configurada en PHP, consultar el estado publicado del workflow. No ejecuta operaciones.</p></div>
   </div>
 
   <section className="robot-admin-banner" role="status"><AlertTriangle size={21} aria-hidden="true"/><div><strong>Sin conexión operativa</strong><p>Los controles están deshabilitados hasta integrar una API autenticada y probar los permisos. No se ha activado ni detenido el robot.</p><p><strong>API de preparación:</strong> {apiState === 'loading' ? 'Comprobando…' : apiState === 'ready' ? 'Disponible (solo lectura)' : 'No disponible (sin conexión verificada)'}</p></div></section>
@@ -38,6 +39,7 @@ export default function RobotAdmin() {
     <div className="robot-admin-card-title"><Network size={21} aria-hidden="true"/><h3>Integraciones</h3></div>
     <div className="robot-admin-integration"><Database size={19} aria-hidden="true"/><div><strong>Base de datos unificada</strong><small>Conexión del módulo pendiente</small></div><span>No verificado</span></div>
     <div className="robot-admin-integration"><Network size={19} aria-hidden="true"/><div><strong>n8n</strong><small>Comprobación de servicio, no de workflows</small></div><span>{apiState !== 'ready' ? 'No verificado' : n8nState === 'reachable' ? 'Servicio accesible' : n8nState === 'unavailable' ? 'Sin respuesta' : 'Prueba desactivada'}</span></div>
+    <div className="robot-admin-integration"><Bot size={19} aria-hidden="true"/><div><strong>Workflow Robot Cotizador</strong><small>Estado de activación en n8n; no confirma funcionamiento de WhatsApp</small></div><span>{apiState !== 'ready' ? 'No verificado' : workflowState === 'active' ? 'Activo en n8n' : workflowState === 'inactive' ? 'Inactivo en n8n' : workflowState === 'not_found' ? 'No encontrado' : workflowState === 'unverified' ? 'No verificable' : 'Consulta sin configurar'}</span></div>
     <div className="robot-admin-integration"><MessageCircle size={19} aria-hidden="true"/><div><strong>WhatsApp / Meta</strong><small>Envío y recepción no conectados aquí</small></div><span>No verificado</span></div>
    </section>
   </div>
