@@ -10,6 +10,7 @@ Las siguientes acciones requieren sesión activa, CSRF para escrituras y comprob
 | --- | --- | --- |
 | GET /api/tac-approvals.php | Alec, Karo | Lista hasta 100 solicitudes, sin snapshots |
 | GET /api/tac-approval-detail.php?id=N | Karo o autor | Muestra título, descripción, motivo y versión |
+| GET /api/tac-approval-history.php?id=N | Karo o autor | Lista las versiones de la misma solicitud |
 | POST /api/tac-approval-drafts.php | Alec, Karo | Crea borrador versión 1 |
 | POST /api/tac-approval-submit.php | Autor | Cambia borrador a submitted |
 | POST /api/tac-approval-review.php | Solo Karo, no autor | Cambia submitted a approved/rejected/returned |
@@ -21,7 +22,7 @@ La revisión de Karo no actualiza pedidos: solo decide sobre la solicitud. Ningu
 
 `POST /api/tac-approval-revise.php` acepta `{"id":1,"version":1,"title":"Título corregido","description":"Explicación corregida"}`. Exige estado `returned`, autor original y versión coincidente. En transacción bloquea la fila anterior, comprueba que no exista versión posterior, inserta un nuevo registro `draft` con el mismo `request_key`, versión incrementada, `before_snapshot` igual al snapshot previo y `after_snapshot` con los datos corregidos. Registra auditoría en la misma transacción. No edita ni borra versiones anteriores. El índice único `(request_key,version)` impide duplicados concurrentes.
 
-La nueva versión debe enviarse nuevamente a revisión. Las versiones `approved` y `rejected` son terminales en esta fase.
+La nueva versión debe enviarse nuevamente a revisión. El formulario permite seleccionar opcionalmente un pedido existente de la lista ya cargada en la sesión; el servidor verifica que exista y aplica la restricción única por pedido y versión. Las versiones `approved` y `rejected` son terminales en esta fase.
 
 ## Revisión de Karo
 
