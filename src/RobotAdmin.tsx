@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getRobotCapabilities, type RobotCapabilities } from './robotApi';
-import { getTacRole, type TacRoleStatus } from './tacRoleApi';
+import { getTacPermissions, type TacPermissionsStatus } from './tacPermissionsApi';
 import { AlertTriangle, Bot, CheckCircle2, CircleHelp, Clock3, Database, LockKeyhole, MessageCircle, Network, RefreshCw, ShieldCheck, SlidersHorizontal, UsersRound } from 'lucide-react';
 import './RobotAdmin.css';
 
@@ -14,17 +14,19 @@ export default function RobotAdmin() {
  const [apiState, setApiState] = useState<'loading' | 'ready' | 'unavailable'>('loading');
  const [refreshCount, setRefreshCount] = useState(0);
  const [lastChecked, setLastChecked] = useState<string | null>(null);
- const [roleStatus, setRoleStatus] = useState<'loading' | 'unavailable' | TacRoleStatus['role']>('loading');
+ const [permissionsStatus, setPermissionsStatus] = useState<TacPermissionsStatus | null>(null);
+ const [roleError, setRoleError] = useState(false);
  const [n8nState, setN8nState] = useState<RobotCapabilities['integrations']['n8n']>('not_configured');
  const [workflowState, setWorkflowState] = useState<RobotCapabilities['integrations']['robotWorkflow']>('not_configured');
  useEffect(() => {
   const controller = new AbortController();
   setApiState('loading');
-  setRoleStatus('loading');
+  setPermissionsStatus(null);
+  setRoleError(false);
   setLastChecked(null);
-  getTacRole(controller.signal)
-   .then(result => { if (!controller.signal.aborted) setRoleStatus(result.role); })
-   .catch(() => { if (!controller.signal.aborted) setRoleStatus('unavailable'); });
+  getTacPermissions(controller.signal)
+   .then(result => { if (!controller.signal.aborted) setPermissionsStatus(result); })
+   .catch(() => { if (!controller.signal.aborted) setRoleError(true); });
   getRobotCapabilities(controller.signal)
    .then((result) => { if (!controller.signal.aborted) { setApiState('ready'); setN8nState(result.integrations.n8n); setWorkflowState(result.integrations.robotWorkflow); setLastChecked(new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' })); } })
    .catch(() => { if (!controller.signal.aborted) setApiState('unavailable'); });
@@ -71,7 +73,8 @@ export default function RobotAdmin() {
   <section className="panel robot-admin-card" aria-label="Diseño de permisos TAC">
    <div className="robot-admin-card-title"><UsersRound size={21} aria-hidden="true"/><h3>Permisos y auditoría · diseño pendiente</h3></div>
    <p>Esta matriz muestra permisos propuestos. La consulta autenticada del rol de tu sesión es de solo lectura; no habilita acciones.</p>
-   <div className="robot-admin-role-status"><ShieldCheck size={18} aria-hidden="true"/><div><strong>Rol de la sesión actual</strong><small>{roleStatus === 'loading' ? 'Consultando…' : roleStatus === 'unavailable' ? 'No se pudo verificar' : roleStatus === 'unassigned' ? 'Sin rol TAC asignado' : roleStatus === 'karo' ? 'Karo (solo lectura)' : 'Alec (solo lectura)'}</small></div></div>
+   <div className="robot-admin-role-status"><ShieldCheck size={18} aria-hidden="true"/><div><strong>Rol de la sesión actual</strong><small>{roleError ? 'No se pudo verificar' : !permissionsStatus ? 'Consultando…' : permissionsStatus.role === 'unassigned' ? 'Sin rol TAC asignado' : permissionsStatus.role === 'karo' ? 'Karo (solo lectura)' : 'Alec (solo lectura)'}</small></div></div>
+   <p className="robot-admin-permissions-note"><ShieldCheck size={16} aria-hidden="true"/> Permisos efectivos de lectura: diagnósticos {permissionsStatus?.permissions.diagnosticsRead ? 'permitidos' : 'no autorizados'} · aprobaciones {permissionsStatus?.permissions.approvalsRead ? 'permitidas' : 'no autorizadas'}. Ninguna operación de escritura está autorizada.</p>
    <div className="robot-admin-permissions-wrap">
     <table className="robot-admin-permissions"><thead><tr><th>Acción futura</th><th>Karo</th><th>Alec</th></tr></thead><tbody>
      <tr><td>Ver diagnósticos</td><td>Previsto</td><td>Previsto</td></tr>
