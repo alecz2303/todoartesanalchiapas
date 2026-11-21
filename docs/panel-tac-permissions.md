@@ -6,6 +6,8 @@
 - `audit_log` registra `user_id`, `action`, `subject` y `created_at`; no contiene diffs, resultados, versión ni motivo.
 - Por ello no se puede inferir que una cuenta sea Karo o Alec a partir de su nombre, ID o posición. **No se han asignado roles reales.**
 - El panel y la API de diagnóstico son de solo lectura. No hay permisos operativos implementados.
+- Tras migración 001 en la base de pruebas, `GET /api/tac-role.php` consulta únicamente el rol asociado al usuario autenticado y devuelve `unassigned`, `karo` o `alec` con `operationalPermissionsEnabled: false`. Si falla la consulta o el rol no es reconocido, responde 503 sin conceder permisos.
+- La interfaz `RobotAdmin` presenta el rol de la sesión, pero ninguna acción se habilita por ello.
 
 ## Matriz de permisos propuesta (pendiente de aprobación y migración)
 
