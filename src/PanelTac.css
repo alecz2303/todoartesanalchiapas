@@ -16,3 +16,9 @@
 .tac-contacts-toolbar{display:grid;gap:7px;margin:18px 0}.tac-contacts-toolbar label{display:flex;align-items:center;gap:7px;font-weight:600;font-size:13px}.tac-contacts-toolbar input{width:100%;max-width:480px;border:1px solid #d8cbe8;border-radius:9px;padding:11px 13px;background:#fff;color:#231b2d}.tac-live-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}.tac-wa-link{display:inline-flex;align-items:center;gap:6px;text-decoration:none}.tac-live-list>div>div:first-child{flex:1;min-width:0}@media(max-width:620px){.tac-live-list>div{align-items:stretch;flex-direction:column}.tac-live-actions{justify-content:flex-start}}
 
 .tac-contacts-toolbar .tac-contacts-filter{display:flex;align-items:center;gap:8px;font-weight:500}.tac-contacts-filter input{width:auto;accent-color:#7e3c95}.tac-contact-entry{flex-wrap:wrap}.tac-contact-orders{flex:0 0 100%;width:100%;display:grid;gap:8px;padding:12px 0 2px;border-top:1px solid #e6deeb}.tac-contact-orders>div{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.tac-contact-orders button{display:inline-flex;align-items:center;gap:6px}
+
+/* El historial expandido debe ocupar toda la fila, no heredar la columna vertical del contacto. */
+.tac-live-list>.tac-contact-entry>.tac-contact-orders{display:grid;flex:0 0 100%;width:100%;min-width:0;gap:8px}
+.tac-live-list>.tac-contact-entry>.tac-contact-orders>div{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.tac-contacts-toolbar .tac-contacts-filter input[type=checkbox]{width:18px;max-width:none;height:18px;padding:0;flex-shrink:0}
+@media(max-width:620px){.tac-live-list>.tac-contact-entry>.tac-contact-orders>div{align-items:flex-start}}
