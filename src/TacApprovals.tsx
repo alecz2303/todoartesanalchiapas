@@ -8,7 +8,7 @@ const statusLabels: Record<ApprovalSummary['status'], string> = {
  draft: 'Borrador', submitted: 'Pendiente de aprobación',
  returned: 'Por corregir', approved: 'Aprobado', rejected: 'Rechazado',
 };
-export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; onSessionExpired: () => void}) {
+export default function TacApprovals({csrf, onSessionExpired, orders}: {csrf: string; onSessionExpired: () => void; orders: {id:string;folio:string}[]}) {
  const [state, setState] = useState<ViewState>('loading');
  const [items, setItems] = useState<ApprovalSummary[]>([]);
  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
@@ -23,6 +23,7 @@ export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; on
  const [reload, setReload] = useState(0);
  const [title, setTitle] = useState('');
  const [description, setDescription] = useState('');
+ const [orderId, setOrderId] = useState('');
  const [saving, setSaving] = useState(false);
  const [saveMessage, setSaveMessage] = useState('');
  const [saveError, setSaveError] = useState('');
@@ -41,8 +42,8 @@ export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; on
   if (saving || title.trim().length < 5 || description.trim().length < 10) return;
   setSaving(true); setSaveError(''); setSaveMessage('');
   try {
-   const created = await createTacApprovalDraft(csrf, {title: title.trim(), description: description.trim()});
-   setTitle(''); setDescription('');
+   const created = await createTacApprovalDraft(csrf, {title: title.trim(), description: description.trim(), ...(orderId ? {order_id:orderId} : {})});
+   setTitle(''); setDescription(''); setOrderId('');
    setSaveMessage('Borrador #' + created.id + ' guardado. No se ha enviado a revisión.');
    setReload(n => n + 1);
   } catch (error) {
@@ -119,6 +120,12 @@ export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; on
     </label>
     <label htmlFor="tac-draft-description">Descripción del cambio
      <textarea id="tac-draft-description" required minLength={10} maxLength={2000} rows={4} value={description} onChange={e => setDescription(e.target.value)} placeholder="Explica qué se solicita cambiar y por qué."/>
+    </label>
+    <label htmlFor="tac-draft-order">Pedido relacionado (opcional)
+     <select id="tac-draft-order" value={orderId} onChange={e=>setOrderId(e.target.value)}>
+      <option value="">Solicitud general · sin pedido</option>
+      {orders.map(order=><option key={order.id} value={order.id}>{order.folio || order.id}</option>)}
+     </select>
     </label>
     <button className="primary" type="submit" disabled={saving || title.trim().length < 5 || description.trim().length < 10}>{saving ? 'Guardando…' : 'Guardar borrador'}</button>
     {saveMessage && <p role="status" className="tac-draft-success">{saveMessage}</p>}
