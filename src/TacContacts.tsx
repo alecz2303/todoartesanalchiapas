@@ -14,6 +14,8 @@ function whatsappUrl(phone:string):string|null {
 }
 export default function TacContacts({orders,onOpenOrder}:{orders:Order[];onOpenOrder:(order:Order)=>void}) {
  const [search,setSearch]=useState('');
+ const [expanded,setExpanded]=useState<string|null>(null);
+ const [onlyActive,setOnlyActive]=useState(false);
  const [robotStatus,setRobotStatus]=useState<{state:'loading'|'ready'|'error';data:RobotCapabilities|null}>({state:'loading',data:null});
  const [diagnostic,setDiagnostic]=useState<{status:'loading'|'ready'|'error';tables:string[];message:string}>({status:'loading',tables:[],message:''});
  const [reload,setReload]=useState(0);
@@ -34,7 +36,9 @@ export default function TacContacts({orders,onOpenOrder}:{orders:Order[];onOpenO
   const map=new Map<string,Contact>();
   for(const order of orders){
    const digits=(order.phone||'').replace(/\D/g,'');
-   const key=digits||'sin-telefono-'+order.id;
+   // Un número puede pertenecer a distintos clientes; no fusionar sus pedidos.
+   const customer=(order.customer||'').trim().toLocaleLowerCase('es-MX').replace(/\s+/g,' ');
+   const key=digits ? digits+'|'+customer : 'sin-telefono-'+order.id;
    const current=map.get(key);
    if(current){
     current.orders.push(order);
@@ -43,7 +47,10 @@ export default function TacContacts({orders,onOpenOrder}:{orders:Order[];onOpenO
   }
   return [...map.values()].sort((a,b)=>b.latest.localeCompare(a.latest));
  },[orders]);
- const filtered=contacts.filter(c=>(c.name+' '+c.phone+' '+c.orders.map(o=>o.folio).join(' ')).toLocaleLowerCase('es-MX').includes(search.toLocaleLowerCase('es-MX')));
+ const filtered=contacts.filter(c=>
+  (!onlyActive||c.orders.some(o=>o.status!=='Entregado'&&o.status!=='Cancelado'))&&
+  (c.name+' '+c.phone+' '+c.orders.map(o=>o.folio).join(' ')).toLocaleLowerCase('es-MX').includes(search.toLocaleLowerCase('es-MX'))
+ );
  return <div className="tac-module">
   <div className="tac-module-intro"><div className="tac-module-icon"><MessageCircle size={29}/></div>
    <div><span className="tac-module-tag">Contactos provenientes de Pedidos</span><h2>Atención por WhatsApp</h2>
@@ -63,15 +70,20 @@ export default function TacContacts({orders,onOpenOrder}:{orders:Order[];onOpenO
    <small>Diagnóstico de solo lectura: no confirma que exista conexión a WhatsApp ni muestra mensajes.</small>
   </section>
   <div className="tac-contacts-toolbar"><label htmlFor="tac-contact-search"><Search size={17}/> Buscar contacto, teléfono o folio</label>
-   <input id="tac-contact-search" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar..." type="search"/></div>
+   <input id="tac-contact-search" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar..." type="search"/>
+   <label className="tac-contacts-filter"><input type="checkbox" checked={onlyActive} onChange={e=>setOnlyActive(e.target.checked)}/> Solo clientes con pedidos activos</label></div>
   <section className="panel tac-module-panel"><h3>Contactos registrados ({filtered.length})</h3>
    {filtered.length===0?<p>No se encontraron contactos entre los pedidos cargados.</p>:<div className="tac-live-list">{filtered.map(c=>{
     const latest=[...c.orders].sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''))[0];
     const url=whatsappUrl(c.phone);
-    return <div key={c.key}><div><strong>{c.name}</strong><span>{c.phone||'Sin teléfono'} · {c.orders.length} pedido(s)</span>
+    return <div key={c.key} className="tac-contact-entry"><div><strong>{c.name}</strong><span>{c.phone||'Sin teléfono'} · {c.orders.length} pedido(s)</span>
      <small>Último pedido: {latest.folio||'Sin folio'} · {latest.status}</small></div>
      <div className="tac-live-actions">{url&&<a className="outline tac-wa-link" href={url} target="_blank" rel="noopener noreferrer"><MessageCircle size={16}/> Abrir WhatsApp</a>}
-      <button className="outline" onClick={()=>onOpenOrder(latest)}><ClipboardList size={16}/> Ver pedido</button></div></div>;
+      <button className="outline" onClick={()=>setExpanded(expanded===c.key?null:c.key)} aria-expanded={expanded===c.key}>{expanded===c.key?'Ocultar pedidos':'Ver pedidos'}</button></div>
+     {expanded===c.key&&<div className="tac-contact-orders">{[...c.orders].sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')).map(o=>
+      <div key={o.id}><span><strong>{o.folio||'Sin folio'}</strong> · {o.status} · {o.deliveryDate||'Sin fecha de entrega'}</span>
+       <button className="outline" onClick={()=>onOpenOrder(o)}><ClipboardList size={15}/> Abrir pedido</button></div>)}</div>}
+    </div>;
    })}</div>}</section>
   <section className="panel tac-module-notice"><div><ShieldCheck size={20}/><strong>Sin automatizaciones ni mensajes enviados</strong></div>
    <p>Los enlaces abren WhatsApp de forma externa. Para mostrar conversaciones reales, transferencias Robot/Karo y su auditoría se requiere conectar la API de conversaciones existente con autenticación y verificar su contrato.</p>
