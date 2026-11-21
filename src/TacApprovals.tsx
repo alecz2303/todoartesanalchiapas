@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ClipboardCheck, LockKeyhole, RefreshCw, ShieldAlert } from 'lucide-react';
-import { getTacApprovals, createTacApprovalDraft, type ApprovalSummary } from './tacApprovalsApi';
+import { getTacApprovals, createTacApprovalDraft, submitTacApproval, type ApprovalSummary } from './tacApprovalsApi';
 import './PanelTac.css';
 
 type ViewState = 'loading' | 'forbidden' | 'not-ready' | 'ready';
@@ -11,6 +11,8 @@ const statusLabels: Record<ApprovalSummary['status'], string> = {
 export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; onSessionExpired: () => void}) {
  const [state, setState] = useState<ViewState>('loading');
  const [items, setItems] = useState<ApprovalSummary[]>([]);
+ const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+ const [submittingId, setSubmittingId] = useState<number | null>(null);
  const [reload, setReload] = useState(0);
  const [title, setTitle] = useState('');
  const [description, setDescription] = useState('');
@@ -22,7 +24,7 @@ export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; on
   const controller = new AbortController();
   setState('loading');
   getTacApprovals(controller.signal)
-   .then(data => { if (!controller.signal.aborted) { setItems(data); setState('ready'); } })
+   .then(data => { if (!controller.signal.aborted) { setItems(data.items); setCurrentUserId(data.currentUserId); setState('ready'); } })
    .catch(e => { if (!controller.signal.aborted) setState(e instanceof Error && e.message === 'FORBIDDEN' ? 'forbidden' : 'not-ready'); });
   return () => controller.abort();
  }, [reload]);
@@ -39,6 +41,19 @@ export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; on
    if (error instanceof Error && error.message === 'SESSION_EXPIRED') onSessionExpired();
    else setSaveError(error instanceof Error && error.message === 'FORBIDDEN' ? 'No tienes permiso para crear borradores.' : error instanceof Error ? error.message : 'Error al guardar');
   } finally { setSaving(false); }
+ }
+ async function sendForReview(item: ApprovalSummary) {
+  if (submittingId !== null || item.status !== 'draft' || item.submitted_by !== currentUserId) return;
+  if (!window.confirm('¿Enviar la solicitud #' + item.id + ' a revisión? No modificará ningún pedido.')) return;
+  setSubmittingId(item.id); setSaveError(''); setSaveMessage('');
+  try {
+   await submitTacApproval(csrf, item.id, item.version);
+   setSaveMessage('Solicitud #' + item.id + ' enviada a revisión. La aprobación comercial sigue bloqueada.');
+   setReload(n => n + 1);
+  } catch (error) {
+   if (error instanceof Error && error.message === 'SESSION_EXPIRED') onSessionExpired();
+   else setSaveError(error instanceof Error ? error.message : 'No se pudo enviar');
+  } finally { setSubmittingId(null); }
  }
  const pending = items.filter(item => item.status === 'submitted').length;
  const returned = items.filter(item => item.status === 'returned').length;
@@ -68,14 +83,16 @@ export default function TacApprovals({csrf, onSessionExpired}: {csrf: string; on
    {state === 'ready' ? <>
     <div className="tac-approval-counts"><span>Pendientes: <strong>{pending}</strong></span><span>Por corregir: <strong>{returned}</strong></span><span>Mostradas: <strong>{items.length}</strong></span></div>
     {items.length > 0 && <div className="tac-approval-toolbar"><label htmlFor="tac-approval-filter">Filtrar por estado</label><select id="tac-approval-filter" value={filter} onChange={e => setFilter(e.target.value as typeof filter)}><option value="all">Todos</option>{Object.entries(statusLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></div>}
+    {saveMessage && <p role="status" className="tac-draft-success">{saveMessage}</p>}
+    {saveError && <p role="alert" className="tac-draft-error">{saveError}</p>}
     {items.length === 0 ? <p>No hay solicitudes registradas en la base de prueba.</p> : visibleItems.length === 0 ? <p>No hay solicitudes con ese estado.</p> :
-     <div className="tac-approval-scroll"><table className="tac-approval-table"><thead><tr><th>Solicitud</th><th>Identidad</th><th>Pedido</th><th>Versión</th><th>Estado</th><th>Enviada</th></tr></thead><tbody>
-      {visibleItems.map(item => <tr key={item.id}><td>#{item.id}</td><td><code title={item.request_key}>{item.request_key.slice(0, 8)}…</code></td><td>{item.order_id ?? 'Sin pedido vinculado'}</td><td>{item.version}</td><td>{statusLabels[item.status]}</td><td>{item.submitted_at ?? '—'}</td></tr>)}
+     <div className="tac-approval-scroll"><table className="tac-approval-table"><thead><tr><th>Solicitud</th><th>Identidad</th><th>Pedido</th><th>Versión</th><th>Estado</th><th>Enviada</th><th>Acción</th></tr></thead><tbody>
+      {visibleItems.map(item => <tr key={item.id}><td>#{item.id}</td><td><code title={item.request_key}>{item.request_key.slice(0, 8)}…</code></td><td>{item.order_id ?? 'Sin pedido vinculado'}</td><td>{item.version}</td><td>{statusLabels[item.status]}</td><td>{item.submitted_at ?? '—'}</td><td>{item.status === 'draft' && item.submitted_by === currentUserId ? <button type="button" className="outline" disabled={submittingId !== null} onClick={() => void sendForReview(item)}>{submittingId === item.id ? 'Enviando…' : 'Enviar a revisión'}</button> : '—'}</td></tr>)}
      </tbody></table></div>}
    </> : <p role="status">{state === 'loading' ? 'Consultando solicitudes…' : state === 'forbidden' ? 'Tu cuenta no tiene permiso para consultar aprobaciones TAC. Es necesario asignar un rol autorizado.' : 'La bandeja aún no está disponible. La migración 002 debe revisarse y aplicarse en la base de prueba antes de consultar solicitudes.'}</p>}
   </section>
   <section className="panel tac-module-notice"><div><ShieldAlert size={21}/><strong>Operaciones bloqueadas</strong></div>
-   <p><LockKeyhole size={15}/> Solo está habilitada la creación de borradores. Los permisos se verifican en el servidor y el listado no devuelve snapshots comerciales.</p>
+   <p><LockKeyhole size={15}/> Se permite crear y enviar borradores a revisión. Aprobar, rechazar y modificar pedidos permanece bloqueado. Los permisos se verifican en el servidor y el listado no devuelve snapshots comerciales.</p>
   </section>
  </div>;
 }
