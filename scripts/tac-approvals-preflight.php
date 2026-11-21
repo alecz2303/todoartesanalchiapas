@@ -30,6 +30,14 @@ try {
     if (in_array('tac_approval_requests', $tables, true)) {
         $count = $pdo->query('SELECT COUNT(*) FROM tac_approval_requests')->fetchColumn();
         echo "Solicitudes registradas: ".$count."\n";
+        $columnsStmt = $pdo->prepare("SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'tac_approval_requests'");
+        $columnsStmt->execute([$name]);
+        $columns = array_column($columnsStmt->fetchAll(), 'COLUMN_NAME');
+        echo "Identidad request_key: ".(in_array('request_key', $columns, true) ? 'EXISTE' : 'FALTA')."\n";
+        $indexStmt = $pdo->prepare("SELECT INDEX_NAME FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'tac_approval_requests'");
+        $indexStmt->execute([$name]);
+        $indexes = array_column($indexStmt->fetchAll(), 'INDEX_NAME');
+        echo "Índice de versiones: ".(in_array('uq_tac_approval_request_version', $indexes, true) ? 'EXISTE' : 'FALTA')."\n";
         echo "La tabla 002 ya existe; NO ejecutar CREATE TABLE de nuevo.\n";
     } else {
         echo "Migración 002 pendiente. El script NO la ejecuta.\n";
