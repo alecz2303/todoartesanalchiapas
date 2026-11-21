@@ -10,7 +10,7 @@ export type RobotCapabilities = {
  };
  integrations: {
   ordersDatabase: 'not_checked';
-  n8n: 'not_connected';
+  n8n: 'not_configured' | 'reachable' | 'unavailable';
   whatsapp: 'not_connected';
  };
 };
@@ -23,7 +23,6 @@ export async function getRobotCapabilities(signal?: AbortSignal): Promise<RobotC
  const value: unknown = await response.json();
  if (!value || typeof value !== 'object') throw new Error('INVALID_STATUS');
  const status = value as Record<string, unknown>;
- // Rechazar respuestas inesperadas antes de mostrar el estado.
  if (status.schemaVersion !== 1 || status.mode !== 'preparation' || status.operational !== false)
   throw new Error('INVALID_STATUS');
  const caps = status.capabilities as Record<string, unknown> | undefined;
@@ -32,7 +31,7 @@ export async function getRobotCapabilities(signal?: AbortSignal): Promise<RobotC
      caps.robotControl !== false || caps.conversationHandoff !== false ||
      caps.quotes !== false || caps.whatsappMessaging !== false ||
      integrations.ordersDatabase !== 'not_checked' ||
-     integrations.n8n !== 'not_connected' ||
+     !['not_configured', 'reachable', 'unavailable'].includes(String(integrations.n8n)) ||
      integrations.whatsapp !== 'not_connected') throw new Error('INVALID_STATUS');
  return value as RobotCapabilities;
 }
