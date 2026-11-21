@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import { getRobotCapabilities } from './robotApi';
 import { AlertTriangle, Bot, CheckCircle2, CircleHelp, Clock3, Database, LockKeyhole, MessageCircle, Network, ShieldCheck, SlidersHorizontal } from 'lucide-react';
 import './RobotAdmin.css';
 
@@ -8,13 +10,21 @@ const rules = [
 ];
 
 export default function RobotAdmin() {
+ const [apiState, setApiState] = useState<'loading' | 'ready' | 'unavailable'>('loading');
+ useEffect(() => {
+  const controller = new AbortController();
+  getRobotCapabilities(controller.signal)
+   .then(() => { if (!controller.signal.aborted) setApiState('ready'); })
+   .catch(() => { if (!controller.signal.aborted) setApiState('unavailable'); });
+  return () => controller.abort();
+ }, []);
  return <div className="robot-admin">
   <div className="robot-admin-heading">
    <div className="robot-admin-symbol"><Bot size={30} aria-hidden="true"/></div>
    <div><span className="tac-module-tag">Administración · interfaz de desarrollo</span><h2>Robot Cotizador TAC</h2><p>Vista preparada para administrar el robot. No consulta su estado real ni ejecuta operaciones.</p></div>
   </div>
 
-  <section className="robot-admin-banner" role="status"><AlertTriangle size={21} aria-hidden="true"/><div><strong>Sin conexión operativa</strong><p>Los controles están deshabilitados hasta integrar una API autenticada y probar los permisos. No se ha activado ni detenido el robot.</p></div></section>
+  <section className="robot-admin-banner" role="status"><AlertTriangle size={21} aria-hidden="true"/><div><strong>Sin conexión operativa</strong><p>Los controles están deshabilitados hasta integrar una API autenticada y probar los permisos. No se ha activado ni detenido el robot.</p><p><strong>API de preparación:</strong> {apiState === 'loading' ? 'Comprobando…' : apiState === 'ready' ? 'Disponible (solo lectura; no verifica n8n)' : 'No disponible (sin conexión verificada)'}</p></div></section>
 
   <div className="robot-admin-grid">
    <section className="panel robot-admin-card">
