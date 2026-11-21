@@ -7,7 +7,9 @@
 - `GET /api/robot-status.php`: requiere sesión TAC existente mediante `requireUser()`.
 - Devuelve `schemaVersion: 1`, `mode: preparation`, `operational: false`.
 - Todas las capacidades operativas están explícitamente deshabilitadas.
-- Los estados `not_connected` / `not_checked` **no** son pruebas de salud ni comprobaciones de conectividad.
+- `n8n: not_configured` indica comprobación desactivada; `reachable` indica HTTP 200 desde `/healthz`; `unavailable` indica que no se obtuvo respuesta HTTP 200. Ninguno certifica que los workflows funcionen.
+- La prueba está desactivada por defecto. Para habilitarla **solo en Laragon**, iniciar el servidor PHP con la variable de entorno `TAC_N8N_LOCAL_HEALTHCHECK=1` y PHP con extensión cURL habilitada. Usa exclusivamente `http://127.0.0.1:5678/healthz`, sin redirecciones y con timeout de 1.5 s.
+- No activar la prueba local en producción: el `localhost` de producción sería otra máquina. La integración remota requerirá otro diseño seguro.
 - El frontend consume el contrato mediante `src/robotApi.ts`, sin llamar directamente a n8n.
 - No se leen ni escriben tablas, workflows, secretos o conversaciones desde el endpoint. La autenticación existente sí valida la sesión con la tabla `users`.
 
@@ -24,6 +26,6 @@
 ## Fase siguiente (requiere pruebas y aprobación)
 
 1. Definir mecanismo de conexión de servidor PHP a n8n y almacenamiento seguro de credenciales.
-2. Incorporar comprobación de salud de solo lectura con timeout y sin divulgar información sensible.
+2. Validar en Laragon la comprobación local opt-in de solo lectura con timeout, sin divulgar información sensible.
 3. Diseñar tablas y migración con respaldo y rollback, **sin ejecutarla en producción**.
 4. Implementar controles con permisos y auditoría; activar únicamente después de pruebas de extremo a extremo.
