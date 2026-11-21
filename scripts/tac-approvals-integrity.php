@@ -27,7 +27,12 @@ try {
   'Decisiones sin revisor' => "SELECT COUNT(*) FROM tac_approval_requests WHERE status IN ('returned','approved','rejected') AND reviewed_by IS NULL",
   'Decisiones sin fecha de revisión' => "SELECT COUNT(*) FROM tac_approval_requests WHERE status IN ('returned','approved','rejected') AND reviewed_at IS NULL",
   'Devoluciones/rechazos sin motivo' => "SELECT COUNT(*) FROM tac_approval_requests WHERE status IN ('returned','rejected') AND (reason_code IS NULL OR reason_code='')",
-  'Solicitudes sin autor' => "SELECT COUNT(*) FROM tac_approval_requests WHERE submitted_by IS NULL"
+  'Solicitudes sin autor' => "SELECT COUNT(*) FROM tac_approval_requests WHERE submitted_by IS NULL",
+  'Revisiones sin estado terminal' => "SELECT COUNT(*) FROM tac_approval_requests WHERE reviewed_by IS NOT NULL AND status NOT IN ('returned','approved','rejected')",
+  'Borradores con fecha de envío' => "SELECT COUNT(*) FROM tac_approval_requests WHERE status='draft' AND submitted_at IS NOT NULL",
+  'Versiones posteriores sin anterior' => "SELECT COUNT(*) FROM tac_approval_requests child LEFT JOIN tac_approval_requests parent ON child.request_key=parent.request_key AND parent.version=child.version-1 WHERE child.version>1 AND parent.id IS NULL",
+  'Versiones posteriores sin snapshot previo' => "SELECT COUNT(*) FROM tac_approval_requests WHERE version>1 AND before_snapshot IS NULL",
+  'Versiones posteriores cuyo origen no fue devuelto' => "SELECT COUNT(*) FROM tac_approval_requests child INNER JOIN tac_approval_requests parent ON child.request_key=parent.request_key AND parent.version=child.version-1 WHERE child.version>1 AND parent.status<>'returned'"
  ];
  $problems=0;
  foreach($checks as $name=>$sql){
