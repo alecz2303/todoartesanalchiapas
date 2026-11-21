@@ -43,3 +43,15 @@ El listado devuelve solo la versión más reciente por `request_key` mediante JO
 ## Diagnóstico local de integridad (sin escrituras)
 
 Con el proyecto actualizado, ejecutar opcionalmente `php scripts/tac-approvals-integrity.php`. Este script usa exclusivamente la configuración de base local y consultas SELECT: revisa duplicados, continuidad de versiones, revisiones por el propio autor, fechas de transición, motivos obligatorios y autoría. Devuelve código 0 si no detecta anomalías, 1 si hay registros por revisar y 2 si no puede consultar la base. No modifica pedidos ni aprobaciones.
+
+## Refuerzos de revisión (fase actual)
+
+El envío a revisión valida que el snapshot incluya título y descripción suficientes y que se esté enviando la versión vigente. La decisión de Karo rechaza solicitudes sin autor y versiones obsoletas. La comparación del detalle es **textual** entre título y descripción de dos versiones, no un diff comercial del pedido.
+
+El diagnóstico local ahora incluye 14 comprobaciones (antes 9), con continuidad de versiones, snapshots previos, revisión de estados y coherencia de las transiciones. Para volver a ejecutarlo, sin escrituras:
+
+```cmd
+php scripts/tac-approvals-integrity.php
+```
+
+**Prueba funcional pendiente:** crear → enviar → devolver → corregir → reenviar → decidir. Debe hacerse con cuentas separadas `admin` y `kramirez` y pedidos de prueba; no hay evidencia de ejecución completa en Laragon.
