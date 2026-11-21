@@ -8,7 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 }
 
 // Diagnóstico solo local y opt-in. La URL y el ID nunca proceden del cliente.
-$localCheck = getenv('TAC_N8N_LOCAL_HEALTHCHECK') === '1';
+$host = $_SERVER['HTTP_HOST'] ?? '';
+$localCheck = getenv('TAC_N8N_LOCAL_HEALTHCHECK') === '1'
+  && preg_match('/^(localhost|127\\.0\\.0\\.1)(:\\d+)?$/', $host) === 1;
 $n8n = 'not_configured';
 $workflow = 'not_configured';
 if ($localCheck) {
