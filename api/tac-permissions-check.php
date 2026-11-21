@@ -15,6 +15,7 @@ respond(200, [
     'diagnosticsRead' => tacCan('diagnostics.read', $role),
     'approvalsRead' => tacCan('approvals.read', $role),
     'approvalsDraftCreate' => tacCan('approvals.draft.create', $role),
+    'approvalsSubmit' => tacCan('approvals.submit', $role),
     'approvalsApprove' => tacCan('approvals.approve', $role),
     'conversationsHandoff' => tacCan('conversations.handoff', $role),
     'robotControl' => tacCan('robot.control', $role),
