@@ -1,8 +1,10 @@
 -- BORRADOR PARA BASE DE PRUEBAS. NO ejecutar automáticamente ni en producción.
 -- Requiere migración 001. No modifica pedidos existentes.
+-- orders.id real en Laragon: CHAR(36), utf8mb4, utf8mb4_general_ci.
+-- La FK order_id debe conservar exactamente ese charset/collation.
 CREATE TABLE tac_approval_requests (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  order_id CHAR(36) NULL,
+  order_id CHAR(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
   request_key CHAR(36) NOT NULL COMMENT 'Identidad estable de la solicitud en todas sus versiones',
   version INT UNSIGNED NOT NULL DEFAULT 1,
   status VARCHAR(24) NOT NULL DEFAULT 'draft',
