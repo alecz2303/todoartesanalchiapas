@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { CalendarDays, ClipboardList, CreditCard, PackageCheck, ShieldCheck, Wallet } from 'lucide-react';
+import { CalendarDays, ClipboardList, CreditCard, PackageCheck, ShieldCheck, Wallet, MessageCircle } from 'lucide-react';
 import { money, totals, type Order } from './model';
 import './PanelTac.css';
 
@@ -10,6 +10,13 @@ const localDay = () => {
 export default function TacOperations({orders,onOpenOrders,onOpenOrder}:{
  orders:Order[];onOpenOrders:()=>void;onOpenOrder:(order:Order)=>void;
 }) {
+ const whatsappLink=(phone:string)=>{
+  const digits=phone.replace(/\D/g,'');
+  if(digits.length===10)return 'https://wa.me/52'+digits;
+  if(digits.length===12 && digits.startsWith('52'))return 'https://wa.me/'+digits;
+  if(digits.length>=11 && digits.length<=15)return 'https://wa.me/'+digits;
+  return null;
+ };
  const summary=useMemo(()=>{
   const today=localDay();
   const open=orders.filter(o=>o.status!=='Entregado'&&o.status!=='Cancelado');
@@ -47,11 +54,11 @@ export default function TacOperations({orders,onOpenOrders,onOpenOrder}:{
        .filter((entry,index,array)=>array.findIndex(other=>other.order.id===entry.order.id)===index)
        .slice(0,20).map(({order,reason})=>
         <div key={order.id}><div><strong>{order.folio||'Sin folio'}</strong><span>{order.customer}</span><small>{reason} · {order.deliveryDate||'Sin fecha'}</small></div>
-         <button className="outline" onClick={()=>onOpenOrder(order)}>Ver pedido</button></div>)}
+         <div className="tac-live-actions">{whatsappLink(order.phone) && <a className="outline tac-wa-link" href={whatsappLink(order.phone)!} target="_blank" rel="noopener noreferrer" aria-label={'Abrir WhatsApp para '+order.customer}><MessageCircle size={16}/> WhatsApp</a>}<button className="outline" onClick={()=>onOpenOrder(order)}>Ver pedido</button></div></div>)}
      </div>}
   </section>
   <section className="panel tac-module-notice"><div><ShieldCheck size={20}/><strong>Una sola fuente de información</strong></div>
-   <p>Este panel consulta el estado de pedidos existente. Las acciones comerciales siguen realizándose en Pedidos. No implica conexión con WhatsApp o n8n.</p>
+   <p>Este panel consulta el estado de pedidos existente. Las acciones comerciales siguen realizándose en Pedidos. Los enlaces de WhatsApp abren el chat externo sin enviar mensajes automáticamente ni conectar n8n.</p>
   </section>
  </div>;
 }
