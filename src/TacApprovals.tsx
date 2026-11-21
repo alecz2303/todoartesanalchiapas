@@ -4,6 +4,10 @@ import { getTacApprovals, createTacApprovalDraft, submitTacApproval, getTacAppro
 import './PanelTac.css';
 
 type ViewState = 'loading' | 'forbidden' | 'not-ready' | 'ready';
+const reasonLabels: Record<string,string> = {
+ price:'Precio', quantity:'Cantidad', delivery_date:'Fecha de entrega',
+ design:'Diseño', missing_info:'Información incompleta', other:'Otro',
+};
 const statusLabels: Record<ApprovalSummary['status'], string> = {
  draft: 'Borrador', submitted: 'Pendiente de aprobación',
  returned: 'Por corregir', approved: 'Aprobado', rejected: 'Rechazado',
@@ -151,8 +155,19 @@ export default function TacApprovals({csrf, onSessionExpired, orders}: {csrf: st
    <p><strong>Estado:</strong> {statusLabels[detail.status]} · <strong>Pedido:</strong> {detail.order_id ?? 'Sin pedido vinculado'}</p>
    <p><strong>Título:</strong> {typeof detail.after.title==='string' ? detail.after.title : '—'}</p>
    <p className="tac-detail-description"><strong>Descripción:</strong> {typeof detail.after.description==='string' ? detail.after.description : '—'}</p>
-   {history.length>0 && <div className="tac-history"><h3>Historial de versiones</h3><ol>{history.map(version=><li key={version.id}><button type="button" className="outline" onClick={()=>void openDetail(version.id)}>Versión {version.version}</button> · {statusLabels[version.status]} · {version.created_at}{version.reason_code?' · Motivo: '+version.reason_code:''}</li>)}</ol></div>}
-   {detail.reason_code && <p><strong>Motivo:</strong> {detail.reason_code} {detail.reason_text ?? ''}</p>}
+   {detail.before && typeof detail.before==='object' && <div className="tac-diff">
+    <h3>Comparación con versión anterior</h3>
+    {(['title','description'] as const).map(field=>{
+     const before=(detail.before as Record<string,unknown>)[field];
+     const after=detail.after[field];
+     if(typeof before!=='string' || typeof after!=='string')return null;
+     return <div key={field}><strong>{field==='title'?'Título':'Descripción'}</strong>
+      {before===after ? <p>Sin cambios</p> : <div className="tac-diff-columns"><div><small>Anterior</small><p>{before}</p></div><div><small>Corregido</small><p>{after}</p></div></div>}
+     </div>;
+    })}
+   </div>}
+   {history.length>0 && <div className="tac-history"><h3>Historial de versiones</h3><ol>{history.map(version=><li key={version.id}><button type="button" className="outline" onClick={()=>void openDetail(version.id)}>Versión {version.version}</button> · {statusLabels[version.status]} · {version.created_at}{version.reason_code?' · Motivo: '+(reasonLabels[version.reason_code] ?? version.reason_code):''}</li>)}</ol></div>}
+   {detail.reason_code && <p><strong>Motivo:</strong> {reasonLabels[detail.reason_code] ?? detail.reason_code} {detail.reason_text ?? ''}</p>}
    {detail.status==='returned' && detail.submitted_by===currentUserId && <div className="tac-draft-form">
     <h3>Crear nueva versión corregida</h3>
     <p>La versión devuelta permanece en el historial. La corrección se guarda como un nuevo borrador.</p>
