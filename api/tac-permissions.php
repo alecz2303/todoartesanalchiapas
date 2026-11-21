@@ -14,10 +14,11 @@ function tacCurrentRole(array $user): ?string {
   return in_array($role, ['karo', 'alec'], true) ? $role : null;
 }
 function tacCan(string $permission, ?string $role): bool {
-  // Solo capacidades de lectura; ninguna escritura habilitada.
+  // Única escritura permitida: borradores aislados; sin impacto en pedidos ni robot.
   $allowed = [
     'diagnostics.read' => ['karo', 'alec'],
     'approvals.read' => ['karo', 'alec'],
+    'approvals.draft.create' => ['karo', 'alec'],
   ];
   return $role !== null && in_array($role, $allowed[$permission] ?? [], true);
 }
