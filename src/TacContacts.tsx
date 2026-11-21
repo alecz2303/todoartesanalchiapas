@@ -3,15 +3,9 @@ import { MessageCircle, Search, ClipboardList, ShieldCheck, RefreshCw } from 'lu
 import type { Order } from './model';
 import { getRobotCapabilities, type RobotCapabilities } from './robotApi';
 import './PanelTac.css';
+import { tacPhoneKey, tacWhatsAppUrl } from './tacPhone';
 
 type Contact = { key:string; name:string; phone:string; orders:Order[]; latest:string };
-function whatsappUrl(phone:string):string|null {
- const digits=phone.replace(/\D/g,'');
- if(digits.length===10)return 'https://wa.me/52'+digits;
- if(digits.length===12&&digits.startsWith('52'))return 'https://wa.me/'+digits;
- if(digits.length>=11&&digits.length<=15)return 'https://wa.me/'+digits;
- return null;
-}
 export default function TacContacts({orders,onOpenOrder}:{orders:Order[];onOpenOrder:(order:Order)=>void}) {
  const [search,setSearch]=useState('');
  const [expanded,setExpanded]=useState<string|null>(null);
@@ -35,7 +29,7 @@ export default function TacContacts({orders,onOpenOrder}:{orders:Order[];onOpenO
  const contacts=useMemo(()=>{
   const map=new Map<string,Contact>();
   for(const order of orders){
-   const digits=(order.phone||'').replace(/\D/g,'');
+   const digits=tacPhoneKey(order.phone||'');
    // Un número puede pertenecer a distintos clientes; no fusionar sus pedidos.
    const customer=(order.customer||'').trim().toLocaleLowerCase('es-MX').replace(/\s+/g,' ');
    const key=digits ? digits+'|'+customer : 'sin-telefono-'+order.id;
@@ -75,7 +69,7 @@ export default function TacContacts({orders,onOpenOrder}:{orders:Order[];onOpenO
   <section className="panel tac-module-panel"><h3>Contactos registrados ({filtered.length})</h3>
    {filtered.length===0?<p>No se encontraron contactos entre los pedidos cargados.</p>:<div className="tac-live-list">{filtered.map(c=>{
     const latest=[...c.orders].sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''))[0];
-    const url=whatsappUrl(c.phone);
+    const url=tacWhatsAppUrl(c.phone);
     return <div key={c.key} className="tac-contact-entry"><div><strong>{c.name}</strong><span>{c.phone||'Sin teléfono'} · {c.orders.length} pedido(s)</span>
      <small>Último pedido: {latest.folio||'Sin folio'} · {latest.status}</small></div>
      <div className="tac-live-actions">{url&&<a className="outline tac-wa-link" href={url} target="_blank" rel="noopener noreferrer"><MessageCircle size={16}/> Abrir WhatsApp</a>}
