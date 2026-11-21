@@ -5,6 +5,8 @@ import { getRobotCapabilities, type RobotCapabilities } from './robotApi';
 import './PanelTac.css';
 import { tacPhoneKey, tacWhatsAppUrl } from './tacPhone';
 
+type LegacyConversation = { telefono:string; modo_atencion:'robot'|'karo'; actualizado_en:string|null };
+type LegacyRead = { connected:boolean; reason?:string|null; conversaciones:LegacyConversation[]; robot:{estado:'activo'|'pausado';actualizadoEn:string|null}|null };
 type Contact = { key:string; name:string; phone:string; orders:Order[]; latest:string };
 export default function TacContacts({orders,onOpenOrder}:{orders:Order[];onOpenOrder:(order:Order)=>void}) {
  const [search,setSearch]=useState('');
@@ -14,10 +16,16 @@ export default function TacContacts({orders,onOpenOrder}:{orders:Order[];onOpenO
  const [robotStatus,setRobotStatus]=useState<{state:'loading'|'ready'|'error';data:RobotCapabilities|null}>({state:'loading',data:null});
  const [diagnostic,setDiagnostic]=useState<{status:'loading'|'ready'|'error';tables:string[];message:string}>({status:'loading',tables:[],message:''});
  const [reload,setReload]=useState(0);
+ const [legacy,setLegacy]=useState<{state:'loading'|'ready'|'error';data:LegacyRead|null}>({state:'loading',data:null});
  useEffect(()=>{
   const controller=new AbortController();
   setDiagnostic({status:'loading',tables:[],message:''});
   setRobotStatus({state:'loading',data:null});
+  setLegacy({state:'loading',data:null});
+  fetch('/api/tac-legacy-read.php',{credentials:'same-origin',cache:'no-store',signal:controller.signal})
+   .then(async response=>{if(!response.ok)throw new Error('LEGACY_UNAVAILABLE');return response.json() as Promise<LegacyRead>;})
+   .then(data=>{if(!controller.signal.aborted)setLegacy({state:'ready',data});})
+   .catch(()=>{if(!controller.signal.aborted)setLegacy({state:'error',data:null});});
   getRobotCapabilities(controller.signal)
    .then(data=>{if(!controller.signal.aborted)setRobotStatus({state:'ready',data});})
    .catch(()=>{if(!controller.signal.aborted)setRobotStatus({state:'error',data:null});});
@@ -42,6 +50,7 @@ export default function TacContacts({orders,onOpenOrder}:{orders:Order[];onOpenO
   }
   return [...map.values()].sort((a,b)=>b.latest.localeCompare(a.latest));
  },[orders]);
+ const conversations=legacy.data?.connected?legacy.data.conversaciones:[];
  const activeOrders=orders.filter(o=>!['Entregado','Cancelado'].includes((o.status||'').trim()));
  const filtered=contacts.filter(c=>
   (!onlyActive||c.orders.some(o=>!['Entregado','Cancelado'].includes((o.status||'').trim())))&&
@@ -52,6 +61,12 @@ export default function TacContacts({orders,onOpenOrder}:{orders:Order[];onOpenO
    <div><span className="tac-module-tag">Contactos provenientes de Pedidos</span><h2>Atención por WhatsApp</h2>
     <p>Acceso a los contactos registrados en pedidos. Esta lista no es una bandeja de mensajes ni muestra el modo de atención del robot.</p></div>
   </div>
+  <section className="panel tac-module-panel" aria-label="Conversaciones del Panel TAC anterior">
+   <div className="tac-approval-toolbar"><h3>Conversaciones del Panel TAC anterior</h3><button className="outline" type="button" onClick={()=>setReload(n=>n+1)} disabled={legacy.state==='loading'}><RefreshCw size={16}/> Actualizar</button></div>
+   <p>{legacy.state==='loading'?'Consultando el servicio anterior…':legacy.state==='error'?'No se pudo consultar el puente de lectura.':!legacy.data?.connected?'La conexión de lectura con el servidor anterior aún no está configurada o no está disponible.':`${conversations.length} conversaciones recuperadas · Robot: ${legacy.data.robot?.estado||'sin verificar'}`}</p>
+   {legacy.data?.connected&&<div className="tac-live-list">{conversations.map((c,i)=><div key={c.telefono+'-'+i}><div><strong>{c.telefono}</strong><span>Atiende: {c.modo_atencion==='robot'?'Robot':'Karo'}</span><small>{c.actualizado_en||'Sin fecha de actualización'}</small></div><div className="tac-live-actions">{tacWhatsAppUrl(c.telefono)&&<a className="outline tac-wa-link" href={tacWhatsAppUrl(c.telefono)!} target="_blank" rel="noopener noreferrer"><MessageCircle size={16}/> Abrir WhatsApp</a>}</div></div>)}</div>}
+   <small>Datos de solo lectura; los controles de transferencia y activación no están habilitados.</small>
+  </section>
   <div className="tac-live-grid tac-contact-summary">
    <article><MessageCircle size={20}/><span>Contactos de pedidos</span><strong>{contacts.length}</strong></article>
    <article><ClipboardList size={20}/><span>Pedidos activos</span><strong>{activeOrders.length}</strong></article>
