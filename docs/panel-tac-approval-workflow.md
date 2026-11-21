@@ -16,7 +16,9 @@
 
 ## Integridad y concurrencia
 - Para pedidos existentes, `UNIQUE(order_id, version)` impide versiones duplicadas.
-- Para solicitudes sin `order_id`, MySQL permite múltiples `NULL` en la clave única. Por tanto, **no considerar esa clave suficiente para controlar versiones de solicitudes nuevas**. Se debe definir identidad estable de solicitud antes de habilitar escrituras.
+- Cada solicitud tiene `request_key CHAR(36)` estable entre versiones, con `UNIQUE(request_key, version)`. Esto impide repetir una versión aunque `order_id` sea `NULL`.
+- Para pedidos existentes también se conserva `UNIQUE(order_id, version)`. El backend futuro deberá definir y validar la correspondencia entre solicitud y pedido; los índices no sustituyen esa regla.
+- El backend futuro deberá generar `request_key` y comprobar la transición de estado en transacción; **todavía no existen escrituras**.
 - La versión y el estado se comprobarán dentro de transacciones; no se aprobará si la solicitud cambió desde su lectura.
 - Auditoría con actor, entidad, versión, resultado y metadatos sin datos personales innecesarios.
 - La tabla 002 por sí sola no impone exclusividad de aprobación por Karo; esa restricción será obligatoria en backend.
@@ -34,7 +36,7 @@ php scripts/tac-approvals-preflight.php
 ```
 Este comando es **solo lectura**: informa nombre de base, dependencias, rol asignado y existencia de la tabla 002.
 
-**No ejecutar migración 002 todavía**: antes de permitir escrituras se revisará el diseño de identidad/versiones para solicitudes sin pedido.
+La migración 002 ya incorpora la identidad estable `request_key`. Se puede evaluar para la **base de prueba**, pero crear la tabla no habilita escrituras ni decisiones comerciales. Antes de ejecutarla, revisar el SQL actualizado y confirmar que el preflight indica `tac_approval_requests: FALTA`.
 
 ## Criterios de aceptación de una futura fase operativa
 1. Sin sesión → 401; sin rol → 403; Alec nunca puede aprobar/rechazar.
