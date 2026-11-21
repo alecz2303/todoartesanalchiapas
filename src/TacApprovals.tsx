@@ -12,6 +12,7 @@ export default function TacApprovals() {
  const [state, setState] = useState<ViewState>('loading');
  const [items, setItems] = useState<ApprovalSummary[]>([]);
  const [reload, setReload] = useState(0);
+ const [filter, setFilter] = useState<'all' | ApprovalSummary['status']>('all');
  useEffect(() => {
   const controller = new AbortController();
   setState('loading');
@@ -22,6 +23,7 @@ export default function TacApprovals() {
  }, [reload]);
  const pending = items.filter(item => item.status === 'submitted').length;
  const returned = items.filter(item => item.status === 'returned').length;
+ const visibleItems = filter === 'all' ? items : items.filter(item => item.status === filter);
  return <div className="tac-module">
   <div className="tac-module-intro">
    <div className="tac-module-icon"><ClipboardCheck size={29} aria-hidden="true"/></div>
@@ -31,9 +33,10 @@ export default function TacApprovals() {
    <div className="tac-approval-toolbar"><h3>Solicitudes</h3><button className="outline" type="button" disabled={state === 'loading'} onClick={() => setReload(n => n + 1)}><RefreshCw size={16}/> Actualizar</button></div>
    {state === 'ready' ? <>
     <div className="tac-approval-counts"><span>Pendientes: <strong>{pending}</strong></span><span>Por corregir: <strong>{returned}</strong></span><span>Mostradas: <strong>{items.length}</strong></span></div>
-    {items.length === 0 ? <p>No hay solicitudes registradas en la base de prueba.</p> :
-     <div className="tac-approval-scroll"><table className="tac-approval-table"><thead><tr><th>Solicitud</th><th>Pedido</th><th>Versión</th><th>Estado</th><th>Enviada</th></tr></thead><tbody>
-      {items.map(item => <tr key={item.id}><td>#{item.id}</td><td>{item.order_id ?? 'Sin pedido vinculado'}</td><td>{item.version}</td><td>{statusLabels[item.status]}</td><td>{item.submitted_at ?? '—'}</td></tr>)}
+    {items.length > 0 && <div className="tac-approval-toolbar"><label htmlFor="tac-approval-filter">Filtrar por estado</label><select id="tac-approval-filter" value={filter} onChange={e => setFilter(e.target.value as typeof filter)}><option value="all">Todos</option>{Object.entries(statusLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></div>}
+    {items.length === 0 ? <p>No hay solicitudes registradas en la base de prueba.</p> : visibleItems.length === 0 ? <p>No hay solicitudes con ese estado.</p> :
+     <div className="tac-approval-scroll"><table className="tac-approval-table"><thead><tr><th>Solicitud</th><th>Identidad</th><th>Pedido</th><th>Versión</th><th>Estado</th><th>Enviada</th></tr></thead><tbody>
+      {visibleItems.map(item => <tr key={item.id}><td>#{item.id}</td><td><code title={item.request_key}>{item.request_key.slice(0, 8)}…</code></td><td>{item.order_id ?? 'Sin pedido vinculado'}</td><td>{item.version}</td><td>{statusLabels[item.status]}</td><td>{item.submitted_at ?? '—'}</td></tr>)}
      </tbody></table></div>}
    </> : <p role="status">{state === 'loading' ? 'Consultando solicitudes…' : state === 'forbidden' ? 'Tu cuenta no tiene permiso para consultar aprobaciones TAC. Es necesario asignar un rol autorizado.' : 'La bandeja aún no está disponible. La migración 002 debe revisarse y aplicarse en la base de prueba antes de consultar solicitudes.'}</p>}
   </section>
