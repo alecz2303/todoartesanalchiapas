@@ -35,3 +35,11 @@ La nueva versión debe enviarse nuevamente a revisión. El formulario permite se
 - No aplicar automáticamente aprobaciones a pedidos hasta definir el modelo de cambios comerciales, reglas de precio, firmas de snapshot y pruebas.
 - Mantener n8n/WhatsApp y robot separados y deshabilitados hasta autorización explícita.
 - Futuro: historial agrupado por `request_key`, alertas de urgencia, catálogo visual de motivos y pruebas de concurrencia.
+
+## Bandeja de versiones vigentes
+
+El listado devuelve solo la versión más reciente por `request_key` mediante JOIN a `MAX(version)`, **antes** de aplicar el límite de 100 solicitudes. Las versiones anteriores siguen disponibles mediante `GET /api/tac-approval-history.php?id=N` y el detalle individual. Esto evita contar devoluciones históricas como pendientes actuales.
+
+## Diagnóstico local de integridad (sin escrituras)
+
+Con el proyecto actualizado, ejecutar opcionalmente `php scripts/tac-approvals-integrity.php`. Este script usa exclusivamente la configuración de base local y consultas SELECT: revisa duplicados, continuidad de versiones, revisiones por el propio autor, fechas de transición, motivos obligatorios y autoría. Devuelve código 0 si no detecta anomalías, 1 si hay registros por revisar y 2 si no puede consultar la base. No modifica pedidos ni aprobaciones.
