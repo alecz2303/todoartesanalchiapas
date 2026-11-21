@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { MessageCircle, Search, ClipboardList, ShieldCheck, RefreshCw } from 'lucide-react';
 import type { Order } from './model';
+import { getRobotCapabilities, type RobotCapabilities } from './robotApi';
 import './PanelTac.css';
 
 type Contact = { key:string; name:string; phone:string; orders:Order[]; latest:string };
@@ -13,11 +14,16 @@ function whatsappUrl(phone:string):string|null {
 }
 export default function TacContacts({orders,onOpenOrder}:{orders:Order[];onOpenOrder:(order:Order)=>void}) {
  const [search,setSearch]=useState('');
+ const [robotStatus,setRobotStatus]=useState<{state:'loading'|'ready'|'error';data:RobotCapabilities|null}>({state:'loading',data:null});
  const [diagnostic,setDiagnostic]=useState<{status:'loading'|'ready'|'error';tables:string[];message:string}>({status:'loading',tables:[],message:''});
  const [reload,setReload]=useState(0);
  useEffect(()=>{
   const controller=new AbortController();
   setDiagnostic({status:'loading',tables:[],message:''});
+  setRobotStatus({state:'loading',data:null});
+  getRobotCapabilities(controller.signal)
+   .then(data=>{if(!controller.signal.aborted)setRobotStatus({state:'ready',data});})
+   .catch(()=>{if(!controller.signal.aborted)setRobotStatus({state:'error',data:null});});
   fetch('/api/tac-conversations-diagnostics.php',{credentials:'same-origin',cache:'no-store',signal:controller.signal})
    .then(async response=>{if(!response.ok)throw new Error('HTTP '+response.status);return response.json();})
    .then(data=>{if(!controller.signal.aborted)setDiagnostic({status:'ready',tables:Array.isArray(data.candidateTables)?data.candidateTables:[],message:String(data.message||'')});})
@@ -43,6 +49,13 @@ export default function TacContacts({orders,onOpenOrder}:{orders:Order[];onOpenO
    <div><span className="tac-module-tag">Contactos provenientes de Pedidos</span><h2>Atención por WhatsApp</h2>
     <p>Acceso a los contactos registrados en pedidos. Esta lista no es una bandeja de mensajes ni muestra el modo de atención del robot.</p></div>
   </div>
+  <section className="panel tac-module-panel" aria-label="Estado de n8n y Robot Cotizador">
+   <h3>Conexión con Robot Cotizador</h3>
+   <p><strong>Servicio n8n:</strong> {robotStatus.state==='loading'?'Consultando…':robotStatus.state==='error'?'No se pudo verificar':robotStatus.data?.integrations.n8n==='reachable'?'Accesible desde PHP':robotStatus.data?.integrations.n8n==='unavailable'?'Sin respuesta':'Comprobación local no habilitada'}</p>
+   <p><strong>Workflow del robot:</strong> {robotStatus.state!=='ready'?'No verificado':robotStatus.data?.integrations.robotWorkflow==='active'?'Activo en n8n':robotStatus.data?.integrations.robotWorkflow==='inactive'?'Inactivo en n8n':robotStatus.data?.integrations.robotWorkflow==='not_found'?'No encontrado':robotStatus.data?.integrations.robotWorkflow==='unverified'?'No verificable':'Consulta no configurada'}</p>
+   <p><strong>Mensajes de WhatsApp:</strong> No conectados a esta interfaz.</p>
+   <small>Lectura de estado mediante la API existente; no activa, detiene ni modifica el workflow.</small>
+  </section>
   <section className="panel tac-module-panel" aria-label="Diagnóstico de integración de conversaciones">
    <div className="tac-approval-toolbar"><h3>Fuente de conversaciones</h3><button className="outline" type="button" onClick={()=>setReload(n=>n+1)} disabled={diagnostic.status==='loading'}><RefreshCw size={16}/> Actualizar</button></div>
    <p>{diagnostic.status==='loading'?'Comprobando tablas disponibles…':diagnostic.message}</p>
