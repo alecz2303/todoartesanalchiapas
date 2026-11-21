@@ -7,10 +7,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
   respond(405, ['error' => 'Método no permitido']);
 }
 
-// Opt-in local exclusivamente: nunca aceptar una URL suministrada por el cliente.
-// El endpoint /healthz de n8n es solo un indicador de proceso, no de workflows.
+// Diagnóstico solo local y opt-in. La URL y el ID nunca proceden del cliente.
+$localCheck = getenv('TAC_N8N_LOCAL_HEALTHCHECK') === '1';
 $n8n = 'not_configured';
-if (getenv('TAC_N8N_LOCAL_HEALTHCHECK') === '1') {
+$workflow = 'not_configured';
+if ($localCheck) {
   $n8n = 'unavailable';
   if (function_exists('curl_init')) {
     $ch = curl_init('http://127.0.0.1:5678/healthz');
@@ -29,6 +30,36 @@ if (getenv('TAC_N8N_LOCAL_HEALTHCHECK') === '1') {
       if ($response !== false && $httpCode === 200) $n8n = 'reachable';
     }
   }
+
+  // No hacer esta consulta sin una clave API configurada en el proceso PHP.
+  // La respuesta de n8n contiene datos del workflow: solo extraer "active".
+  $apiKey = getenv('TAC_N8N_API_KEY');
+  if ($apiKey !== false && $apiKey !== '' && $n8n === 'reachable' && function_exists('curl_init')) {
+    $workflow = 'unverified';
+    $ch = curl_init('http://127.0.0.1:5678/api/v1/workflows/dWTUD02LAVnjEmmJ');
+    if ($ch !== false) {
+      curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_CONNECTTIMEOUT_MS => 700,
+        CURLOPT_TIMEOUT_MS => 1500,
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_MAXREDIRS => 0,
+        CURLOPT_HTTPHEADER => ['Accept: application/json', 'X-N8N-API-KEY: '.$apiKey],
+      ]);
+      $response = curl_exec($ch);
+      $httpCode = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+      curl_close($ch);
+      if ($response !== false && $httpCode === 200) {
+        $data = json_decode($response, true);
+        if (is_array($data) && ($data['id'] ?? null) === 'dWTUD02LAVnjEmmJ') {
+          if (($data['active'] ?? null) === true) $workflow = 'active';
+          elseif (($data['active'] ?? null) === false) $workflow = 'inactive';
+        }
+      } elseif ($httpCode === 404) {
+        $workflow = 'not_found';
+      }
+    }
+  }
 }
 respond(200, [
   'schemaVersion' => 1,
@@ -44,5 +75,6 @@ respond(200, [
     'ordersDatabase' => 'not_checked',
     'n8n' => $n8n,
     'whatsapp' => 'not_connected',
+    'robotWorkflow' => $workflow,
   ],
 ]);
