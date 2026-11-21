@@ -2,9 +2,11 @@ import { Bot, CheckCircle2, ClipboardCheck, Clock3, MessageCircle, Settings2, Sh
 import './PanelTac.css';
 import RobotAdmin from './RobotAdmin';
 import TacApprovals from './TacApprovals';
+import TacOperations from './TacOperations';
+import type { Order } from './model';
 
-type Module = 'conversations' | 'robot' | 'approvals' | 'settings';
-type Props = { module: Module; csrf: string; onSessionExpired: () => void; orders: {id:string;folio:string}[] };
+type Module = 'operations' | 'conversations' | 'robot' | 'approvals' | 'settings';
+type Props = { module: Module; csrf: string; onSessionExpired: () => void; orders: Order[]; onOpenOrders:()=>void; onOpenOrder:(order:Order)=>void };
 const definitions = {
  conversations: {
   icon: MessageCircle, title: 'Conversaciones de WhatsApp', description: 'Espacio previsto para consultar conversaciones y decidir si atiende el robot o Karo.',
@@ -28,9 +30,10 @@ const definitions = {
  }
 } as const;
 
-export default function PanelTac({ module, csrf, onSessionExpired, orders }: Props) {
+export default function PanelTac({ module, csrf, onSessionExpired, orders, onOpenOrders, onOpenOrder }: Props) {
+ if (module === 'operations') return <TacOperations orders={orders} onOpenOrders={onOpenOrders} onOpenOrder={onOpenOrder}/>;
  if (module === 'robot') return <RobotAdmin/>;
- if (module === 'approvals') return <TacApprovals csrf={csrf} onSessionExpired={onSessionExpired} orders={orders}/>;
+ if (module === 'approvals') return <TacApprovals csrf={csrf} onSessionExpired={onSessionExpired} orders={orders.map(o=>({id:o.id,folio:o.folio}))}/>;
  const item = definitions[module];
  const Icon = item.icon;
  return <div className="tac-module">
