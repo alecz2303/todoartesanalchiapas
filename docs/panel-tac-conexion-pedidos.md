@@ -31,3 +31,9 @@ El botón **WhatsApp** en la atención prioritaria abre `wa.me` con el número g
 `GET /api/tac-conversations-diagnostics.php` requiere sesión activa y permiso TAC `diagnostics.read`. Consulta exclusivamente los nombres de tablas de la base MySQL actualmente configurada que parezcan relacionadas con chats, mensajes o WhatsApp. Devuelve `connected:false` deliberadamente: encontrar una tabla no equivale a haber conectado el proveedor. No lee filas de clientes, mensajes ni secretos. La sección Conversaciones muestra las tablas candidatas o un error de conexión, sin activar ninguna transferencia ni robot.
 
 Las rutas `/api/conversaciones`, `/api/robot/estado` y `/api/conversaciones/control/modo` identificadas en el escritorio TAC legado no se consideran compatibles automáticamente con el PHP actual; antes de implementar un adaptador operativo deben identificarse el servidor, esquema y autenticación de esas rutas.
+
+## Reutilización de diagnóstico n8n existente
+
+La sección Conversaciones ahora llama también a `getRobotCapabilities()`, que consulta `GET /api/robot-status.php` mediante la sesión PHP. La API ya existente comprueba opcionalmente `http://127.0.0.1:5678/healthz` y, si se configura la clave API del proceso PHP, consulta el estado `active` del workflow conocido. La comprobación local requiere `TAC_N8N_LOCAL_HEALTHCHECK=1` y un host localhost/127.0.0.1. El estado `not_configured` no significa que el servicio esté apagado, solo que no se realizó esa comprobación. No se crean nuevos endpoints de n8n ni se transmiten secretos al navegador.
+
+No se infiere que los mensajes de WhatsApp estén almacenados en MySQL. Para conectar conversaciones reales se debe localizar el proveedor o almacenamiento utilizado por el workflow; no es correcto derivar una bandeja a partir de pedidos.
