@@ -12,6 +12,7 @@ export type RobotCapabilities = {
   ordersDatabase: 'not_checked';
   n8n: 'not_configured' | 'reachable' | 'unavailable';
   whatsapp: 'not_connected';
+  robotWorkflow: 'not_configured' | 'unverified' | 'not_found' | 'active' | 'inactive';
  };
 };
 
@@ -32,6 +33,7 @@ export async function getRobotCapabilities(signal?: AbortSignal): Promise<RobotC
      caps.quotes !== false || caps.whatsappMessaging !== false ||
      integrations.ordersDatabase !== 'not_checked' ||
      !['not_configured', 'reachable', 'unavailable'].includes(String(integrations.n8n)) ||
-     integrations.whatsapp !== 'not_connected') throw new Error('INVALID_STATUS');
+     integrations.whatsapp !== 'not_connected' ||
+     !['not_configured', 'unverified', 'not_found', 'active', 'inactive'].includes(String(integrations.robotWorkflow))) throw new Error('INVALID_STATUS');
  return value as RobotCapabilities;
 }
