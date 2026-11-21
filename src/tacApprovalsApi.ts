@@ -95,3 +95,20 @@ export async function reviewTacApproval(csrf: string, input: {
  const data=await response.json().catch(()=>null);
  if (!response.ok) throw new Error(data?.error || 'No se pudo registrar la decisión');
 }
+
+export async function reviseTacApproval(csrf:string,input:{id:number;version:number;title:string;description:string}):Promise<{id:number;version:number}>{
+ const response=await fetch('/api/tac-approval-revise.php',{
+  method:'POST',credentials:'same-origin',cache:'no-store',
+  headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},
+  body:JSON.stringify(input),
+ });
+ if(response.status===401)throw new Error('SESSION_EXPIRED');
+ const data:unknown=await response.json().catch(()=>null);
+ if(!response.ok){
+  const error=data && typeof data==='object' && 'error' in data && typeof data.error==='string'?data.error:'No se pudo crear la nueva versión';
+  throw new Error(error);
+ }
+ if(!data || typeof data!=='object' || !('id' in data) || !Number.isInteger(data.id) ||
+    !('version' in data) || !Number.isInteger(data.version))throw new Error('Respuesta inválida');
+ return data as {id:number;version:number};
+}
