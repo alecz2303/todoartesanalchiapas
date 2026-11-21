@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getRobotCapabilities, type RobotCapabilities } from './robotApi';
-import { AlertTriangle, Bot, CheckCircle2, CircleHelp, Clock3, Database, LockKeyhole, MessageCircle, Network, ShieldCheck, SlidersHorizontal } from 'lucide-react';
+import { AlertTriangle, Bot, CheckCircle2, CircleHelp, Clock3, Database, LockKeyhole, MessageCircle, Network, RefreshCw, ShieldCheck, SlidersHorizontal } from 'lucide-react';
 import './RobotAdmin.css';
 
 const rules = [
@@ -11,15 +11,19 @@ const rules = [
 
 export default function RobotAdmin() {
  const [apiState, setApiState] = useState<'loading' | 'ready' | 'unavailable'>('loading');
+ const [refreshCount, setRefreshCount] = useState(0);
+ const [lastChecked, setLastChecked] = useState<string | null>(null);
  const [n8nState, setN8nState] = useState<RobotCapabilities['integrations']['n8n']>('not_configured');
  const [workflowState, setWorkflowState] = useState<RobotCapabilities['integrations']['robotWorkflow']>('not_configured');
  useEffect(() => {
   const controller = new AbortController();
+  setApiState('loading');
+  setLastChecked(null);
   getRobotCapabilities(controller.signal)
-   .then((result) => { if (!controller.signal.aborted) { setApiState('ready'); setN8nState(result.integrations.n8n); setWorkflowState(result.integrations.robotWorkflow); } })
+   .then((result) => { if (!controller.signal.aborted) { setApiState('ready'); setN8nState(result.integrations.n8n); setWorkflowState(result.integrations.robotWorkflow); setLastChecked(new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' })); } })
    .catch(() => { if (!controller.signal.aborted) setApiState('unavailable'); });
   return () => controller.abort();
- }, []);
+ }, [refreshCount]);
  return <div className="robot-admin">
   <div className="robot-admin-heading">
    <div className="robot-admin-symbol"><Bot size={30} aria-hidden="true"/></div>
@@ -37,6 +41,7 @@ export default function RobotAdmin() {
    </section>
    <section className="panel robot-admin-card">
     <div className="robot-admin-card-title"><Network size={21} aria-hidden="true"/><h3>Integraciones</h3></div>
+    <div className="robot-admin-refresh"><small>{lastChecked ? 'Última consulta: ' + lastChecked : 'Sin consulta completada'}</small><button type="button" className="outline robot-admin-button" disabled={apiState === 'loading'} onClick={() => setRefreshCount(count => count + 1)}><RefreshCw size={15} aria-hidden="true"/> {apiState === 'loading' ? 'Consultando…' : 'Actualizar estado'}</button></div>
     <div className="robot-admin-integration"><Database size={19} aria-hidden="true"/><div><strong>Base de datos unificada</strong><small>Conexión del módulo pendiente</small></div><span>No verificado</span></div>
     <div className="robot-admin-integration"><Network size={19} aria-hidden="true"/><div><strong>n8n</strong><small>Comprobación de servicio, no de workflows</small></div><span>{apiState !== 'ready' ? 'No verificado' : n8nState === 'reachable' ? 'Servicio accesible' : n8nState === 'unavailable' ? 'Sin respuesta' : 'Prueba desactivada'}</span></div>
     <div className="robot-admin-integration"><Bot size={19} aria-hidden="true"/><div><strong>Workflow Robot Cotizador</strong><small>Estado de activación en n8n; no confirma funcionamiento de WhatsApp</small></div><span>{apiState !== 'ready' ? 'No verificado' : workflowState === 'active' ? 'Activo en n8n' : workflowState === 'inactive' ? 'Inactivo en n8n' : workflowState === 'not_found' ? 'No encontrado' : workflowState === 'unverified' ? 'No verificable' : 'Consulta sin configurar'}</span></div>
