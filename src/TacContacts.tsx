@@ -42,6 +42,7 @@ export default function TacContacts({orders,onOpenOrder}:{orders:Order[];onOpenO
   }
   return [...map.values()].sort((a,b)=>b.latest.localeCompare(a.latest));
  },[orders]);
+ const activeOrders=orders.filter(o=>!['Entregado','Cancelado'].includes((o.status||'').trim()));
  const filtered=contacts.filter(c=>
   (!onlyActive||c.orders.some(o=>!['Entregado','Cancelado'].includes((o.status||'').trim())))&&
   (c.name+' '+c.phone+' '+c.orders.map(o=>o.folio).join(' ')).toLocaleLowerCase('es-MX').includes(search.toLocaleLowerCase('es-MX'))
@@ -50,6 +51,11 @@ export default function TacContacts({orders,onOpenOrder}:{orders:Order[];onOpenO
   <div className="tac-module-intro"><div className="tac-module-icon"><MessageCircle size={29}/></div>
    <div><span className="tac-module-tag">Contactos provenientes de Pedidos</span><h2>Atención por WhatsApp</h2>
     <p>Acceso a los contactos registrados en pedidos. Esta lista no es una bandeja de mensajes ni muestra el modo de atención del robot.</p></div>
+  </div>
+  <div className="tac-live-grid tac-contact-summary">
+   <article><MessageCircle size={20}/><span>Contactos de pedidos</span><strong>{contacts.length}</strong></article>
+   <article><ClipboardList size={20}/><span>Pedidos activos</span><strong>{activeOrders.length}</strong></article>
+   <article><ShieldCheck size={20}/><span>Mensajes conectados</span><strong>No</strong></article>
   </div>
   <div className="tac-approval-toolbar"><button type="button" className="outline" onClick={()=>setShowTechnical(value=>!value)} aria-expanded={showTechnical}>{showTechnical?'Ocultar diagnóstico técnico':'Mostrar diagnóstico técnico'}</button></div>
   {showTechnical&&<>
