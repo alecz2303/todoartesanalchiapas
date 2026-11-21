@@ -4,7 +4,7 @@ import RobotAdmin from './RobotAdmin';
 import TacApprovals from './TacApprovals';
 
 type Module = 'conversations' | 'robot' | 'approvals' | 'settings';
-type Props = { module: Module };
+type Props = { module: Module; csrf: string; onSessionExpired: () => void };
 const definitions = {
  conversations: {
   icon: MessageCircle, title: 'Conversaciones de WhatsApp', description: 'Espacio previsto para consultar conversaciones y decidir si atiende el robot o Karo.',
@@ -28,9 +28,9 @@ const definitions = {
  }
 } as const;
 
-export default function PanelTac({ module }: Props) {
+export default function PanelTac({ module, csrf, onSessionExpired }: Props) {
  if (module === 'robot') return <RobotAdmin/>;
- if (module === 'approvals') return <TacApprovals/>;
+ if (module === 'approvals') return <TacApprovals csrf={csrf} onSessionExpired={onSessionExpired}/>;
  const item = definitions[module];
  const Icon = item.icon;
  return <div className="tac-module">
