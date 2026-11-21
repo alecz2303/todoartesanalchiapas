@@ -15,6 +15,14 @@ try {
     CASE WHEN status = 'submitted' THEN 0 WHEN status = 'returned' THEN 1 ELSE 2 END,
     submitted_at ASC, id ASC LIMIT 100");
   $items = $query->fetchAll();
+  // Keep the historical rows accessible via detail/history, but show only the newest
+  // version of each request in the active queue to avoid counting returned ancestors.
+  $latest = db()->query('SELECT request_key, MAX(version) AS latest_version FROM tac_approval_requests GROUP BY request_key')->fetchAll();
+  $latestVersions = [];
+  foreach ($latest as $versionRow) $latestVersions[$versionRow['request_key']] = (int)$versionRow['latest_version'];
+  $items = array_values(array_filter($items, static function ($item) use ($latestVersions) {
+    return (int)$item['version'] === ($latestVersions[$item['request_key']] ?? 0);
+  }));
 } catch (PDOException $e) {
   error_log('TAC approvals list unavailable');
   respond(503, ['error' => 'Bandeja de aprobaciones no disponible; verifica la migración 002 en la base de prueba']);
