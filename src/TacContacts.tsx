@@ -10,6 +10,7 @@ export default function TacContacts({orders,onOpenOrder}:{orders:Order[];onOpenO
  const [search,setSearch]=useState('');
  const [expanded,setExpanded]=useState<string|null>(null);
  const [onlyActive,setOnlyActive]=useState(false);
+ const [showTechnical,setShowTechnical]=useState(false);
  const [robotStatus,setRobotStatus]=useState<{state:'loading'|'ready'|'error';data:RobotCapabilities|null}>({state:'loading',data:null});
  const [diagnostic,setDiagnostic]=useState<{status:'loading'|'ready'|'error';tables:string[];message:string}>({status:'loading',tables:[],message:''});
  const [reload,setReload]=useState(0);
@@ -36,13 +37,13 @@ export default function TacContacts({orders,onOpenOrder}:{orders:Order[];onOpenO
    const current=map.get(key);
    if(current){
     current.orders.push(order);
-    if(order.createdAt>current.latest){current.latest=order.createdAt;current.name=order.customer||current.name;current.phone=order.phone||current.phone;}
+    if((order.createdAt||'')>current.latest){current.latest=order.createdAt;current.name=order.customer||current.name;current.phone=order.phone||current.phone;}
    } else map.set(key,{key,name:order.customer||'Sin nombre',phone:order.phone||'',orders:[order],latest:order.createdAt||''});
   }
   return [...map.values()].sort((a,b)=>b.latest.localeCompare(a.latest));
  },[orders]);
  const filtered=contacts.filter(c=>
-  (!onlyActive||c.orders.some(o=>o.status!=='Entregado'&&o.status!=='Cancelado'))&&
+  (!onlyActive||c.orders.some(o=>!['Entregado','Cancelado'].includes((o.status||'').trim())))&&
   (c.name+' '+c.phone+' '+c.orders.map(o=>o.folio).join(' ')).toLocaleLowerCase('es-MX').includes(search.toLocaleLowerCase('es-MX'))
  );
  return <div className="tac-module">
@@ -50,6 +51,8 @@ export default function TacContacts({orders,onOpenOrder}:{orders:Order[];onOpenO
    <div><span className="tac-module-tag">Contactos provenientes de Pedidos</span><h2>Atención por WhatsApp</h2>
     <p>Acceso a los contactos registrados en pedidos. Esta lista no es una bandeja de mensajes ni muestra el modo de atención del robot.</p></div>
   </div>
+  <div className="tac-approval-toolbar"><button type="button" className="outline" onClick={()=>setShowTechnical(value=>!value)} aria-expanded={showTechnical}>{showTechnical?'Ocultar diagnóstico técnico':'Mostrar diagnóstico técnico'}</button></div>
+  {showTechnical&&<>
   <section className="panel tac-module-panel" aria-label="Estado de n8n y Robot Cotizador">
    <h3>Conexión con Robot Cotizador</h3>
    <p><strong>Servicio n8n:</strong> {robotStatus.state==='loading'?'Consultando…':robotStatus.state==='error'?'No se pudo verificar':robotStatus.data?.integrations.n8n==='reachable'?'Accesible desde PHP':robotStatus.data?.integrations.n8n==='unavailable'?'Sin respuesta':'Comprobación local no habilitada'}</p>
@@ -63,6 +66,7 @@ export default function TacContacts({orders,onOpenOrder}:{orders:Order[];onOpenO
    {diagnostic.tables.length>0&&<p><strong>Tablas candidatas:</strong> {diagnostic.tables.join(', ')}</p>}
    <small>Diagnóstico de solo lectura: no confirma que exista conexión a WhatsApp ni muestra mensajes.</small>
   </section>
+  </>}
   <div className="tac-contacts-toolbar"><label htmlFor="tac-contact-search"><Search size={17}/> Buscar contacto, teléfono o folio</label>
    <input id="tac-contact-search" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar..." type="search"/>
    <label className="tac-contacts-filter"><input type="checkbox" checked={onlyActive} onChange={e=>setOnlyActive(e.target.checked)}/> Solo clientes con pedidos activos</label></div>
