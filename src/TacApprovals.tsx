@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ClipboardCheck, LockKeyhole, RefreshCw, ShieldAlert } from 'lucide-react';
 import { getTacApprovals, createTacApprovalDraft, submitTacApproval, getTacApprovalDetail, reviewTacApproval, reviseTacApproval, getTacApprovalHistory, type TacApprovalHistoryItem, type TacApprovalDetail, type ApprovalSummary } from './tacApprovalsApi';
 import './PanelTac.css';
@@ -10,6 +10,7 @@ const statusLabels: Record<ApprovalSummary['status'], string> = {
 };
 export default function TacApprovals({csrf, onSessionExpired, orders}: {csrf: string; onSessionExpired: () => void; orders: {id:string;folio:string}[]}) {
  const [state, setState] = useState<ViewState>('loading');
+ const detailRequest = useRef(0);
  const [items, setItems] = useState<ApprovalSummary[]>([]);
  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
  const [submittingId, setSubmittingId] = useState<number | null>(null);
@@ -65,9 +66,11 @@ export default function TacApprovals({csrf, onSessionExpired, orders}: {csrf: st
   } finally { setSubmittingId(null); }
  }
  async function openDetail(id: number) {
+  const request = ++detailRequest.current;
   setSaveError(''); setSaveMessage(''); setDetail(null); setHistory([]); setReasonCode(''); setReasonText('');
-  try { const [loaded, versions]=await Promise.all([getTacApprovalDetail(id),getTacApprovalHistory(id)]);setHistory(versions);setDetail(loaded);setRevisionTitle(typeof loaded.after.title==='string'?loaded.after.title:'');setRevisionDescription(typeof loaded.after.description==='string'?loaded.after.description:''); }
+  try { const [loaded, versions]=await Promise.all([getTacApprovalDetail(id),getTacApprovalHistory(id)]);if (request !== detailRequest.current) return;setHistory(versions);setDetail(loaded);setRevisionTitle(typeof loaded.after.title==='string'?loaded.after.title:'');setRevisionDescription(typeof loaded.after.description==='string'?loaded.after.description:''); }
   catch (error) {
+   if (request !== detailRequest.current) return;
    if (error instanceof Error && error.message==='SESSION_EXPIRED') onSessionExpired();
    else setSaveError(error instanceof Error ? error.message : 'No se pudo abrir');
   }
@@ -128,8 +131,6 @@ export default function TacApprovals({csrf, onSessionExpired, orders}: {csrf: st
      </select>
     </label>
     <button className="primary" type="submit" disabled={saving || title.trim().length < 5 || description.trim().length < 10}>{saving ? 'Guardando…' : 'Guardar borrador'}</button>
-    {saveMessage && <p role="status" className="tac-draft-success">{saveMessage}</p>}
-    {saveError && <p role="alert" className="tac-draft-error">{saveError}</p>}
    </form>
   </section>}
   <section className="panel tac-module-panel">
@@ -146,7 +147,7 @@ export default function TacApprovals({csrf, onSessionExpired, orders}: {csrf: st
    </> : <p role="status">{state === 'loading' ? 'Consultando solicitudes…' : state === 'forbidden' ? 'Tu cuenta no tiene permiso para consultar aprobaciones TAC. Es necesario asignar un rol autorizado.' : 'La bandeja aún no está disponible. La migración 002 debe revisarse y aplicarse en la base de prueba antes de consultar solicitudes.'}</p>}
   </section>
   {detail && <section className="panel tac-module-panel" aria-labelledby="tac-review-heading">
-   <div className="tac-approval-toolbar"><h3 id="tac-review-heading">Solicitud #{detail.id} · v{detail.version}</h3><button className="outline" type="button" onClick={()=>setDetail(null)}>Cerrar detalle</button></div>
+   <div className="tac-approval-toolbar"><h3 id="tac-review-heading">Solicitud #{detail.id} · v{detail.version}</h3><button className="outline" type="button" onClick={()=>{detailRequest.current++;setDetail(null);}}>Cerrar detalle</button></div>
    <p><strong>Estado:</strong> {statusLabels[detail.status]} · <strong>Pedido:</strong> {detail.order_id ?? 'Sin pedido vinculado'}</p>
    <p><strong>Título:</strong> {typeof detail.after.title==='string' ? detail.after.title : '—'}</p>
    <p className="tac-detail-description"><strong>Descripción:</strong> {typeof detail.after.description==='string' ? detail.after.description : '—'}</p>
