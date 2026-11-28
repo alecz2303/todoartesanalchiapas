@@ -1,4 +1,4 @@
-export type Item = { id: string; quantity: number; description: string; dimensions: string; observations?: string; unitPrice: number };
+export type Item = { id: string; quantity: number; description: string; dimensions: string; observations?: string; unitPrice: number; catalogId?: number };
 export type Payment = { id: string; date: string; amount: number; method: 'Efectivo' | 'Transferencia' };
 export type Order = { id: string; folio: string; createdAt: string; customer: string; phone: string; address: string; deliveryDate: string; deliveryTime: string; eventDate: string; delivery: 'Recoger en tienda' | 'Envío a domicilio'; deliveryAddress: string; directions: string; instructions: string; iva: boolean; shipping: number; items: Item[]; payments: Payment[]; consent: boolean; status: string };
 export const money=(n:number)=>new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN'}).format(n);
