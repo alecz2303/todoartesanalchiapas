@@ -1,0 +1,81 @@
+{
+  "id": "8OKq0IkHDzYNPgMP",
+  "name": "TAC | Entrada de pedidos WhatsApp",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "\nconst entrada = $input.first().json.body;\nconst pedido = entrada && typeof entrada === \"object\" &&\n  !Array.isArray(entrada) ? entrada : {};\n\nconst {\n  producto,\n  cantidad,\n  disenos,\n  anticipacionDias,\n  longitudMetros,\n  mismoDiseno\n} = pedido;\n\nlet estado = \"pendiente\";\nlet mensaje = \"\";\nlet total = null;\nlet precioUnitario = null;\nlet descripcion = \"\";\n\nconst dinero = (valor) =>\n  valor.toLocaleString(\"es-MX\", {\n    style: \"currency\",\n    currency: \"MXN\"\n  });\n\n// Compatibilidad con el formato anterior:\n// producto: \"plastico\" significa plástico personalizado.\nconst esPicadoNuevo = producto === \"picado\";\nconst esPicadoAnterior = producto === \"plastico\";\n\nconst material = esPicadoAnterior\n  ? \"plastico\"\n  : pedido.material;\n\nconst tipo = esPicadoAnterior\n  ? \"personalizado\"\n  : pedido.tipo;\n\n// 1. VALIDACIÓN GENERAL\n\nif (!Number.isInteger(cantidad) || cantidad < 1) {\n  estado = \"no_disponible\";\n  mensaje = \"💜 Indícanos una cantidad válida.\";\n\n} else if (producto === \"taza\") {\n\n  // 2. TAZAS\n  // Prediseñadas: $38 fijas (precio confirmado por Alecz, 2026-11-28).\n  // Personalizadas: $70, o $38 a partir de 12 con el mismo diseño.\n\n  if (tipo === \"predisenada\") {\n\n    descripcion = `${cantidad} taza(s) prediseñada(s)`;\n\n    if (cantidad >= 100) {\n      mensaje =\n        \"💜 Para pedidos de 100 tazas o más manejamos \" +\n        \"cotizaciones especiales. Karo revisará tu solicitud.\";\n\n    } else {\n      precioUnitario = 38;\n      total = cantidad * precioUnitario;\n      estado = \"cotizado\";\n    }\n\n  } else {\n\n    descripcion = `${cantidad} taza(s) personalizada(s)`;\n\n    if (cantidad >= 100) {\n      mensaje =\n        \"💜 Para pedidos de 100 tazas o más manejamos \" +\n        \"cotizaciones especiales. Karo revisará tu solicitud.\";\n\n    } else if (cantidad >= 12) {\n\n      if (mismoDiseno !== true) {\n        mensaje =\n          \"💜 Para aplicar el precio por volumen, \" +\n          \"todas las tazas deben tener exactamente \" +\n          \"el mismo diseño. Karo revisará tu solicitud.\";\n\n      } else {\n        precioUnitario = 38;\n        total = cantidad * precioUnitario;\n        estado = \"cotizado\";\n      }\n\n    } else {\n      precioUnitario = 70;\n      total = cantidad * precioUnitario;\n      estado = \"cotizado\";\n    }\n\n  }\n\n} else if (esPicadoNuevo || esPicadoAnterior) {\n\n  // 3. PAPEL O PLÁSTICO PICADO\n\n  if (![\"papel\", \"plastico\"].includes(material)) {\n    mensaje =\n      \"💜 Indícanos si deseas papel o plástico picado.\";\n\n  } else if (![\"predisenado\", \"personalizado\"].includes(tipo)) {\n    mensaje =\n      \"💜 Indícanos si deseas picado prediseñado \" +\n      \"o personalizado.\";\n\n  } else {\n\n    const nombreMaterial =\n      material === \"papel\" ? \"papel\" : \"plástico\";\n\n    descripcion =\n      `${cantidad} tira(s) de ${nombreMaterial} ` +\n      `picado ${tipo === \"predisenado\"\n        ? \"prediseñado\"\n        : \"personalizado\"}`;\n\n    if (tipo === \"predisenado\") {\n\n      // 3A. PICADO PREDISEÑADO\n\n      if (longitudMetros !== undefined &&\n          (!Number.isFinite(longitudMetros) ||\n           longitudMetros !== 5)) {\n        mensaje =\n          \"💜 Las tiras con longitud especial \" +\n          \"requieren cotización de Karo.\";\n\n      } else if (cantidad >= 100) {\n        mensaje =\n          \"💜 Para pedidos de 100 tiras o más \" +\n          \"de picado prediseñado, Karo revisará \" +\n          \"una cotización especial.\";\n\n      } else {\n        precioUnitario = cantidad >= 10 ? 38 : 40;\n        total = cantidad * precioUnitario;\n        estado = \"cotizado\";\n      }\n\n    } else {\n\n      // 3B. PICADO PERSONALIZADO\n\n      if (\n        cantidad < 10 ||\n        cantidad > 100 ||\n        cantidad % 10 !== 0\n      ) {\n        estado = \"no_disponible\";\n\n        if (cantidad < 10) {\n          mensaje =\n            \"💜 El pedido mínimo es de 10 tiras. \" +\n            \"¿Te gustaría solicitar 10?\";\n\n        } else if (cantidad > 100) {\n          mensaje =\n            \"💜 El catálogo estándar contempla \" +\n            \"hasta 100 tiras. Karo puede revisar \" +\n            \"tu solicitud si necesitas más.\";\n\n        } else {\n          const menor =\n            Math.floor(cantidad / 10) * 10;\n          const mayor =\n            Math.ceil(cantidad / 10) * 10;\n\n          mensaje =\n            `💜 No podemos elaborar ${cantidad} tiras. ` +\n            \"Trabajamos en múltiplos de 10. \" +\n            `¿Prefieres ${menor} o ${mayor} tiras?`;\n        }\n\n      } else {\n\n        const maxDisenos =\n          cantidad === 100 ? 5 :\n          cantidad >= 50 ? 3 :\n          cantidad >= 30 ? 2 : 1;\n\n        if (\n          !Number.isInteger(disenos) ||\n          disenos < 1 ||\n          disenos > maxDisenos\n        ) {\n          estado = \"no_disponible\";\n          mensaje =\n            `💜 Para ${cantidad} tiras se permiten ` +\n            `hasta ${maxDisenos} diseño(s). ` +\n            \"¿Te gustaría ajustar tu pedido?\";\n\n        } else if (\n          !Number.isFinite(longitudMetros) ||\n          longitudMetros !== 5\n        ) {\n          mensaje =\n            \"💜 Las tiras con longitud especial \" +\n            \"requieren cotización de Karo.\";\n\n        } else if (\n          !Number.isFinite(anticipacionDias) ||\n          anticipacionDias < 25\n        ) {\n          mensaje =\n            \"💜 Los pedidos personalizados requieren \" +\n            \"al menos 25 días de anticipación. \" +\n            \"Karo revisará la disponibilidad.\";\n\n        } else {\n          precioUnitario =\n            cantidad === 100 ? 45 :\n            cantidad >= 30 ? 55 : 85;\n\n          total = cantidad * precioUnitario;\n          estado = \"cotizado\";\n        }\n      }\n    }\n  }\n\n} else if (producto === \"papel_muertos\") {\n\n  // 4. PAPEL PICADO DÍA DE MUERTOS\n  // Hojas sueltas desde 1 pieza\n\n  const precios = {\n    octavo: {\n      unitario: 1.50,\n      paquete100: 100\n    },\n    cuarto: {\n      unitario: 2.00,\n      paquete100: 120\n    },\n    medio: {\n      unitario: 3.00,\n      paquete100: 145\n    }\n  };\n\n  const tamano = pedido.tamano;\n  const precio = Object.prototype.hasOwnProperty.call(\n    precios, tamano\n  ) ? precios[tamano] : null;\n\n  if (!precio) {\n    mensaje =\n      \"💜 Indícanos el tamaño de las hojas: \" +\n      \"octavo, cuarto o medio.\";\n\n  } else if (cantidad > 100) {\n    mensaje =\n      \"💜 Para pedidos de más de 100 hojas \" +\n      \"de Día de Muertos, Karo revisará \" +\n      \"una cotización especial.\";\n\n  } else {\n    if (cantidad === 100) {\n      total = precio.paquete100;\n      precioUnitario = total / cantidad;\n    } else {\n      precioUnitario = precio.unitario;\n      total = cantidad * precioUnitario;\n    }\n\n    descripcion =\n      `${cantidad} hoja(s) de papel picado ` +\n      `Día de Muertos, tamaño ${tamano}`;\n\n    estado = \"cotizado\";\n  }\n\n} else {\n  mensaje =\n    \"💜 Este producto todavía no tiene una \" +\n    \"cotización automática configurada. \" +\n    \"Karo revisará tu solicitud.\";\n}\n\n// 5. ANTICIPO GENERAL TAC: 60 %\n\nconst anticipo =\n  total === null\n    ? null\n    : Math.round(total * 0.60 * 100) / 100;\n\nconst restante =\n  total === null\n    ? null\n    : Math.round((total - anticipo) * 100) / 100;\n\n// 6. MENSAJE PARA EL CLIENTE\n\nif (estado === \"cotizado\") {\n  mensaje =\n    \"¡Gracias por elegir Todo Artesanal Chiapas! 💜\\n\\n\" +\n    `Producto: ${descripcion}\\n` +\n    `Precio por pieza: ${dinero(precioUnitario)}\\n` +\n    `Total: ${dinero(total)}\\n` +\n    `Anticipo del 60 %: ${dinero(anticipo)}\\n` +\n    `Restante del 40 %: ${dinero(restante)}\\n\\n` +\n    \"Cotización sujeta a confirmación de disponibilidad.\";\n}\n\nreturn [{\n  json: {\n    pedido,\n    estado,\n    precioUnitario,\n    total,\n    anticipo,\n    restante,\n    mensaje\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "3886c2a6-91cd-4821-98e7-4205c17d9a8e",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "tac-cotizador",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b5fd6f6d-7780-475b-a1d0-b75cd300849a",
+      "name": "Webhook",
+      "webhookId": "ab476e25-7f64-4b79-8d06-9225ccf7a563"
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "dbbd6e35-dccd-415c-9551-f6833c8bf065",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "pinData": {}
+}

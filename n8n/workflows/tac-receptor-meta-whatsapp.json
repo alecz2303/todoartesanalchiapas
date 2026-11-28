@@ -1,0 +1,290 @@
+{
+  "id": "DnsNXWlzn7qzXcJZ",
+  "name": "TAC | Receptor Meta WhatsApp",
+  "active": false,
+  "nodes": [
+    {
+      "id": "5f7f6539-170c-4c2b-b09a-f6833e79fca0",
+      "name": "Webhook GET",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "tac-meta-verificacion",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "6321294d-51fa-43d0-9432-c3ee0b08c778"
+    },
+    {
+      "id": "70b9a9ea-a05b-488c-809b-bdc307a61f8d",
+      "name": "Webhook POST",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        240
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "tac-meta-verificacion",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "webhookId": "598fbcce-e2d9-44b5-8005-013e7f50f778"
+    },
+    {
+      "id": "cbf2aa2c-c1ac-4908-94ca-79d69c3ac5ac",
+      "name": "Verificar y procesar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        256,
+        120
+      ],
+      "parameters": {
+        "jsCode": "// Verificar y procesar — Receptor Meta WhatsApp\n// Entrada: $input.first().json con { headers, query, body }\n//   - Webhook GET (verificación de Meta): query trae hub.mode / hub.verify_token / hub.challenge\n//   - Webhook POST (mensaje): body trae el cuerpo crudo (rawBody) como texto\n// Salida: { tipo, respuesta, statusCode, telefono?, texto? }\n//   tipo: 'challenge' | 'rechazado' | 'ignorado' | 'mensaje'\n\nconst crypto = require('crypto');\n\nconst entrada = $input.first().json;\nconst query = entrada.query || {};\nconst headers = entrada.headers || {};\nconst rawBody = typeof entrada.body === 'string' ? entrada.body : '';\n\n// --- Rama GET: verificación de Meta (handshake) ---\nif (query['hub.mode'] !== undefined) {\n  const tokenEsperado = $env.TAC_META_VERIFY_TOKEN;\n  const challenge = query['hub.challenge'];\n\n  if (\n    tokenEsperado &&\n    query['hub.mode'] === 'subscribe' &&\n    query['hub.verify_token'] === tokenEsperado &&\n    challenge\n  ) {\n    return [{ json: { tipo: 'challenge', respuesta: String(challenge), statusCode: 200 } }];\n  }\n\n  return [{ json: { tipo: 'rechazado', respuesta: 'Verificación rechazada', statusCode: 403 } }];\n}\n\n// --- Rama POST: mensaje de WhatsApp ---\nconst firma = headers['x-hub-signature-256'] || '';\nconst secreto = $env.TAC_META_APP_SECRET || '';\n\nif (!secreto || !firma.startsWith('sha256=')) {\n  return [{ json: { tipo: 'rechazado', respuesta: 'Firma inválida', statusCode: 403 } }];\n}\n\nconst esperado = 'sha256=' + crypto.createHmac('sha256', secreto).update(rawBody, 'utf8').digest('hex');\n\nlet firmaValida = false;\ntry {\n  const a = Buffer.from(firma, 'utf8');\n  const b = Buffer.from(esperado, 'utf8');\n  firmaValida = a.length === b.length && crypto.timingSafeEqual(a, b);\n} catch (e) {\n  firmaValida = false;\n}\n\nif (!firmaValida) {\n  return [{ json: { tipo: 'rechazado', respuesta: 'Firma inválida', statusCode: 403 } }];\n}\n\nlet payload = null;\ntry {\n  payload = JSON.parse(rawBody);\n} catch (e) {\n  return [{ json: { tipo: 'ignorado', respuesta: '', statusCode: 200 } }];\n}\n\nconst value = payload && payload.entry && payload.entry[0] &&\n  payload.entry[0].changes && payload.entry[0].changes[0] &&\n  payload.entry[0].changes[0].value;\n\nconst mensajes = value && Array.isArray(value.messages) ? value.messages : [];\nconst mensaje = mensajes[0];\n\nif (!mensaje || mensaje.type !== 'text' || !mensaje.text || typeof mensaje.text.body !== 'string') {\n  return [{ json: { tipo: 'ignorado', respuesta: '', statusCode: 200 } }];\n}\n\nconst telefono = String(mensaje.from || '');\nconst texto = mensaje.text.body;\n\n// El teléfono debe ser solo dígitos (como lo guarda conversaciones_whatsapp).\nif (!/^[1-9][0-9]{6,14}$/.test(telefono)) {\n  return [{ json: { tipo: 'ignorado', respuesta: '', statusCode: 200 } }];\n}\n\nreturn [{ json: { tipo: 'mensaje', telefono, texto } }];\n"
+      }
+    },
+    {
+      "id": "1d6687d3-e121-4ffb-b67a-3b75777ca1e3",
+      "name": "¿Es mensaje de texto?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        512,
+        120
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "9ef3448e-3339-4c8a-b9d9-53bc53bd6a2b",
+              "leftValue": "={{ $json.tipo }}",
+              "rightValue": "mensaje",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "31ebdee4-e1c2-4bb6-a734-03e4768aaf36",
+      "name": "Registrar chat y leer modos",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        768,
+        0
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ 'WITH nuevo AS (INSERT INTO public.conversaciones_whatsapp (telefono, modo_atencion, actualizado_en) VALUES (\\'' + $json.telefono + '\\', \\'robot\\', now()) ON CONFLICT (telefono) DO UPDATE SET actualizado_en = EXCLUDED.actualizado_en RETURNING modo_atencion) SELECT (SELECT valor FROM public.configuracion_robot WHERE clave = \\'modo_general\\') AS modo_general, (SELECT modo_atencion FROM nuevo) AS modo_chat;' }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "22914c17-8b6f-4c05-b6a8-800927613f27",
+      "name": "¿Contesta el robot?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1024,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "d970a725-a5c4-473b-9df5-886a77c658ff",
+              "leftValue": "={{ $json.modo_general }}",
+              "rightValue": "activo",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter"
+              }
+            },
+            {
+              "id": "61bd1514-7645-4054-a0ab-86e1281d4675",
+              "leftValue": "={{ $json.modo_chat }}",
+              "rightValue": "robot",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "d1b5cb02-3397-49d5-bead-781ebc6729d4",
+      "name": "Llamar al menú",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1280,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/tac-menu",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ telefono: $json.telefono, texto: $json.texto }) }}",
+        "options": {
+          "timeout": 10000
+        }
+      }
+    },
+    {
+      "id": "740850c2-58a3-45dd-bcfc-7dbb26d11d44",
+      "name": "Responder a Meta",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1280,
+        240
+      ],
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.respuesta || '' }}",
+        "options": {
+          "responseCode": "={{ $json.statusCode || 200 }}",
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=utf-8"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook GET": {
+      "main": [
+        [
+          {
+            "node": "Verificar y procesar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook POST": {
+      "main": [
+        [
+          {
+            "node": "Verificar y procesar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar y procesar": {
+      "main": [
+        [
+          {
+            "node": "¿Es mensaje de texto?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es mensaje de texto?": {
+      "main": [
+        [
+          {
+            "node": "Registrar chat y leer modos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder a Meta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar chat y leer modos": {
+      "main": [
+        [
+          {
+            "node": "¿Contesta el robot?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Contesta el robot?": {
+      "main": [
+        [
+          {
+            "node": "Llamar al menú",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder a Meta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Llamar al menú": {
+      "main": [
+        [
+          {
+            "node": "Responder a Meta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "pinData": {}
+}

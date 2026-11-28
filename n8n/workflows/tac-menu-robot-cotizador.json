@@ -1,0 +1,432 @@
+{
+  "id": "b5f9303e-d591-4b36-894a-37b9a2490938",
+  "name": "TAC | Menú Robot Cotizador",
+  "active": false,
+  "nodes": [
+    {
+      "id": "973a0726-41c1-4230-952c-13c6f215d9fd",
+      "name": "Webhook menú",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "tac-menu",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "webhookId": "5b5f0d59-0672-4644-a992-14638320905c"
+    },
+    {
+      "id": "2f473332-ac7b-442d-b1d2-0e8a8c2e0f9b",
+      "name": "Cargar estado",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        256,
+        0
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ 'SELECT c.modo_atencion, e.paso, e.datos FROM public.conversaciones_whatsapp c LEFT JOIN public.estado_menu_whatsapp e ON e.telefono = c.telefono WHERE c.telefono = \\'' + $json.body.telefono + '\\';' }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "a4e5e553-04a2-4ee2-9d27-2ab7227a9a94",
+      "name": "Juntar mensaje y estado",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        512,
+        0
+      ],
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      }
+    },
+    {
+      "id": "dec06f02-d213-4fec-bd8a-f9b5e2096208",
+      "name": "Router del menú",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        768,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Router del menú — Robot Cotizador Todo Artesanal\n// Entrada: $input.first().json con { body: { telefono, texto }, modo_atencion, paso, datos }\n// Salida: { accion, mensaje, pedido, nuevoPaso, nuevosDatos, nuevosDatosSql, pasoSiFalla, datosSiFalla, telefono }\n// accion: 'responder' (contesta y se queda) | 'cotizar' (llama al motor) | 'karo' (pasa el chat a Karo)\n\nconst entrada = $input.first().json;\nconst body = entrada.body || {};\nconst telefono = String(body.telefono || '');\nconst textoOriginal = String(body.texto || '');\n\nconst pasoActual = entrada.paso || 'menu';\n\nlet datosActuales = {};\ntry {\n  if (entrada.datos && typeof entrada.datos === 'object') {\n    datosActuales = entrada.datos;\n  } else if (typeof entrada.datos === 'string' && entrada.datos) {\n    datosActuales = JSON.parse(entrada.datos);\n  }\n} catch (e) {\n  datosActuales = {};\n}\n\nconst normalizar = (s) =>\n  s.trim().toLowerCase()\n    .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')\n    .replace(/\\s+/g, ' ');\n\nconst txt = normalizar(textoOriginal);\n\n// El JSON de datos se guarda escapado para SQL (las comillas simples se duplican).\nconst sqlTexto = (valor) => JSON.stringify(valor).replace(/'/g, \"''\");\n\nconst MENU =\n  '¡Hola! 💜 Soy el asistente de Todo Artesanal Chiapas. ¿En qué te ayudo?\\n\\n' +\n  '1️⃣ Dirección\\n' +\n  '2️⃣ Horarios\\n' +\n  '3️⃣ Piñatas\\n' +\n  '4️⃣ Papel / Plástico picado\\n' +\n  '5️⃣ Tazas\\n' +\n  '6️⃣ Otros productos\\n\\n' +\n  'Responde con el número de la opción.';\n\nconst DIRECCION =\n  '💜 Nuestra dirección es:\\n' +\n  '6a. Ote. Nte. 132, Asamblea de barrio,\\n' +\n  'Zona Sin Asignación de Nombre de Col 42,\\n' +\n  '29000 Tuxtla Gutiérrez, Chis., México.\\n\\n' +\n  '¿Te ayudo con algo más? Escribe \"menú\" para ver las opciones.';\n\nconst HORARIOS =\n  '💜 Nuestros horarios son:\\n' +\n  'Lunes a miércoles: 11:00–18:00\\n' +\n  'Jueves: 17:00–20:00\\n' +\n  'Viernes: 11:00–18:00\\n' +\n  'Sábado: 11:00–17:00\\n' +\n  'Domingo: cerrado\\n\\n' +\n  '¿Te ayudo con algo más? Escribe \"menú\" para ver las opciones.';\n\nconst responder = (mensaje, nuevoPaso, nuevosDatos) => ({\n  accion: 'responder',\n  mensaje,\n  pedido: null,\n  nuevoPaso,\n  nuevosDatos,\n  nuevosDatosSql: sqlTexto(nuevosDatos),\n  pasoSiFalla: nuevoPaso,\n  datosSiFalla: nuevosDatos,\n  telefono,\n});\n\nconst cotizar = (pedido, pasoSiFalla, datosSiFalla) => ({\n  accion: 'cotizar',\n  mensaje: null,\n  pedido,\n  nuevoPaso: 'menu',\n  nuevosDatos: {},\n  nuevosDatosSql: sqlTexto({}),\n  pasoSiFalla,\n  datosSiFalla,\n  telefono,\n});\n\nconst aKaro = (mensaje) => ({\n  accion: 'karo',\n  mensaje,\n  pedido: null,\n  nuevoPaso: 'menu',\n  nuevosDatos: {},\n  nuevosDatosSql: sqlTexto({}),\n  pasoSiFalla: 'menu',\n  datosSiFalla: {},\n  telefono,\n});\n\nconst parseCantidad = (t) => {\n  if (!/^\\d+$/.test(t)) return null;\n  const n = parseInt(t, 10);\n  return n >= 1 ? n : null;\n};\n\n// \"menú\" o \"cancelar\" en cualquier paso vuelve al menú.\nif (txt.includes('menu') || txt.includes('cancelar') || txt === 'inicio') {\n  return [{ json: responder(MENU, 'menu', {}) }];\n}\n\nswitch (pasoActual) {\n  case 'menu': {\n    if (txt === '1' || txt.includes('direccion')) {\n      return [{ json: responder(DIRECCION, 'menu', {}) }];\n    }\n    if (txt === '2' || txt.includes('horario')) {\n      return [{ json: responder(HORARIOS, 'menu', {}) }];\n    }\n    if (txt === '3' || txt.includes('pinata')) {\n      return [{ json: responder(\n        '💜 ¿Qué tipo de piñata buscas?\\nA. Personalizada\\nB. Prediseñada',\n        'pinatas_tipo', {}) }];\n    }\n    if (txt === '4' || txt.includes('picado') || txt.includes('papel') || txt.includes('plastico')) {\n      return [{ json: responder(\n        '💜 ¿Qué tipo de picado?\\nA. Personalizado\\nB. Prediseñado',\n        'picado_tipo', {}) }];\n    }\n    if (txt === '5' || txt.includes('taza')) {\n      return [{ json: responder(\n        '💜 ¿Qué tipo de taza?\\nA. Personalizada\\nB. Prediseñada',\n        'tazas_tipo', {}) }];\n    }\n    if (txt === '6' || txt.includes('otro')) {\n      return [{ json: aKaro('💜 Te paso con Karo, ella te atiende personalmente en un momento.') }];\n    }\n    return [{ json: responder(MENU, 'menu', {}) }];\n  }\n\n  case 'pinatas_tipo': {\n    if (txt === 'a' || txt.includes('personalizada')) {\n      return [{ json: aKaro('💜 Perfecto, te paso con Karo para tu piñata personalizada, ella te atiende personalmente.') }];\n    }\n    if (txt === 'b' || txt.includes('predisenada')) {\n      return [{ json: aKaro('💜 Perfecto, te paso con Karo para tu piñata prediseñada, ella te atiende personalmente.') }];\n    }\n    return [{ json: responder('💜 ¿Qué tipo de piñata buscas?\\nA. Personalizada\\nB. Prediseñada', 'pinatas_tipo', {}) }];\n  }\n\n  case 'picado_tipo': {\n    if (txt === 'a' || txt.includes('personalizado')) {\n      return [{ json: responder('💜 ¿Cuántas tiras necesitas? Trabajamos de 10 a 100 tiras, en múltiplos de 10.', 'picado_pers_cantidad', {}) }];\n    }\n    if (txt === 'b' || txt.includes('predisenado')) {\n      return [{ json: responder('💜 ¿Papel o plástico?', 'picado_pred_material', {}) }];\n    }\n    return [{ json: responder('💜 ¿Qué tipo de picado?\\nA. Personalizado\\nB. Prediseñado', 'picado_tipo', {}) }];\n  }\n\n  case 'picado_pred_material': {\n    if (txt.includes('papel') || txt.includes('plastico')) {\n      const material = txt.includes('papel') ? 'papel' : 'plastico';\n      return [{ json: responder('💜 ¿Cuántas tiras necesitas?', 'picado_pred_cantidad', { material }) }];\n    }\n    return [{ json: responder('💜 ¿Papel o plástico?', 'picado_pred_material', {}) }];\n  }\n\n  case 'picado_pred_cantidad': {\n    const cantidad = parseCantidad(txt);\n    if (cantidad === null) {\n      return [{ json: responder('💜 Indícanos una cantidad válida. ¿Cuántas tiras necesitas?', 'picado_pred_cantidad', datosActuales) }];\n    }\n    const pedido = { producto: 'picado', material: datosActuales.material, tipo: 'predisenado', cantidad };\n    return [{ json: cotizar(pedido, 'picado_pred_cantidad', { material: datosActuales.material }) }];\n  }\n\n  case 'picado_pers_cantidad': {\n    const cantidad = parseCantidad(txt);\n    if (cantidad === null) {\n      return [{ json: responder('💜 Indícanos una cantidad válida. ¿Cuántas tiras necesitas? Recuerda: de 10 a 100, en múltiplos de 10.', 'picado_pers_cantidad', {}) }];\n    }\n    return [{ json: responder('💜 ¿Papel o plástico?', 'picado_pers_material', { cantidad }) }];\n  }\n\n  case 'picado_pers_material': {\n    if (txt.includes('papel') || txt.includes('plastico')) {\n      const material = txt.includes('papel') ? 'papel' : 'plastico';\n      return [{ json: responder('💜 ¿Cuántos diseños diferentes quieres?', 'picado_pers_disenos', { cantidad: datosActuales.cantidad, material }) }];\n    }\n    return [{ json: responder('💜 ¿Papel o plástico?', 'picado_pers_material', datosActuales) }];\n  }\n\n  case 'picado_pers_disenos': {\n    const disenos = parseCantidad(txt);\n    if (disenos === null) {\n      return [{ json: responder('💜 Indícanos cuántos diseños, con un número. ¿Cuántos diseños diferentes quieres?', 'picado_pers_disenos', datosActuales) }];\n    }\n    return [{ json: responder('💜 ¿Para cuándo lo necesitas? Dime en cuántos días (mínimo 25 días de anticipación).', 'picado_pers_anticipacion', { cantidad: datosActuales.cantidad, material: datosActuales.material, disenos }) }];\n  }\n\n  case 'picado_pers_anticipacion': {\n    const dias = parseCantidad(txt);\n    if (dias === null) {\n      return [{ json: responder('💜 Indícanos en cuántos días lo necesitas, con un número.', 'picado_pers_anticipacion', datosActuales) }];\n    }\n    const pedido = {\n      producto: 'picado',\n      material: datosActuales.material,\n      tipo: 'personalizado',\n      cantidad: datosActuales.cantidad,\n      disenos: datosActuales.disenos,\n      anticipacionDias: dias,\n      longitudMetros: 5,\n    };\n    return [{ json: cotizar(pedido, 'picado_pers_anticipacion', { cantidad: datosActuales.cantidad, material: datosActuales.material, disenos: datosActuales.disenos }) }];\n  }\n\n  case 'tazas_tipo': {\n    if (txt === 'a' || txt.includes('personalizada')) {\n      return [{ json: responder('💜 ¿Cuántas tazas personalizadas necesitas?', 'tazas_pers_cantidad', {}) }];\n    }\n    if (txt === 'b' || txt.includes('predisenada')) {\n      return [{ json: responder('💜 ¿Cuántas tazas prediseñadas necesitas?', 'tazas_pred_cantidad', {}) }];\n    }\n    return [{ json: responder('💜 ¿Qué tipo de taza?\\nA. Personalizada\\nB. Prediseñada', 'tazas_tipo', {}) }];\n  }\n\n  case 'tazas_pred_cantidad': {\n    const cantidad = parseCantidad(txt);\n    if (cantidad === null) {\n      return [{ json: responder('💜 Indícanos una cantidad válida. ¿Cuántas tazas prediseñadas necesitas?', 'tazas_pred_cantidad', {}) }];\n    }\n    const pedido = { producto: 'taza', tipo: 'predisenada', cantidad };\n    return [{ json: cotizar(pedido, 'tazas_pred_cantidad', {}) }];\n  }\n\n  case 'tazas_pers_cantidad': {\n    const cantidad = parseCantidad(txt);\n    if (cantidad === null) {\n      return [{ json: responder('💜 Indícanos una cantidad válida. ¿Cuántas tazas personalizadas necesitas?', 'tazas_pers_cantidad', {}) }];\n    }\n    return [{ json: responder('💜 ¿Todas las tazas llevan el mismo diseño? Responde sí o no.', 'tazas_pers_mismo', { cantidad }) }];\n  }\n\n  case 'tazas_pers_mismo': {\n    if (txt === 'si' || txt.startsWith('si ') || txt.startsWith('si,')) {\n      const pedido = { producto: 'taza', tipo: 'personalizada', cantidad: datosActuales.cantidad, mismoDiseno: true };\n      return [{ json: cotizar(pedido, 'tazas_pers_mismo', { cantidad: datosActuales.cantidad }) }];\n    }\n    if (txt === 'no' || txt.startsWith('no ') || txt.startsWith('no,')) {\n      const pedido = { producto: 'taza', tipo: 'personalizada', cantidad: datosActuales.cantidad, mismoDiseno: false };\n      return [{ json: cotizar(pedido, 'tazas_pers_mismo', { cantidad: datosActuales.cantidad }) }];\n    }\n    return [{ json: responder('💜 ¿Todas las tazas llevan el mismo diseño? Responde sí o no.', 'tazas_pers_mismo', datosActuales) }];\n  }\n\n  default: {\n    return [{ json: responder(MENU, 'menu', {}) }];\n  }\n}\n"
+      }
+    },
+    {
+      "id": "f62ce827-45f7-4b2e-82df-c0daa67b80b7",
+      "name": "¿Hay que cotizar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1024,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "115f3d5d-14e2-4412-a012-ed9cc9208dfa",
+              "leftValue": "={{ $json.accion }}",
+              "rightValue": "cotizar",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "6bc095ab-f45e-47ec-b1a6-aba8327f8c40",
+      "name": "Llamar al motor",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1280,
+        -120
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/tac-cotizador",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.pedido) }}",
+        "options": {
+          "timeout": 10000
+        }
+      }
+    },
+    {
+      "id": "eca58d5c-16ca-4b31-81ea-275014439cdb",
+      "name": "Juntar ruta y cotización",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1536,
+        -120
+      ],
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      }
+    },
+    {
+      "id": "69ba0497-92db-4310-866d-035bd0c9bcb0",
+      "name": "Armar respuesta de cotización",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1792,
+        -120
+      ],
+      "parameters": {
+        "jsCode": "// Armar respuesta de cotización — Menú Robot Cotizador\n// Entrada: $input.first().json con lo del Router + lo del motor (estado, mensaje, ...)\n//   estado del motor: 'cotizado' | 'pendiente' | 'no_disponible'\n// Salida: { accion, mensaje, nuevoPaso, nuevosDatos, nuevosDatosSql, telefono }\n//   - cotizado: se contesta con el mensaje del motor y se vuelve al menú.\n//   - pendiente: el motor dice que Karo revisará; se contesta y el chat pasa a Karo.\n//   - no_disponible: se contesta con el mensaje del motor y se queda en el mismo\n//     paso para que el cliente corrija el dato.\n\nconst item = $input.first().json;\nconst estado = item.estado;\n\nconst sqlTexto = (valor) => JSON.stringify(valor).replace(/'/g, \"''\");\n\nif (estado === 'cotizado') {\n  return [{ json: {\n    accion: 'responder',\n    mensaje: item.mensaje,\n    nuevoPaso: 'menu',\n    nuevosDatos: {},\n    nuevosDatosSql: sqlTexto({}),\n    telefono: item.telefono,\n  } }];\n}\n\nif (estado === 'pendiente') {\n  return [{ json: {\n    accion: 'karo',\n    mensaje: item.mensaje,\n    nuevoPaso: 'menu',\n    nuevosDatos: {},\n    nuevosDatosSql: sqlTexto({}),\n    telefono: item.telefono,\n  } }];\n}\n\n// no_disponible (o cualquier otro estado): se queda en el paso para corregir el dato.\nconst datosSiFalla = (item.datosSiFalla && typeof item.datosSiFalla === 'object') ? item.datosSiFalla : {};\nreturn [{ json: {\n  accion: 'responder',\n  mensaje: item.mensaje,\n  nuevoPaso: item.pasoSiFalla || 'menu',\n  nuevosDatos: datosSiFalla,\n  nuevosDatosSql: sqlTexto(datosSiFalla),\n  telefono: item.telefono,\n} }];\n"
+      }
+    },
+    {
+      "id": "4c7ec670-6efb-4fa2-8a42-08a99ba0ef2c",
+      "name": "¿Pasa a Karo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2048,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "5aa8e4e0-32be-4a08-8a68-2ba3924c1bb7",
+              "leftValue": "={{ $json.accion }}",
+              "rightValue": "karo",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "9289d3ee-8159-4818-a9ec-ad4b5bf1a5b3",
+      "name": "Cambiar a Karo",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        2304,
+        -120
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ 'UPDATE public.conversaciones_whatsapp SET modo_atencion = \\'karo\\', actualizado_en = now() WHERE telefono = \\'' + $json.telefono + '\\';' }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "4e10b6c2-38d8-42e4-95c0-40d6e1b922f7",
+      "name": "Enviar WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2560,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v21.0/{{ $env.TAC_META_PHONE_NUMBER_ID }}/messages",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ messaging_product: 'whatsapp', to: $json.telefono, type: 'text', text: { body: $json.mensaje } }) }}",
+        "options": {
+          "timeout": 10000
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.TAC_META_WHATSAPP_TOKEN }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ede7e481-900b-45f2-9b28-fc0c6a917539",
+      "name": "Juntar envío y ruta",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        2816,
+        0
+      ],
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      }
+    },
+    {
+      "id": "7e9ac1fe-6e47-40b8-a6a5-5503de8bee4a",
+      "name": "Guardar estado",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        3072,
+        0
+      ],
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ 'INSERT INTO public.estado_menu_whatsapp (telefono, paso, datos, actualizado_en) VALUES (\\'' + $json.telefono + '\\', \\'' + $json.nuevoPaso + '\\', \\'' + $json.nuevosDatosSql + '\\'::jsonb, now()) ON CONFLICT (telefono) DO UPDATE SET paso = EXCLUDED.paso, datos = EXCLUDED.datos, actualizado_en = now();' }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Webhook menú": {
+      "main": [
+        [
+          {
+            "node": "Cargar estado",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Juntar mensaje y estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cargar estado": {
+      "main": [
+        [
+          {
+            "node": "Juntar mensaje y estado",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Juntar mensaje y estado": {
+      "main": [
+        [
+          {
+            "node": "Router del menú",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Router del menú": {
+      "main": [
+        [
+          {
+            "node": "¿Hay que cotizar?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Hay que cotizar?": {
+      "main": [
+        [
+          {
+            "node": "Llamar al motor",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Juntar ruta y cotización",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "¿Pasa a Karo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Llamar al motor": {
+      "main": [
+        [
+          {
+            "node": "Juntar ruta y cotización",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Juntar ruta y cotización": {
+      "main": [
+        [
+          {
+            "node": "Armar respuesta de cotización",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Armar respuesta de cotización": {
+      "main": [
+        [
+          {
+            "node": "¿Pasa a Karo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Pasa a Karo?": {
+      "main": [
+        [
+          {
+            "node": "Cambiar a Karo",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Juntar envío y ruta",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar WhatsApp",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Juntar envío y ruta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cambiar a Karo": {
+      "main": [
+        [
+          {
+            "node": "Enviar WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Juntar envío y ruta",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Juntar envío y ruta": {
+      "main": [
+        [
+          {
+            "node": "Guardar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "pinData": {}
+}
